@@ -69,18 +69,18 @@ export interface FilterState {
 }
 
 export const WILAYAS = [
-  'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Béjaïa', 'Biskra',
-  'Béchar', 'Blida', 'Bouïra', 'Tamanrasset', 'Tébessa', 'Tlemcen', 'Tiaret',
-  'Tizi Ouzou', 'Alger', 'Djelfa', 'Jijel', 'Sétif', 'Saïda', 'Skikda',
-  'Sidi Bel Abbès', 'Annaba', 'Guelma', 'Constantine', 'Médéa', 'Mostaganem',
-  "M'Sila", 'Mascara', 'Ouargla', 'Oran', 'El Bayadh', 'Illizi',
-  'Bordj Bou Arréridj', 'Boumerdès', 'El Tarf', 'Tindouf', 'Tissemsilt',
-  'El Oued', 'Khenchela', 'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma',
-  'Aïn Témouchent', 'Ghardaïa', 'Relizane', 'Timimoun', 'Bordj Badji Mokhtar',
-  'Ouled Djellal', 'Béni Abbès', 'In Salah', 'In Guezzam', 'Touggourt',
-  'Djanet', "El M'Ghair", 'El Meniaâ', 'Aflou', 'Bir El Ater', 'El Kantara',
-  'Barika', 'El Aricha', 'Ksar Chellala', 'Aïn Oussera', 'Messaad',
-  'Ksar El Boukhari', 'Bou Saâda', 'El Abiodh Sidi Cheikh'
+  '01 - Adrar', '02 - Chlef', '03 - Laghouat', '04 - Oum El Bouaghi', '05 - Batna', '06 - Béjaïa', '07 - Biskra',
+  '08 - Béchar', '09 - Blida', '10 - Bouïra', '11 - Tamanrasset', '12 - Tébessa', '13 - Tlemcen', '14 - Tiaret',
+  '15 - Tizi Ouzou', '16 - Alger', '17 - Djelfa', '18 - Jijel', '19 - Sétif', '20 - Saïda', '21 - Skikda',
+  '22 - Sidi Bel Abbès', '23 - Annaba', '24 - Guelma', '25 - Constantine', '26 - Médéa', '27 - Mostaganem',
+  "28 - M'Sila", '29 - Mascara', '30 - Ouargla', '31 - Oran', '32 - El Bayadh', '33 - Illizi',
+  '34 - Bordj Bou Arréridj', '35 - Boumerdès', '36 - El Tarf', '37 - Tindouf', '38 - Tissemsilt',
+  '39 - El Oued', '40 - Khenchela', '41 - Souk Ahras', '42 - Tipaza', '43 - Mila', '44 - Aïn Defla', '45 - Naâma',
+  '46 - Aïn Témouchent', '47 - Ghardaïa', '48 - Relizane', '49 - Timimoun', '50 - Bordj Badji Mokhtar',
+  '51 - Ouled Djellal', '52 - Béni Abbès', '53 - In Salah', '54 - In Guezzam', '55 - Touggourt',
+  '56 - Djanet', "57 - El M'Ghair", '58 - El Meniaâ', '59 - Aflou', '60 - Bir El Ater', '61 - El Kantara',
+  '62 - Barika', '63 - El Aricha', '64 - Ksar Chellala', '65 - Aïn Oussera', '66 - Messaad',
+  '67 - Ksar El Boukhari', '68 - Bou Saâda', '69 - El Abiodh Sidi Cheikh'
 ] as const;
 
 export const CAR_BRANDS = [
