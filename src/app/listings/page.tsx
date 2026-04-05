@@ -89,6 +89,7 @@ export default function ListingsPage() {
   const [selectedWilaya, setSelectedWilaya] = useState('');
   const [selectedFuel, setSelectedFuel] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
+  const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'price-asc' | 'price-desc'>('recent');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -101,6 +102,7 @@ export default function ListingsPage() {
       if (selectedWilaya && car.wilaya !== selectedWilaya) return false;
       if (selectedFuel && car.fuel !== selectedFuel) return false;
       if (selectedCondition && car.condition !== selectedCondition) return false;
+      if (priceMin && car.price < parseInt(priceMin)) return false;
       if (priceMax && car.price > parseInt(priceMax)) return false;
       return true;
     })
@@ -115,6 +117,7 @@ export default function ListingsPage() {
     setSelectedWilaya('');
     setSelectedFuel('');
     setSelectedCondition('');
+    setPriceMin('');
     setPriceMax('');
     setSearchQuery('');
   };
@@ -183,16 +186,25 @@ export default function ListingsPage() {
                 </select>
               </div>
 
-              {/* Price Max */}
+              {/* Budget */}
               <div className="mb-4">
-                <label className="text-slate-400 text-sm mb-2 block">Prix maximum (DA)</label>
-                <input
-                  type="number"
-                  placeholder="ex: 5000000"
-                  value={priceMax}
-                  onChange={e => setPriceMax(e.target.value)}
-                  className="input text-white text-sm"
-                />
+                <label className="text-slate-400 text-sm mb-2 block">{t('listings.filter.budget')}</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    placeholder={t('listings.filter.min')}
+                    value={priceMin}
+                    onChange={e => setPriceMin(e.target.value)}
+                    className="input text-white text-sm"
+                  />
+                  <input
+                    type="number"
+                    placeholder={t('listings.filter.max')}
+                    value={priceMax}
+                    onChange={e => setPriceMax(e.target.value)}
+                    className="input text-white text-sm"
+                  />
+                </div>
               </div>
             </div>
           </aside>

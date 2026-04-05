@@ -43,6 +43,9 @@ const translations: Record<Language, Record<string, string>> = {
     'listings.sort.recent': 'Plus récents',
     'listings.sort.priceAsc': 'Prix croissant',
     'listings.sort.priceDesc': 'Prix décroissant',
+    'listings.filter.budget': 'Budget (DA)',
+    'listings.filter.min': 'Min',
+    'listings.filter.max': 'Max',
     // Car Details
     'car.year': 'Année',
     'car.mileage': 'Kilométrage',
@@ -143,6 +146,9 @@ const translations: Record<Language, Record<string, string>> = {
     'listings.sort.recent': 'الأحدث',
     'listings.sort.priceAsc': 'السعر تصاعدي',
     'listings.sort.priceDesc': 'السعر تنازلي',
+    'listings.filter.budget': 'الميزانية (دج)',
+    'listings.filter.min': 'الأدنى',
+    'listings.filter.max': 'الأقصى',
     // Car Details
     'car.year': 'السنة',
     'car.mileage': 'الأميال',
