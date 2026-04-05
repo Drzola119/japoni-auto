@@ -23,7 +23,7 @@ export default function HeroCanvas() {
     resizeCanvas();
 
     // Setup Frames
-    const totalFrames = 181;
+    const totalFrames = 182;
     const frameUrls = Array.from({ length: totalFrames }, (_, i) => {
       const num = (i + 1).toString().padStart(3, '0');
       return `/frames/ezgif-frame-${num}.jpg`;
