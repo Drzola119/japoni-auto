@@ -7,6 +7,7 @@ import { Search, ChevronDown, Star, Shield, TrendingUp, ArrowRight, Zap } from '
 import { useLanguage } from '@/context/LanguageContext';
 import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
+import HeroCanvas from '@/components/HeroCanvas';
 import { cn } from '@/lib/utils';
 
 // Demo data for initial display before Firebase loads
@@ -101,14 +102,9 @@ export default function HomePage() {
 
         {/* Animated background */}
         <div className="absolute inset-0">
-          {/* Background image */}
-          <div className="absolute inset-0"
-               style={{
-                 backgroundImage: `url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80')`,
-                 backgroundSize: 'cover',
-                 backgroundPosition: 'center',
-               }} />
-          <div className="hero-overlay absolute inset-0" />
+          {/* Canvas Implementation */}
+          <HeroCanvas />
+          <div className="hero-overlay absolute inset-0 z-0" />
 
           {/* Floating orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl animate-pulse"
