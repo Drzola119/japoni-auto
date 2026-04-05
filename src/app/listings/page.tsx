@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Grid3X3, List } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import CarCard from '@/components/CarCard';
 import { CarListing, CAR_BRANDS, WILAYAS } from '@/types';
@@ -84,6 +85,7 @@ const DEMO_CARS: CarListing[] = [
 
 export default function ListingsPage() {
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedWilaya, setSelectedWilaya] = useState('');
@@ -93,6 +95,18 @@ export default function ListingsPage() {
   const [priceMax, setPriceMax] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'price-asc' | 'price-desc'>('recent');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const w = searchParams.get('wilaya');
+    const min = searchParams.get('min');
+    const max = searchParams.get('max');
+    
+    if (q) setSearchQuery(q);
+    if (w) setSelectedWilaya(w);
+    if (min) setPriceMin(min);
+    if (max) setPriceMax(max);
+  }, [searchParams]);
 
   const filtered = DEMO_CARS
     .filter(car => {

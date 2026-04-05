@@ -77,6 +77,7 @@ export default function HomePage() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWilaya, setSelectedWilaya] = useState('');
+  const [priceMax, setPriceMax] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
 
   const filters = [
@@ -186,20 +187,34 @@ export default function HomePage() {
             <select
               value={selectedWilaya}
               onChange={(e) => setSelectedWilaya(e.target.value)}
-              className="sm:w-52 px-4 py-4 rounded-2xl text-white text-base outline-none cursor-pointer"
+              className="sm:w-48 px-4 py-4 rounded-2xl text-white text-base outline-none cursor-pointer"
               style={{
                 background: 'rgba(255,255,255,0.1)',
                 backdropFilter: 'blur(20px)',
                 border: '1px solid rgba(255,255,255,0.15)',
               }}
             >
-              <option value="" style={{ background: '#1a1a25' }}>Toutes les wilayas</option>
+              <option value="" style={{ background: '#1a1a25' }}>Wilaya</option>
               {WILAYAS.map(w => (
                 <option key={w} value={w} style={{ background: '#1a1a25' }}>{w}</option>
               ))}
             </select>
+            <div className="sm:w-40 relative">
+              <input
+                type="number"
+                placeholder={t('listings.filter.max')}
+                value={priceMax}
+                onChange={(e) => setPriceMax(e.target.value)}
+                className="w-full px-4 py-4 rounded-2xl text-white text-base outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                }}
+              />
+            </div>
             <Link
-              href={`/listings?q=${searchQuery}&wilaya=${selectedWilaya}`}
+              href={`/listings?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
               className="btn-primary py-4 px-8 text-base rounded-2xl whitespace-nowrap"
             >
               <Search className="w-5 h-5" />
