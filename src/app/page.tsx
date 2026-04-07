@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { m as motion, AnimatePresence, Variants } from "framer-motion";
 import Link from 'next/link';
 import { Search, Star, Shield, TrendingUp, ArrowRight as ArrowRightIcon } from 'lucide-react';
@@ -8,9 +8,11 @@ import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
 import dynamic from 'next/dynamic';
 
+import LoadingScreen from '@/components/LoadingScreen';
+
 const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), { ssr: false });
 const SocialPopup = dynamic(() => import('@/components/SocialPopup'), { ssr: false });
-const LoadingScreen = dynamic(() => import('@/components/LoadingScreen'), { ssr: false });
+// Removed dynamic import for LoadingScreen to ensure it's in the main bundle for instant appearance
 import CountUp from 'react-countup';
 
 const DEMO_CARS: CarListing[] = [
@@ -104,6 +106,11 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [showPopup, setShowPopup] = useState(false);
 
+  const handleLoadingComplete = useCallback(() => {
+    sessionStorage.setItem('japonLoaded', 'true');
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
     const popupShown = localStorage.getItem('japoniPopupDismissed');
     if (!popupShown) {
@@ -130,10 +137,7 @@ export default function HomePage() {
     <>
       <AnimatePresence>
         {isLoading && (
-          <LoadingScreen onComplete={() => {
-            sessionStorage.setItem('japonLoaded', 'true');
-            setIsLoading(false);
-          }} />
+          <LoadingScreen onComplete={handleLoadingComplete} />
         )}
       </AnimatePresence>
       <motion.div
