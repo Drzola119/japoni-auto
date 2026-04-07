@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface SocialPopupProps {
   onClose: () => void;
 }
 
 const GOLD_PRIMARY = "#C9A84C";
-const GOLD_BRIGHT = "#E8C96A";
-const GOLD_DARK = "#8B6914";
 
 const PLATFORMS = [
   { id: 'facebook',  label: 'Facebook',  href: 'https://facebook.com/japoni.auto',          icon: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /> },
@@ -263,7 +261,7 @@ export default function SocialPopup({ onClose }: SocialPopupProps) {
                 className="text-[13px] leading-[1.65] text-white/55 mt-3 max-w-[340px] mx-auto"
                 style={{ fontFamily: 'Inter' }}
               >
-                Exclusivités, avant-premières de nouveaux modèles et coulisses de l'automobile premium !
+                Exclusivités, avant-premières de nouveaux modèles et coulisses de l&apos;automobile premium !
               </motion.p>
 
               {/* FIX 9 — Gold divider */}
@@ -383,7 +381,7 @@ export default function SocialPopup({ onClose }: SocialPopupProps) {
               4.9/5
             </p>
             <p className="text-[11px] tracking-[0.08em] text-center" style={{ fontFamily: 'Inter', color: 'rgba(201,168,76,0.55)' }}>
-              (150+ avis Google) — L'expérience JAPONI.
+              (150+ avis Google) — L&apos;expérience JAPONI.
             </p>
           </div>
 
@@ -421,7 +419,7 @@ export default function SocialPopup({ onClose }: SocialPopupProps) {
               <svg width="14" height="16" viewBox="0 0 14 16" fill="none" className="opacity-50">
                 <path d="M7 1L1 4v5c0 4.11 2.56 7.95 6 9 3.44-1.05 6-4.89 6-9V4L7 1z" stroke={GOLD_PRIMARY} strokeWidth="1"/>
               </svg>
-              JAPONI AUTO — L'excellence automobile algérienne
+              JAPONI AUTO — L&apos;excellence automobile algérienne
             </div>
           </div>
 
