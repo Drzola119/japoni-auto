@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,11 +36,9 @@ export default function HeroCanvas() {
       img.onload = () => {
         loadedImages[i] = img;
         loadedCount++;
-        setProgress(Math.round((loadedCount / totalFrames) * 100));
 
         if (loadedCount === totalFrames) {
           // All loaded, start animation
-          setLoading(false);
           startAnimation();
         }
       };
@@ -50,9 +46,7 @@ export default function HeroCanvas() {
         console.error('Failed to load frame:', url);
         // Fallback progress to avoid getting stuck if an image fails
         loadedCount++;
-        setProgress(Math.round((loadedCount / totalFrames) * 100));
         if (loadedCount === totalFrames) {
-          setLoading(false);
           startAnimation();
         }
       };
