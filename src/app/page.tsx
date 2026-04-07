@@ -8,6 +8,7 @@ import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
 import HeroCanvas from '@/components/HeroCanvas';
 import SocialPopup from '@/components/SocialPopup';
+import LoadingScreen from '@/components/LoadingScreen';
 import CountUp from 'react-countup';
 
 const DEMO_CARS: CarListing[] = [
@@ -91,6 +92,10 @@ const fadeUpVariants: Variants = {
 };
 
 export default function HomePage() {
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !sessionStorage.getItem('japonLoaded');
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWilaya, setSelectedWilaya] = useState('');
   const [priceMax, setPriceMax] = useState('');
@@ -120,9 +125,23 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#07070C]">
-      {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <>
+      <AnimatePresence>
+        {isLoading && (
+          <LoadingScreen onComplete={() => {
+            sessionStorage.setItem('japonLoaded', 'true');
+            setIsLoading(false);
+          }} />
+        )}
+      </AnimatePresence>
+      <motion.div
+        animate={{ opacity: isLoading ? 0 : 1 }}
+        transition={{ duration: 0.4 }}
+        style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+      >
+      <div className="min-h-screen bg-[#07070C]">
+        {/* ===== HERO SECTION ===== */}
+        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
         
         {/* Animated canvas background via component */}
         <HeroCanvas />
@@ -565,10 +584,12 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* Social Popup */}
-      <AnimatePresence>
-        {showPopup && <SocialPopup onClose={() => setShowPopup(false)} />}
-      </AnimatePresence>
-    </div>
+        {/* Social Popup */}
+        <AnimatePresence>
+          {showPopup && <SocialPopup onClose={() => setShowPopup(false)} />}
+        </AnimatePresence>
+      </div>
+      </motion.div>
+    </>
   );
 }
