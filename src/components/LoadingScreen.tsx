@@ -51,23 +51,25 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const flames = useMemo(() => FLAMES_DATA, []);
 
   useEffect(() => {
-    const t1 = setTimeout(() => { setPhase('logo'); setLogoOn(true); }, 800);
-    const t2 = setTimeout(() => { setPhase('bar');  setBarOn(true);  }, 1800);
-    const t3 = setTimeout(() => { setPhase('exit'); setExitFlash(true); }, 3000);
-    const t4 = setTimeout(() => { setAlive(false); onComplete(); }, 3500);
+    let iv: NodeJS.Timeout;
+    const t1 = setTimeout(() => { setPhase('logo'); setLogoOn(true); }, 2000);
+    const t2 = setTimeout(() => { setPhase('bar');  setBarOn(true);  }, 4000);
+    const t3 = setTimeout(() => { setPhase('exit'); setExitFlash(true); }, 10000);
+    const t4 = setTimeout(() => { setAlive(false); onComplete(); }, 10500);
 
-    // progress counter starts at 1800ms
-    const pStart = Date.now() + 1800;
-    const iv = setInterval(() => {
-      const elapsed = Date.now() - pStart;
-      const pct = Math.min(100, (elapsed / 1200) * 100);
-      setProgress(pct);
-      if (pct >= 100) clearInterval(iv);
-    }, 16);
+    const t5 = setTimeout(() => {
+      const pStart = Date.now();
+      iv = setInterval(() => {
+        const elapsed = Date.now() - pStart;
+        const pct = Math.min(100, (elapsed / 6000) * 100);
+        setProgress(pct);
+        if (pct >= 100) clearInterval(iv);
+      }, 16);
+    }, 4000);
 
     return () => {
-      [t1, t2, t3, t4].forEach(clearTimeout);
-      clearInterval(iv);
+      [t1, t2, t3, t4, t5].forEach(clearTimeout);
+      if (iv) clearInterval(iv);
     };
   }, [onComplete]);
 
