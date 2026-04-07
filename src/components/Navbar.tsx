@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Car, Heart, User, Menu, X, Globe, LogOut, Plus, Shield, ChevronDown } from 'lucide-react';
+import { Heart, User, Menu, X, Globe, LogOut, Shield, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
+import AnimatedLogo from './AnimatedLogo';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -14,195 +15,283 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20);
+    const handler = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handler);
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
   return (
-    <header className={cn(
-      'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-      scrolled ? 'glass-dark py-3 shadow-2xl' : 'bg-transparent py-5'
-    )}>
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center" 
-               style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)' }}>
-            <Car className="w-6 h-6 text-white" />
-            <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-all" />
-          </div>
-          <div>
-            <span className="text-xl font-bold text-white leading-none block">JAPONI</span>
-            <span className="text-xs font-medium" style={{ color: '#f97316' }}>AUTO</span>
-          </div>
-        </Link>
+    <>
+      {/* Invisible trigger area at the top to detect mouse movement */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-4 z-[102]"
+        onMouseEnter={() => setIsHovered(true)}
+      />
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
-          {[
-            { href: '/', label: t('nav.home') },
-            { href: '/listings', label: t('nav.listings') },
-            { href: '/sell', label: t('nav.sell') },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-200"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Right Actions */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* Language Toggle */}
-          <button
-            onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border"
-            style={{
-              background: 'rgba(249,115,22,0.1)',
-              borderColor: 'rgba(249,115,22,0.3)',
-              color: '#f97316',
-            }}
-          >
-            <Globe className="w-4 h-4" />
-            {language === 'fr' ? 'عربي' : 'Français'}
-          </button>
-
-          {user ? (
-            <>
-              {/* Favorites */}
-              <Link href="/favorites" className="relative p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-                <Heart className="w-5 h-5" />
-              </Link>
-
-              {/* Post Ad button */}
-              <Link href="/sell" className="btn-primary text-sm py-2.5 px-5">
-                <Plus className="w-4 h-4" />
-                {t('nav.sell')}
-              </Link>
-
-              {/* Profile Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center gap-2 p-2 rounded-xl hover:bg-white/10 transition-all"
-                >
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-sm"
-                       style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)' }}>
-                    {user.displayName?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                  <ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform', profileOpen && 'rotate-180')} />
-                </button>
-
-                <AnimatePresence>
-                  {profileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-52 rounded-2xl overflow-hidden z-50"
-                      style={{ background: '#1a1a25', border: '1px solid rgba(255,255,255,0.08)' }}
-                    >
-                      <div className="p-3 border-b border-white/5">
-                        <p className="text-white font-semibold text-sm">{user.displayName}</p>
-                        <p className="text-slate-500 text-xs">{user.email}</p>
-                      </div>
-                      <div className="p-2">
-                        <Link href="/profile" onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-white/10 transition-all">
-                          <User className="w-4 h-4" /> {t('nav.profile')}
-                        </Link>
-                        {user.role === 'admin' && (
-                          <Link href="/admin" onClick={() => setProfileOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 transition-all">
-                            <Shield className="w-4 h-4" /> {t('nav.admin')}
-                          </Link>
-                        )}
-                        <button onClick={() => { logout(); setProfileOpen(false); }}
-                          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-white/10 transition-all w-full">
-                          <LogOut className="w-4 h-4" /> {t('nav.logout')}
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </>
-          ) : (
-            <>
-              <Link href="/auth" className="btn-secondary text-sm py-2.5 px-5">
-                {t('nav.login')}
-              </Link>
-              <Link href="/auth?mode=register" className="btn-primary text-sm py-2.5 px-5">
-                {t('nav.register')}
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2.5 rounded-xl text-white hover:bg-white/10 transition-all"
-          onClick={() => setMenuOpen(!menuOpen)}
+      {/* Top Banner */}
+      <div 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="w-full flex items-center justify-center fixed top-0 z-[101] transition-transform duration-500 ease-out"
+        style={{ 
+          height: '32px', 
+          background: 'linear-gradient(90deg, #0A0A0F, #1a1508, #0A0A0F)',
+          borderBottom: '1px solid rgba(201, 168, 76, 0.12)',
+          transform: isHovered || menuOpen ? 'translateY(0)' : 'translateY(-100%)'
+        }}
+      >
+        <div 
+          className="text-[#C9A84C] uppercase tracking-[0.2em] relative"
+          style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.7rem' }}
         >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          <span className="opacity-0 lg:opacity-100 transition-opacity">──── </span>
+          ⭐ Algérie&apos;s #1 Car Marketplace
+          <span className="opacity-0 lg:opacity-100 transition-opacity"> ────</span>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Main Navbar */}
+      <header 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="fixed left-0 right-0 z-[100] transition-all duration-500 ease-out"
+        style={{
+          top: '32px',
+          height: '68px',
+          background: scrolled ? 'rgba(7,7,12,0.85)' : 'rgba(7,7,12,0.6)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          transform: isHovered || menuOpen ? 'translateY(0)' : 'translateY(calc(-100% - 32px))',
+          borderBottom: '1px solid rgba(201,168,76,0.08)'
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+          
+          {/* Logo */}
+          <Link href="/" className="group">
+            <AnimatedLogo variant="navbar" />
+          </Link>
+
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-8">
+            {[
+              { href: '/', label: t('nav.home') },
+              { href: '/listings', label: t('nav.listings') },
+              { href: '/sell', label: t('nav.sell') },
+              { href: '#', label: 'Contact' }
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative group py-2"
+                style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.78rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9A9480' }}
+              >
+                <span className="group-hover:text-[#F5F0E8] transition-colors duration-200">
+                  {item.label}
+                </span>
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C9A84C] transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right Actions */}
+          <div className="hidden md:flex items-center gap-4">
+            {/* Language Toggle */}
+            <button
+              onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
+              className="flex items-center gap-2 group hover:text-[#C9A84C] transition-colors duration-200"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.78rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9A9480' }}
+            >
+              <Globe className="w-4 h-4 group-hover:text-[#C9A84C]" />
+              {language === 'fr' ? 'عربي' : 'FR'}
+            </button>
+
+            <div className="w-[1px] h-4 bg-[rgba(255,255,255,0.06)] mx-2" />
+
+            {user ? (
+              <>
+                <Link href="/favorites" className="relative group p-2 text-[#9A9480] hover:text-[#C9A84C] transition-colors">
+                  <Heart className="w-4 h-4" />
+                </Link>
+
+                <div className="relative">
+                  <button
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    className="flex items-center gap-2 p-1.5 rounded-sm hover:bg-[rgba(255,255,255,0.03)] transition-all border border-[rgba(255,255,255,0.04)]"
+                  >
+                    <div className="w-7 h-7 rounded-sm flex items-center justify-center font-bold text-[#07070C] text-xs bg-[#C9A84C]">
+                      {user.displayName?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <ChevronDown className={cn('w-3 h-3 text-[#9A9480] transition-transform', profileOpen && 'rotate-180')} />
+                  </button>
+
+                  <AnimatePresence>
+                    {profileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-52 rounded-sm overflow-hidden z-[110]"
+                        style={{ background: '#111118', border: '1px solid rgba(201,168,76,0.15)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}
+                      >
+                        <div className="p-4 border-b border-[rgba(255,255,255,0.06)]">
+                          <p className="text-[#F5F0E8] font-medium text-sm truncate">{user.displayName}</p>
+                          <p className="text-[#4A4840] text-xs mt-1 truncate">{user.email}</p>
+                        </div>
+                        <div className="p-2">
+                          <Link href="/profile" onClick={() => setProfileOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#9A9480] hover:text-[#C9A84C] hover:bg-[rgba(201,168,76,0.04)] transition-all">
+                            <User className="w-4 h-4" /> {t('nav.profile')}
+                          </Link>
+                          {user.role === 'admin' && (
+                            <Link href="/admin" onClick={() => setProfileOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
+                              <Shield className="w-4 h-4" /> {t('nav.admin')}
+                            </Link>
+                          )}
+                          <button onClick={() => { logout(); setProfileOpen(false); }}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#9A9480] hover:text-[#F5F0E8] hover:bg-[rgba(255,255,255,0.03)] transition-all w-full text-left mt-1">
+                            <LogOut className="w-4 h-4" /> {t('nav.logout')}
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link 
+                  href="/auth" 
+                  className="btn-ghost transition-all duration-200"
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(201,168,76,0.3)',
+                    color: '#C9A84C',
+                    padding: '0.4rem 1.25rem',
+                    borderRadius: '2px',
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '0.78rem',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#C9A84C';
+                    e.currentTarget.style.color = '#07070C';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#C9A84C';
+                  }}
+                >
+                  {t('nav.login')}
+                </Link>
+                <Link 
+                  href="/auth?mode=register" 
+                  className="btn-primary transition-all duration-200"
+                  style={{
+                    background: '#C9A84C',
+                    color: '#07070C',
+                    border: 'none',
+                    padding: '0.4rem 1.5rem',
+                    borderRadius: '2px',
+                    fontFamily: '"Inter", sans-serif',
+                    fontWeight: 600,
+                    fontSize: '0.78rem',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#E8C96B';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(201,168,76,0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#C9A84C';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {t('nav.register')}
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 rounded-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.1)] transition-all"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Menu Full Screen Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden"
-            style={{ background: '#111118', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-[90] flex flex-col justify-center items-center"
+            style={{ background: '#07070C', backdropFilter: 'blur(24px)' }}
           >
-            <div className="p-4 flex flex-col gap-2">
+            <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
               {[
                 { href: '/', label: t('nav.home') },
                 { href: '/listings', label: t('nav.listings') },
                 { href: '/sell', label: t('nav.sell') },
-              ].map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}
-                  className="px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium">
-                  {item.label}
-                </Link>
+                { href: '#', label: 'Contact' }
+              ].map((item, i) => (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                >
+                  <Link 
+                    href={item.href} 
+                    onClick={() => setMenuOpen(false)}
+                    className="text-[#F5F0E8] hover:text-[#C9A84C] transition-colors"
+                    style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '2rem', letterSpacing: '0.1em' }}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
               ))}
-              <hr style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+              
+              <div className="w-full h-[1px] bg-[rgba(201,168,76,0.15)] my-4" />
+
               <button
                 onClick={() => { setLanguage(language === 'fr' ? 'ar' : 'fr'); setMenuOpen(false); }}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl transition-all font-medium"
-                style={{ color: '#f97316', background: 'rgba(249,115,22,0.08)' }}>
-                <Globe className="w-4 h-4" />
-                {language === 'fr' ? 'عربي' : 'Français'}
+                className="flex items-center gap-2 text-[#C9A84C]"
+                style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
+              >
+                <Globe className="w-5 h-5" />
+                {language === 'fr' ? 'عربي' : 'FRANÇAIS'}
               </button>
-              {!user && (
-                <div className="flex gap-2 pt-2">
-                  <Link href="/auth" onClick={() => setMenuOpen(false)} className="btn-secondary flex-1 text-center text-sm py-2.5">
+
+              {!user ? (
+                <div className="flex flex-col w-full gap-4 mt-8">
+                  <Link href="/auth" onClick={() => setMenuOpen(false)} className="btn-secondary w-full py-4 text-center">
                     {t('nav.login')}
                   </Link>
-                  <Link href="/auth?mode=register" onClick={() => setMenuOpen(false)} className="btn-primary flex-1 text-center text-sm py-2.5">
+                  <Link href="/auth?mode=register" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
                     {t('nav.register')}
                   </Link>
                 </div>
-              )}
-              {user && (
+              ) : (
                 <button onClick={() => { logout(); setMenuOpen(false); }}
-                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium">
-                  <LogOut className="w-4 h-4" /> {t('nav.logout')}
+                  className="flex items-center justify-center gap-3 w-full py-4 mt-8 text-[#9A9480] hover:text-[#F5F0E8] border border-[rgba(255,255,255,0.06)] rounded-sm">
+                  <LogOut className="w-5 h-5" /> {t('nav.logout')}
                 </button>
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

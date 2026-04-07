@@ -1,16 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Link from 'next/link';
-import { Search, ChevronDown, Star, Shield, TrendingUp, ArrowRight, Zap } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
+import { Search, Star, Shield, TrendingUp, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
 import HeroCanvas from '@/components/HeroCanvas';
-import { cn } from '@/lib/utils';
+import SocialPopup from '@/components/SocialPopup';
+import CountUp from 'react-countup';
 
-// Demo data for initial display before Firebase loads
 const DEMO_CARS: CarListing[] = [
   {
     id: '1', title: 'Toyota Corolla Cross 2023 Full Options', brand: 'Toyota', model: 'Corolla Cross',
@@ -69,23 +68,48 @@ const DEMO_CARS: CarListing[] = [
 ];
 
 const STATS = [
-  { value: '12,400+', label: 'Annonces actives', icon: '🚗' },
-  { value: '32', label: 'Marques disponibles', icon: '⭐' },
-  { value: '58', label: 'Wilayas couvertes', icon: '📍' },
+  { value: 12400, suffix: '+', label: 'Annonces actives' },
+  { value: 32, suffix: '', label: 'Marques disponibles' },
+  { value: 58, suffix: '', label: 'Wilayas couvertes' },
 ];
 
+const staggerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const fadeUpVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut' }
+  }
+};
+
 export default function HomePage() {
-  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWilaya, setSelectedWilaya] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const popupShown = localStorage.getItem('japoniPopupDismissed');
+    if (!popupShown) {
+      const timer = setTimeout(() => setShowPopup(true), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const filters = [
-    { id: 'all', label: t('listings.filter.all') },
-    { id: 'premium', label: t('listings.filter.premium') },
-    { id: 'neuf', label: t('listings.filter.new') },
-    { id: 'occasion', label: t('listings.filter.used') },
+    { id: 'all', label: 'Tout' },
+    { id: 'premium', label: 'Premium' },
+    { id: 'neuf', label: 'Neufs' },
+    { id: 'occasion', label: 'Occasions' },
   ];
 
   const filteredCars = DEMO_CARS.filter(car => {
@@ -96,265 +120,455 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#07070C]">
       {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-
-        {/* Animated background */}
-        <div className="absolute inset-0">
-          {/* Canvas Implementation */}
-          <HeroCanvas />
-          <div className="hero-overlay absolute inset-0 z-0" />
-
-          {/* Floating orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl animate-pulse"
-               style={{ background: 'radial-gradient(circle, #f97316, transparent)' }} />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl animate-pulse"
-               style={{ background: 'radial-gradient(circle, #f59e0b, transparent)', animationDelay: '1s' }} />
-        </div>
+      <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+        
+        {/* Animated canvas background via component */}
+        <HeroCanvas />
 
         {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full text-sm font-semibold"
-            style={{ background: 'rgba(249,115,22,0.15)', border: '1px solid rgba(249,115,22,0.3)', color: '#f97316' }}
-          >
-            <Zap className="w-4 h-4" />
-            Algérie&apos;s #1 Car Marketplace
-          </motion.div>
-
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.7 }}
-            className="text-5xl md:text-7xl font-black text-white leading-tight mb-6"
-          >
-            {t('hero.title')}{' '}
-            <span className="relative inline-block">
-              <span style={{ background: 'linear-gradient(135deg, #f97316, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                {t('hero.title.highlight')}
-              </span>
-              <motion.span
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="absolute -bottom-2 left-0 right-0 h-1 rounded-full origin-left"
-                style={{ background: 'linear-gradient(90deg, #f97316, #f59e0b)' }}
-              />
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
-            {t('hero.subtitle')}
-          </motion.p>
-
-          {/* Search Bar */}
+        <div className="relative z-10 text-center px-4 max-w-7xl mx-auto w-full pt-20">
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto mb-10"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+            className="flex flex-col items-center justify-center"
           >
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder={t('hero.search.placeholder')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl text-white text-base outline-none"
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                }}
-              />
-            </div>
-            <select
-              value={selectedWilaya}
-              onChange={(e) => setSelectedWilaya(e.target.value)}
-              className="sm:w-48 px-4 py-4 rounded-2xl text-white text-base outline-none cursor-pointer"
-              style={{
-                background: 'rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.15)',
+            {/* Premium Brand Title */}
+            <motion.h1
+              initial={{ opacity: 0, letterSpacing: "0.5em", filter: "blur(10px)" }}
+              animate={{ opacity: 1, letterSpacing: "1em", filter: "blur(0px)" }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] as const }}
+              className="mb-4 text-[#C9A84C] text-center"
+              style={{ 
+                fontFamily: '"Cormorant Garamond", serif', 
+                fontWeight: 300, 
+                fontSize: 'clamp(1.5rem, 5vw, 3rem)',
+                textShadow: '0 0 30px rgba(201, 168, 76, 0.3)'
               }}
             >
-              <option value="" style={{ background: '#1a1a25' }}>Wilaya</option>
-              {WILAYAS.map(w => (
-                <option key={w} value={w} style={{ background: '#1a1a25' }}>{w}</option>
-              ))}
-            </select>
-            <div className="sm:w-40 relative">
-              <input
-                type="number"
-                placeholder={t('listings.filter.max')}
-                value={priceMax}
-                onChange={(e) => setPriceMax(e.target.value)}
-                className="w-full px-4 py-4 rounded-2xl text-white text-base outline-none"
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                }}
-              />
-            </div>
-            <Link
-              href={`/listings?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
-              className="btn-primary py-4 px-8 text-base rounded-2xl whitespace-nowrap"
+              JAPONI AUTO
+            </motion.h1>
+
+            {/* Eyebrow */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
+              className="flex items-center gap-4 mb-10 text-[#F5F0E8] opacity-80"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase' }}
             >
-              <Search className="w-5 h-5" />
-              {t('hero.btn.search')}
-            </Link>
-          </motion.div>
+              <span className="w-12 h-[1px] bg-[#C9A84C] opacity-40" />
+              ALGÉRIE&apos;S PREMIUM AUTO MARKETPLACE
+              <span className="w-12 h-[1px] bg-[#C9A84C] opacity-40" />
+            </motion.div>
 
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex items-center justify-center gap-4 flex-wrap"
-          >
-            <Link href="/sell" className="btn-secondary py-3 px-6">
-              {t('hero.btn.sell')} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
+            {/* Main Heading Text */}
+            <h2 
+              className="mb-10"
+              style={{ textShadow: '0 2px 40px rgba(0,0,0,0.8)' }}
+            >
+              <span 
+                className="block text-[#F5F0E8] leading-none mb-2"
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: 'clamp(2rem, 6vw, 4rem)' }}
+              >
+                Trouvez Votre Voiture
+              </span>
+              <span 
+                className="block text-[#C9A84C] italic leading-none"
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: 'clamp(2rem, 6vw, 4rem)' }}
+              >
+                Idéale
+              </span>
+            </h2>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex items-center justify-center gap-8 mt-16 flex-wrap"
-          >
-            {STATS.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl font-black text-white mb-1">{stat.value}</p>
-                <p className="text-slate-400 text-sm">{stat.label}</p>
+            {/* Subheading */}
+            <p 
+              className="mx-auto mb-16 text-[#9A9480]"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '1rem', maxWidth: '48ch', lineHeight: 1.8 }}
+            >
+              La plus grande plateforme de vente et d&apos;achat de voitures en Algérie.
+            </p>
+
+            {/* Search Bar Container */}
+            <div 
+              className="w-full max-w-[780px] mx-auto rounded-[4px] p-1.5 flex flex-col md:flex-row gap-0"
+              style={{
+                background: 'rgba(7,7,12,0.7)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(201,168,76,0.2)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)'
+              }}
+            >
+              {/* Query Input */}
+              <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Recherche</label>
+                <input
+                  type="text"
+                  placeholder="Marque, modèle..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
+                  style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
+                />
               </div>
-            ))}
+
+              {/* Location Input */}
+              <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Localisation</label>
+                <select
+                  value={selectedWilaya}
+                  onChange={(e) => setSelectedWilaya(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-[#F5F0E8] appearance-none cursor-pointer"
+                  style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
+                >
+                  <option value="" style={{ background: '#0A0A0F', color: '#9A9480' }}>Toute l&apos;Algérie</option>
+                  {WILAYAS.map(w => (
+                    <option key={w} value={w} style={{ background: '#0A0A0F' }}>{w}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price Max Input */}
+              <div className="flex-1 px-4 py-3 relative text-left">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Budget Max</label>
+                <input
+                  type="number"
+                  placeholder="Illimité"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
+                  style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
+                />
+              </div>
+
+              {/* Search Button */}
+              <Link
+                href={`/listings?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
+                className="group flex items-center justify-center rounded-[2px] px-8 py-3 mt-2 md:mt-0 transition-all duration-250 cursor-pointer"
+                style={{
+                  background: '#C9A84C',
+                  color: '#07070C'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#E8C96B';
+                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(201,168,76,0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#C9A84C';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <Search className="w-4 h-4 mr-2" />
+                <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  AFFICHER
+                </span>
+              </Link>
+            </div>
+
+            {/* Vendre ma voiture link */}
+            <Link 
+              href="/sell"
+              className="mt-6 flex items-center gap-2 group transition-colors duration-200"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.85rem', color: '#9A9480' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#F5F0E8'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#9A9480'}
+            >
+              Vendre ma voiture
+              <ArrowRightIcon className="w-3 h-3 text-[#C9A84C] transform group-hover:translate-x-1 transition-transform" />
+            </Link>
+
           </motion.div>
         </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400"
-        >
-          <ChevronDown className="w-8 h-8" />
-        </motion.div>
       </section>
 
-      {/* ===== FEATURES STRIP ===== */}
-      <section className="py-12" style={{ background: 'linear-gradient(135deg, rgba(249,115,22,0.05), rgba(245,158,11,0.03))' }}>
+      {/* ===== STATS BAR ===== */}
+      <section 
+        className="w-full py-12"
+        style={{
+          background: 'rgba(201,168,76,0.04)',
+          borderTop: '1px solid rgba(201,168,76,0.1)',
+          borderBottom: '1px solid rgba(201,168,76,0.1)'
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-0">
+          {STATS.map((stat, i) => (
+            <motion.div 
+              key={stat.label} 
+              className="flex flex-col items-center text-center relative"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+            >
+              <div 
+                className="mb-1 text-[#C9A84C]"
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '3.5rem', lineHeight: 1 }}
+              >
+                <CountUp end={stat.value} duration={2.5} separator="," />
+                {stat.suffix}
+              </div>
+              <div 
+                className="text-[#4A4840] uppercase"
+                style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.75rem', letterSpacing: '0.2em' }}
+              >
+                {stat.label}
+              </div>
+              {/* Divider (hide on last item and optionally handle mobile grid borders) */}
+              {i < STATS.length - 1 && (
+                <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-[1px] h-12 bg-[rgba(255,255,255,0.06)]" />
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== FEATURES ROW ===== */}
+      <section className="py-24 fade-up-section">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={staggerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
             {[
-              { icon: Shield, title: 'Annonces Vérifiées', desc: 'Toutes nos annonces passent par une vérification manuelle de notre équipe.' },
-              { icon: Star, title: 'Meilleurs Prix', desc: 'Comparez les prix et trouvez les meilleures offres dans toute l\'Algérie.' },
-              { icon: TrendingUp, title: 'Vente Rapide', desc: 'Publication instantanée et visibilité maximale pour vendre rapidement.' },
+              { icon: Shield, title: 'Annonces Vérifiées', desc: 'Chaque transaction est approuvée par notre équipe spécialisée pour garantir authenticité et sécurité absolue.' },
+              { icon: Star, title: 'Excellence Premium', desc: 'Accédez aux véhicules les plus prestigieux avec des fiches détaillées et des vendeurs certifiés.' },
+              { icon: TrendingUp, title: 'Vente Exclusive', desc: 'Une visibilité exceptionnelle pour votre véhicule auprès d\'une clientèle ciblée et sérieuse.' },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-4 p-6 rounded-2xl"
-                   style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                     style={{ background: 'rgba(249,115,22,0.12)' }}>
-                  <Icon className="w-6 h-6" style={{ color: '#f97316' }} />
+              <motion.div 
+                key={title} 
+                variants={fadeUpVariants}
+                className="group p-10 rounded-[8px] transition-all duration-300 relative bg-[rgba(255,255,255,0.02)]"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.06)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(201,168,76,0.04)';
+                  e.currentTarget.style.borderColor = 'rgba(201,168,76,0.2)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,168,76,0.1)';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div className="mb-6 h-[48px] flex flex-col justify-between">
+                  <Icon className="w-[28px] h-[28px] text-[#C9A84C]" strokeWidth={1.5} />
+                  {/* Decorative gold line */}
+                  <div className="w-[48px] h-[1px] bg-[#C9A84C] mt-4" />
                 </div>
-                <div>
-                  <h3 className="text-white font-bold mb-1">{title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
-                </div>
-              </div>
+                <h3 
+                  className="mb-3 text-[#F5F0E8]"
+                  style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: '1.3rem' }}
+                >
+                  {title}
+                </h3>
+                <p 
+                  className="text-[#9A9480]"
+                  style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '0.875rem', lineHeight: 1.8 }}
+                >
+                  {desc}
+                </p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ===== LISTINGS SECTION ===== */}
-      <section className="py-20 px-4">
+      {/* ===== CAR LISTINGS SECTION ===== */}
+      <section className="py-24 px-4 bg-[#0A0A0F]">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 mb-10">
-            <div>
-              <p className="text-orange-500 font-semibold text-sm mb-2 tracking-wider uppercase">Annonces récentes</p>
-              <h2 className="section-title">
-                {t('listings.title').split(' ').slice(0, -1).join(' ')}{' '}
-                <span>{t('listings.title').split(' ').slice(-1)}</span>
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+            >
+              <p 
+                className="uppercase mb-2 text-[#C9A84C]"
+                style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.3em' }}
+              >
+                Annonces Récentes
+              </p>
+              <h2 
+                className="text-[#F5F0E8]"
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '2.5rem' }}
+              >
+                Dernières Annonces
               </h2>
-            </div>
-            {/* Filters */}
-            <div className="flex items-center gap-2 flex-wrap">
+            </motion.div>
+            
+            {/* Filter Tabs */}
+            <motion.div 
+              className="flex items-center gap-2 flex-wrap"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+            >
               {filters.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setActiveFilter(f.id)}
-                  className={cn(
-                    'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200',
-                    activeFilter === f.id
-                      ? 'text-white'
-                      : 'text-slate-400 hover:text-white hover:bg-white/10'
-                  )}
-                  style={activeFilter === f.id ? {
-                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                    boxShadow: '0 4px 15px rgba(249,115,22,0.3)',
-                  } : {}}
+                  className="transition-all duration-300"
+                  style={{
+                    background: activeFilter === f.id ? 'rgba(201,168,76,0.1)' : 'transparent',
+                    border: `1px solid ${activeFilter === f.id ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                    color: activeFilter === f.id ? '#C9A84C' : '#4A4840',
+                    borderRadius: '2px',
+                    padding: '0.4rem 1.25rem',
+                    fontFamily: '"Inter", sans-serif',
+                    fontWeight: 500,
+                    fontSize: '0.78rem',
+                    letterSpacing: '0.1em'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (activeFilter !== f.id) {
+                      e.currentTarget.style.borderColor = 'rgba(201,168,76,0.2)';
+                      e.currentTarget.style.color = '#9A9480';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activeFilter !== f.id) {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                      e.currentTarget.style.color = '#4A4840';
+                    }
+                  }}
                 >
                   {f.label}
                 </button>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCars.map((car, i) => (
               <CarCard key={car.id} car={car} index={i} />
             ))}
           </div>
 
           {/* View All */}
-          <div className="text-center mt-12">
-            <Link href="/listings" className="btn-secondary inline-flex py-4 px-10 text-base">
-              {t('listings.btn.viewAll')} <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== CTA SECTION ===== */}
-      <section className="py-20 px-4" style={{ background: 'linear-gradient(135deg, rgba(249,115,22,0.08), rgba(245,158,11,0.04))' }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          <motion.div 
+            className="text-center mt-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
           >
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-              Vendez votre voiture{' '}
-              <span style={{ background: 'linear-gradient(135deg, #f97316, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                rapidement
-              </span>
-            </h2>
-            <p className="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
-              Publiez votre annonce gratuitement en quelques minutes et atteignez des milliers d&apos;acheteurs potentiels dans toute l&apos;Algérie.
-            </p>
-            <Link href="/sell" className="btn-primary text-lg py-4 px-10 inline-flex">
-              Publier une annonce gratuite <ArrowRight className="w-5 h-5" />
+            <Link 
+              href="/listings" 
+              className="inline-flex transition-all duration-300"
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(201,168,76,0.3)',
+                color: '#C9A84C',
+                borderRadius: '2px',
+                padding: '0.875rem 3rem',
+                fontFamily: '"Inter", sans-serif',
+                fontWeight: 500,
+                fontSize: '0.8rem',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(201,168,76,0.08)';
+                e.currentTarget.style.borderColor = '#C9A84C';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)';
+              }}
+            >
+              Voir toutes les annonces <ArrowRightIcon className="w-4 h-4 ml-2 my-auto" />
             </Link>
           </motion.div>
         </div>
       </section>
+
+      {/* ===== SELL CTA SECTION ===== */}
+      <section 
+        className="w-full text-center"
+        style={{ 
+          background: 'linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(7,7,12,0) 50%)',
+          borderTop: '1px solid rgba(201,168,76,0.1)',
+          borderBottom: '1px solid rgba(201,168,76,0.1)',
+          padding: '7rem 2rem'
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+          className="max-w-4xl mx-auto"
+        >
+          <h2 className="mb-6">
+            <span 
+              className="text-[#F5F0E8] block md:inline" 
+              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '3.5rem', lineHeight: 1.1 }}
+            >
+              Vendez votre voiture{' '}
+            </span>
+            <span 
+              className="text-[#C9A84C] italic" 
+              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: '3.5rem', lineHeight: 1.1 }}
+            >
+              rapidement
+            </span>
+          </h2>
+          
+          <p 
+            className="mb-10 mx-auto text-[#9A9480]"
+            style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '1rem', maxWidth: '52ch' }}
+          >
+            Publiez votre annonce gratuitement en quelques minutes et atteignez une exclusivité d&apos;acheteurs premium sélectionnés dans toute l&apos;Algérie.
+          </p>
+          
+          <Link 
+            href="/sell" 
+            className="inline-block transition-all duration-250 cursor-pointer"
+            style={{
+              background: '#C9A84C',
+              color: '#07070C',
+              borderRadius: '2px',
+              padding: '1rem 3.5rem',
+              fontFamily: '"Inter", sans-serif',
+              fontWeight: 600,
+              fontSize: '0.85rem',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              boxShadow: '0 0 0 0 rgba(201,168,76,0.4)',
+              transform: 'translateY(0)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 12px 40px rgba(201,168,76,0.35)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 0 0 0 rgba(201,168,76,0.4)';
+            }}
+          >
+            Démarrer L&apos;évaluation
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* Social Popup */}
+      <AnimatePresence>
+        {showPopup && <SocialPopup onClose={() => setShowPopup(false)} />}
+      </AnimatePresence>
     </div>
   );
 }

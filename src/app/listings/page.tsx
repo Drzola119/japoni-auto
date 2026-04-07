@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { Search, Grid3X3, List } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -83,7 +83,7 @@ const DEMO_CARS: CarListing[] = [
   },
 ];
 
-export default function ListingsPage() {
+function ListingsContent() {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
@@ -279,5 +279,13 @@ export default function ListingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#07070C]" />}>
+      <ListingsContent />
+    </Suspense>
   );
 }
