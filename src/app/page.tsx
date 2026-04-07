@@ -96,10 +96,7 @@ const fadeUpVariants: Variants = {
 };
 
 export default function HomePage() {
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return !sessionStorage.getItem('japonLoaded');
-  });
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWilaya, setSelectedWilaya] = useState('');
   const [priceMax, setPriceMax] = useState('');
@@ -112,12 +109,22 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const popupShown = localStorage.getItem('japoniPopupDismissed');
-    if (!popupShown) {
-      const timer = setTimeout(() => setShowPopup(true), 30000);
-      return () => clearTimeout(timer);
+    // Check if already loaded in this session
+    if (sessionStorage.getItem('japonLoaded')) {
+      setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    // Only start popup timer AFTER loading screen is gone
+    if (!isLoading) {
+      const popupShown = localStorage.getItem('japoniPopupDismissed');
+      if (!popupShown) {
+        const timer = setTimeout(() => setShowPopup(true), 30000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isLoading]);
 
   const filters = [
     { id: 'all', label: 'Tout' },

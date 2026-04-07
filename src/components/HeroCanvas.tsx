@@ -108,16 +108,16 @@ export default function HeroCanvas() {
       }
       await Promise.all(initialPromises);
       
-      // 2. Load the rest in small background chunks of 15
-      const chunkSize = 15;
+      // 2. Load the rest in small background chunks of 10 (gentler)
+      const chunkSize = 10;
       for (let i = initialBatchSize; i < totalFrames; i += chunkSize) {
         const chunkPromises = [];
         for (let j = 0; j < chunkSize && (i + j) < totalFrames; j++) {
           chunkPromises.push(loadImage(i + j));
         }
         await Promise.all(chunkPromises);
-        // Small delay between chunks to keep main thread and network free
-        await new Promise(r => setTimeout(r, 100));
+        // Larger delay between chunks to keep CPU footprint very low
+        await new Promise(r => setTimeout(r, 200));
       }
     };
 
