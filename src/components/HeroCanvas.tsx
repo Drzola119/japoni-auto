@@ -43,7 +43,6 @@ export default function HeroCanvas() {
         }
       };
       img.onerror = () => {
-        console.error('Failed to load frame:', url);
         // Fallback progress to avoid getting stuck if an image fails
         loadedCount++;
         if (loadedCount === totalFrames) {

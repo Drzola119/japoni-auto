@@ -1,10 +1,32 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond, Inter, Cairo } from 'next/font/google';
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
+import MotionProvider from "@/components/MotionProvider";
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-cormorant',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const cairo = Cairo({
+  subsets: ['arabic'],
+  display: 'swap',
+  variable: '--font-cairo',
+});
 
 export const metadata: Metadata = {
   title: "Japoni Auto - Achat & Vente de Voitures en Algérie",
@@ -19,27 +41,33 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" dir="ltr">
+    <html lang="fr" dir="ltr" className={`${inter.variable} ${cormorant.variable} ${cairo.variable}`}>
+      <head>
+        {/* Preload first animation frame as high priority */}
+        <link rel="preload" as="image" href="/frames/ezgif-frame-001.jpg" fetchPriority="high" />
+      </head>
       <body>
         <AuthProvider>
           <LanguageProvider>
-            <Navbar />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                style: {
-                  background: '#1a1a25',
-                  color: '#f8fafc',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: '12px',
-                },
-                success: {
-                  iconTheme: { primary: '#f97316', secondary: '#fff' },
-                },
-              }}
-            />
+            <MotionProvider>
+              <Navbar />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  style: {
+                    background: '#1a1a25',
+                    color: '#f8fafc',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '12px',
+                  },
+                  success: {
+                    iconTheme: { primary: '#f97316', secondary: '#fff' },
+                  },
+                }}
+              />
+            </MotionProvider>
           </LanguageProvider>
         </AuthProvider>
       </body>

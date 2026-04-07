@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { m as motion, useInView, useScroll, useTransform } from "framer-motion";
 
 interface AnimatedLogoProps {
   variant?: "navbar" | "footer";

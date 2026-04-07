@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m as motion } from "framer-motion";
 import { Heart, MapPin, Gauge, Fuel, Calendar, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { CarListing } from '@/types';
@@ -58,6 +58,9 @@ export default function CarCard({ car, index = 0 }: Props) {
               alt={car.title || 'Voiture'}
               fill
               className="object-cover transition-transform duration-600 ease-out group-hover:scale-105"
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
               onError={() => setImgError(true)}
             />
           ) : (

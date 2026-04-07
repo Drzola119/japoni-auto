@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -26,8 +26,8 @@
   --shadow-gold:        0 0 40px rgba(201, 168, 76, 0.08);
   --shadow-card:        0 8px 32px rgba(0, 0, 0, 0.4);
 
-  --font-display: 'Cormorant Garamond', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: var(--font-cormorant), serif;
+  --font-body: var(--font-inter), sans-serif;
 }
 
 * {
@@ -48,7 +48,7 @@ body {
 }
 
 body.rtl, [dir="rtl"] {
-  font-family: 'Cairo', var(--font-body);
+  font-family: var(--font-cairo), var(--font-body);
   direction: rtl;
   text-align: right;
 }

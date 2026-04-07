@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { useState, useEffect, Suspense } from 'react';
+import { m as motion, AnimatePresence, Variants } from "framer-motion";
 import Link from 'next/link';
 import { Search, Star, Shield, TrendingUp, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
-import HeroCanvas from '@/components/HeroCanvas';
-import SocialPopup from '@/components/SocialPopup';
-import LoadingScreen from '@/components/LoadingScreen';
+import dynamic from 'next/dynamic';
+
+const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), { ssr: false });
+const SocialPopup = dynamic(() => import('@/components/SocialPopup'), { ssr: false });
+const LoadingScreen = dynamic(() => import('@/components/LoadingScreen'), { ssr: false });
 import CountUp from 'react-countup';
 
 const DEMO_CARS: CarListing[] = [
@@ -471,11 +473,13 @@ export default function HomePage() {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCars.map((car, i) => (
-              <CarCard key={car.id} car={car} index={i} />
-            ))}
-          </div>
+          <Suspense fallback={<CarCardSkeleton />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCars.map((car, i) => (
+                <CarCard key={car.id} car={car} index={i} />
+              ))}
+            </div>
+          </Suspense>
 
           {/* View All */}
           <motion.div 
@@ -591,5 +595,19 @@ export default function HomePage() {
       </div>
       </motion.div>
     </>
+  );
+}
+
+function CarCardSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[...Array(6)].map((_, i) => (
+        <div 
+          key={i} 
+          className="h-64 rounded-[8px] shimmer" 
+          style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+        />
+      ))}
+    </div>
   );
 }

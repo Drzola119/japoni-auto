@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Car, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';

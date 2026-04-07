@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { m as motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { X, Plus, Car, Settings, Phone, ImagePlus, CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
