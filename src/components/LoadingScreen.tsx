@@ -52,20 +52,20 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   useEffect(() => {
     let iv: NodeJS.Timeout;
-    const t1 = setTimeout(() => { setPhase('logo'); setLogoOn(true); }, 2000);
-    const t2 = setTimeout(() => { setPhase('bar');  setBarOn(true);  }, 4000);
-    const t3 = setTimeout(() => { setPhase('exit'); setExitFlash(true); }, 10000);
-    const t4 = setTimeout(() => { setAlive(false); onComplete(); }, 10500);
+    const t1 = setTimeout(() => { setPhase('logo'); setLogoOn(true); }, 800);
+    const t2 = setTimeout(() => { setPhase('bar');  setBarOn(true);  }, 1200);
+    const t3 = setTimeout(() => { setPhase('exit'); setExitFlash(true); }, 4000);
+    const t4 = setTimeout(() => { setAlive(false); onComplete(); }, 4500);
 
     const t5 = setTimeout(() => {
       const pStart = Date.now();
       iv = setInterval(() => {
         const elapsed = Date.now() - pStart;
-        const pct = Math.min(100, (elapsed / 6000) * 100);
+        const pct = Math.min(100, (elapsed / 2500) * 100);
         setProgress(pct);
         if (pct >= 100) clearInterval(iv);
       }, 16);
-    }, 4000);
+    }, 1200);
 
     return () => {
       [t1, t2, t3, t4, t5].forEach(clearTimeout);

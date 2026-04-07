@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 
 export default function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const startedRef = useRef(false);
+  const loadedImagesRef = useRef<HTMLImageElement[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -21,37 +23,16 @@ export default function HeroCanvas() {
 
     // Setup Frames
     const totalFrames = 600;
+    const initialBatchSize = 60;
     const frameUrls = Array.from({ length: totalFrames }, (_, i) => {
       const num = (i + 1).toString().padStart(3, '0');
       return `/frames/ezgif-frame-${num}.jpg`;
     });
 
-    const loadedImages: HTMLImageElement[] = [];
     let loadedCount = 0;
+    const loadedImages = loadedImagesRef.current;
 
-    // Load frames
-    frameUrls.forEach((url, i) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        loadedImages[i] = img;
-        loadedCount++;
-
-        if (loadedCount === totalFrames) {
-          // All loaded, start animation
-          startAnimation();
-        }
-      };
-      img.onerror = () => {
-        // Fallback progress to avoid getting stuck if an image fails
-        loadedCount++;
-        if (loadedCount === totalFrames) {
-          startAnimation();
-        }
-      };
-    });
-
-    // Animation Loop
+    // Animation Loop Variables
     const FPS = 30;
     const FRAME_INTERVAL = 1000 / FPS;
     let lastTimestamp = 0;
@@ -61,14 +42,10 @@ export default function HeroCanvas() {
 
     const renderFrame = (img: HTMLImageElement) => {
       if (!img || !canvas || !ctx) return;
-
       const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
       const x = (canvas.width - img.width * scale) / 2;
       const y = (canvas.height - img.height * scale) / 2;
-
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-
-      // Dark Overlay to ensure readability
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
@@ -76,38 +53,85 @@ export default function HeroCanvas() {
     const tick = (timestamp: number) => {
       if (!lastTimestamp) lastTimestamp = timestamp;
       const delta = timestamp - lastTimestamp;
-
       if (delta >= FRAME_INTERVAL) {
         if (loadedImages[currentFrameIndex]) {
           renderFrame(loadedImages[currentFrameIndex]);
         }
-        currentFrameIndex = (currentFrameIndex + 1) % loadedImages.length;
+        currentFrameIndex = (currentFrameIndex + 1) % totalFrames;
         lastTimestamp = timestamp - (delta % FRAME_INTERVAL);
       }
-
       animationId = requestAnimationFrame(tick);
     };
 
     const startAnimation = () => {
-      if (loadedImages[0]) {
-        renderFrame(loadedImages[0]);
-      }
+      if (startedRef.current) return;
+      startedRef.current = true;
+      
+      if (loadedImages[0]) renderFrame(loadedImages[0]);
       
       handleResizeRef = () => {
-        if (loadedImages[currentFrameIndex]) {
-          renderFrame(loadedImages[currentFrameIndex]);
-        }
+        if (loadedImages[currentFrameIndex]) renderFrame(loadedImages[currentFrameIndex]);
       };
       window.addEventListener('resize', handleResizeRef);
-      
       animationId = requestAnimationFrame(tick);
     };
 
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (handleResizeRef) {
-        window.removeEventListener('resize', handleResizeRef);
+    // Helper to load a single image
+    const loadImage = (index: number): Promise<void> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = frameUrls[index];
+        img.onload = () => {
+          loadedImages[index] = img;
+          loadedCount++;
+          if (loadedCount >= initialBatchSize && !startedRef.current) {
+            startAnimation();
+          }
+          resolve();
+        };
+        img.onerror = () => {
+          loadedCount++;
+          if (loadedCount >= initialBatchSize && !startedRef.current) {
+            startAnimation();
+          }
+          resolve();
+        };
+      });
+    };
+
+    // Loading strategy:
+    // 1. Load first 60 frames in parallel to start fast
+    const loadInitial = async () => {
+      const initialPromises = [];
+      for (let i = 0; i < initialBatchSize; i++) {
+        initialPromises.push(loadImage(i));
       }
+      await Promise.all(initialPromises);
+      
+      // 2. Load the rest in small background chunks of 15
+      const chunkSize = 15;
+      for (let i = initialBatchSize; i < totalFrames; i += chunkSize) {
+        const chunkPromises = [];
+        for (let j = 0; j < chunkSize && (i + j) < totalFrames; j++) {
+          chunkPromises.push(loadImage(i + j));
+        }
+        await Promise.all(chunkPromises);
+        // Small delay between chunks to keep main thread and network free
+        await new Promise(r => setTimeout(r, 100));
+      }
+    };
+
+    loadInitial();
+
+    // Safety timeout: if after 5 seconds we haven't started, force start
+    const safetyT = setTimeout(() => {
+      if (!startedRef.current) startAnimation();
+    }, 5000);
+
+    return () => {
+      clearTimeout(safetyT);
+      window.removeEventListener('resize', resizeCanvas);
+      if (handleResizeRef) window.removeEventListener('resize', handleResizeRef);
       if (animationId) cancelAnimationFrame(animationId);
     };
   }, []);
