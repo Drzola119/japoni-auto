@@ -115,12 +115,17 @@ export default function HomePage() {
     }
   }, []);
 
+  const popupTimerStarted = useRef(false);
+
   useEffect(() => {
     // Only start popup timer AFTER loading screen is gone
-    if (!isLoading) {
+    if (!isLoading && !popupTimerStarted.current) {
       const popupShown = localStorage.getItem('japoniPopupDismissed');
       if (!popupShown) {
-        const timer = setTimeout(() => setShowPopup(true), 30000);
+        popupTimerStarted.current = true;
+        const timer = setTimeout(() => {
+          setShowPopup(true);
+        }, 30000);
         return () => clearTimeout(timer);
       }
     }
