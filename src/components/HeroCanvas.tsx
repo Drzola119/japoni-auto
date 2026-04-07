@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -121,35 +120,10 @@ export default function HeroCanvas() {
   }, []);
 
   return (
-    <>
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-[9999] bg-[#0A0A0F] flex flex-col items-center justify-center p-4"
-          >
-            <div className="text-[#C9A84C] font-serif text-2xl tracking-[0.2em] mb-6 font-light" style={{ fontFamily: '"Cormorant Garamond", serif' }}>
-              JAPONI AUTO
-            </div>
-            <div className="w-[200px] h-0.5 bg-[rgba(201,168,76,0.2)] rounded-full overflow-hidden mb-4">
-              <div
-                className="h-full bg-[#C9A84C] transition-all duration-200"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <div className="text-[#9A9480] text-xs uppercase tracking-widest font-sans">
-              Chargement... {progress}%
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full z-0 object-cover"
-        style={{ pointerEvents: 'none' }}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full z-0 object-cover"
+      style={{ pointerEvents: 'none' }}
+    />
   );
 }
