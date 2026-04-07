@@ -114,7 +114,7 @@ export default function HomePage() {
   useEffect(() => {
     const popupShown = localStorage.getItem('japoniPopupDismissed');
     if (!popupShown) {
-      const timer = setTimeout(() => setShowPopup(true), 4000);
+      const timer = setTimeout(() => setShowPopup(true), 30000);
       return () => clearTimeout(timer);
     }
   }, []);
