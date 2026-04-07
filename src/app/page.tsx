@@ -118,16 +118,21 @@ export default function HomePage() {
   const popupTimerStarted = useRef(false);
 
   useEffect(() => {
-    // Only start popup timer AFTER loading screen is gone
+    // Show popup only on FIRST scroll after loading is complete
     if (!isLoading && !popupTimerStarted.current) {
-      const popupShown = localStorage.getItem('japoniPopupDismissed');
-      if (!popupShown) {
-        popupTimerStarted.current = true;
-        const timer = setTimeout(() => {
-          setShowPopup(true);
-        }, 30000);
-        return () => clearTimeout(timer);
-      }
+      const handleScroll = () => {
+        if (window.scrollY > 30) {
+          const popupShown = localStorage.getItem('japoniPopupDismissed');
+          if (!popupShown) {
+            popupTimerStarted.current = true;
+            setShowPopup(true);
+          }
+          window.removeEventListener('scroll', handleScroll);
+        }
+      };
+      
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
     }
   }, [isLoading]);
 
