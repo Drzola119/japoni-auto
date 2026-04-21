@@ -18,14 +18,24 @@ let db: Firestore | null = null;
 let storage: FirebaseStorage | null = null;
 
 if (typeof window !== 'undefined') {
-  // Only initialize Firebase on the CLIENT (browser), never during SSR/build
-  if (!firebaseConfig.apiKey) {
-    console.error('Firebase API Key is missing. Check your .env.local file.');
+  // Only initialize Firebase on the CLIENT (browser)
+  const isConfigValid = 
+    firebaseConfig.apiKey && 
+    firebaseConfig.apiKey !== 'undefined' && 
+    firebaseConfig.apiKey.length > 10;
+
+  if (!isConfigValid) {
+    console.error('❌ Firebase Configuration Error: NEXT_PUBLIC_FIREBASE_API_KEY is missing or invalid.');
+    console.warn('If you are seeing this on Hostinger, you MUST add the environment variables in your Hostinger Dashboard -> Advanced -> Environment Variables AND trigger a new build.');
   } else {
-    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
-    db = getFirestore(app);
-    storage = getStorage(app);
+    try {
+      app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+      auth = getAuth(app);
+      db = getFirestore(app);
+      storage = getStorage(app);
+    } catch (error) {
+      console.error('❌ Firebase Initialization Error:', error);
+    }
   }
 }
 
