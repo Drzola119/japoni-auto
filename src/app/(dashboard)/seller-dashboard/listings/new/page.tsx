@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation';
 import { UploadCloud, CheckCircle2, X, Loader2 } from 'lucide-react';
 import { CAR_BRANDS, WILAYAS } from '@/types';
 import { useAuth } from '@/context/AuthContext';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useFileUpload } from '@/hooks/useFileUpload';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 
@@ -17,6 +17,7 @@ export default function NewListing() {
   const { user } = useAuth();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadMultiple } = useFileUpload();
 
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
@@ -64,18 +65,17 @@ export default function NewListing() {
     
     setLoading(true);
     try {
-      if (!db || !storage || !user) {
+      if (!db || !user) {
         throw new Error('Service Firebase non initialisé ou utilisateur non connecté');
       }
 
-      // 1. Upload Images
-      const imageUrls = await Promise.all(
-        images.map(async (file, index) => {
-          const storageRef = ref(storage!, `listings/${user.uid}/${Date.now()}-${index}`);
-          const uploadResult = await uploadBytes(storageRef, file);
-          return getDownloadURL(uploadResult.ref);
-        })
-      );
+      // 1. Upload Images to Bunny.net
+      const uploadResults = await uploadMultiple(images, `listings/${user.uid}`);
+      const imageUrls = uploadResults.map(r => r.url);
+
+      if (imageUrls.length === 0) {
+        throw new Error('Échec de l\'upload des images');
+      }
 
       // 2. Save to Firestore
       const listingData = {

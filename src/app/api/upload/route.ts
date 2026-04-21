@@ -1,0 +1,41 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { uploadToBunny, deleteFromBunny } from '@/lib/bunny';
+import { nanoid } from 'nanoid';
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const file = formData.get('file') as File | null;
+    const folder = (formData.get('folder') as string) || 'uploads';
+
+    if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type))
+      return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
+
+    if (file.size > 10 * 1024 * 1024)
+      return NextResponse.json({ error: 'File too large (max 10MB)' }, { status: 400 });
+
+    const ext = file.name.split('.').pop() || 'jpg';
+    const fileName = `${folder}/${nanoid()}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const url = await uploadToBunny(buffer, fileName);
+
+    return NextResponse.json({ success: true, url, fileName });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { fileName } = await req.json();
+    if (!fileName) return NextResponse.json({ error: 'No fileName' }, { status: 400 });
+    await deleteFromBunny(fileName);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+  }
+}
