@@ -1,6 +1,8 @@
 'use client';
 
-import { AlertTriangle, UserX, Flag, Check } from 'lucide-react';
+export const dynamic = 'force-dynamic';
+
+import { AlertTriangle, Flag, Check } from 'lucide-react';
 
 const mockReports = [
   { id: 'REP-01', reporter: 'ClientX', target: 'Annonce: Mercedes G63', reason: 'Prix irréaliste (Arnaque)', status: 'open', date: 'Maintentant' },

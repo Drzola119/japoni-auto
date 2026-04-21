@@ -1,6 +1,8 @@
 'use client';
 
-import { MessageSquare, Send, Car } from 'lucide-react';
+export const dynamic = 'force-dynamic';
+
+import { Send, Car } from 'lucide-react';
 import { useState } from 'react';
 
 const mockInquiries = [

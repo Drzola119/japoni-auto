@@ -1,6 +1,8 @@
 'use client';
 
-import { ShieldCheck, FileCheck, XCircle, Users } from 'lucide-react';
+export const dynamic = 'force-dynamic';
+
+import { ShieldCheck, FileCheck, XCircle } from 'lucide-react';
 
 const mockSellers = [
   { id: 1, showroom: 'Luxury Motors DZ', owner: 'Amine K.', activeListings: 14, status: 'pending', requestedAt: 'Aujourd\'hui' },

@@ -1,7 +1,10 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Car, Eye, MessageSquare, Plus, Star } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function SellerOverview() {
   return (
@@ -75,7 +78,7 @@ export default function SellerOverview() {
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.02] transition-colors group">
               <div className="w-16 h-12 bg-black rounded-lg border border-white/10 overflow-hidden relative shrink-0">
-                <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a" alt="car" className="w-full h-full object-cover" />
+                <Image src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a" alt="car" fill className="object-cover" />
               </div>
               <div className="flex-1">
                 <h4 className="font-medium text-white/90 text-sm transition-colors">Mercedes G63 AMG</h4>

@@ -35,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     if (!auth || !db) {
       setLoading(false);
       return;
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false);
     });
-    return unsub;
+    return () => unsub();
   }, []);
 
   const login = async (email: string, password: string) => {

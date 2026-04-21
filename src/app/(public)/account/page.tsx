@@ -1,21 +1,22 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Settings, LogOut, FileText, Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+
 import toast from 'react-hot-toast';
 
 export default function AccountPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
       router.push('/login');
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la déconnexion');
     }
   };
@@ -71,7 +72,7 @@ export default function AccountPage() {
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Adresse Email</label>
                   <input type="email" defaultValue={user.email || ''} disabled className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/50 cursor-not-allowed" />
-                  <p className="text-[10px] text-white/30 mt-2">L'adresse email ne peut pas être modifiée.</p>
+                  <p className="text-[10px] text-white/30 mt-2">L&apos;adresse email ne peut pas être modifiée.</p>
                 </div>
 
                 <div>

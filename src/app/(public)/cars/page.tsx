@@ -1,8 +1,11 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Search, SlidersHorizontal, MapPin, Gauge } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const inventory = [
   { id: '1', title: 'Mercedes-Benz G63 AMG', price: '45,000,000 DZD', year: 2024, mileage: '5,000 km', location: 'Alger', fuel: 'Essence', image: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80' },
@@ -94,7 +97,7 @@ export default function CarsListings() {
                 <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur border border-white/10 rounded-lg px-2.5 py-1 text-[10px] uppercase font-bold tracking-widest flex items-center gap-1.5">
                   <MapPin size={10} className="text-[#C9A84C]" /> {car.location}
                 </div>
-                <img src={car.image} alt={car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+                <Image src={car.image} alt={car.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
               </div>
               <div className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold font-cormorant text-white group-hover:text-[#E8C96A] transition-colors line-clamp-1">{car.title}</h3>
@@ -123,7 +126,7 @@ export default function CarsListings() {
 
         <div className="mt-16 flex justify-center">
           <button className="min-h-[44px] px-8 py-3 bg-white/5 border border-white/10 rounded-xl font-medium text-sm hover:bg-white/10 transition-colors">
-            Charger plus d'annonces
+            Charger plus d&apos;annonces
           </button>
         </div>
 

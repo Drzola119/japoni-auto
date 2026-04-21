@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { m as motion } from "framer-motion";
 import { Mail, ArrowLeft, KeyRound } from 'lucide-react';

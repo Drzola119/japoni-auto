@@ -1,12 +1,13 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Save, Store, Mail, Phone, MapPin } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useState } from 'react';
+
 
 export default function SellerProfile() {
   const { user } = useAuth();
-  const [saving, setSaving] = useState(false);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-4xl">

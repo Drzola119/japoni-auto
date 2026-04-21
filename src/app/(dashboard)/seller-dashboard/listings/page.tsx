@@ -1,6 +1,8 @@
 'use client';
 
-import { Edit2, Eye, MoreVertical, Plus, Trash2 } from 'lucide-react';
+export const dynamic = 'force-dynamic';
+
+import { Edit2, Eye, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 const mockMyListings = [

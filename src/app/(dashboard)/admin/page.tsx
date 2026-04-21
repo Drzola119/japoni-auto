@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Users, Car, AlertTriangle, ShieldCheck, TrendingUp, Clock } from 'lucide-react';
 
 const kpis = [

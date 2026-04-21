@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { Activity, ShieldAlert, KeyRound, Smartphone } from 'lucide-react';
 
 const mockLogs = [

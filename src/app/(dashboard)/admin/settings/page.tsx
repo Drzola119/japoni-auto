@@ -1,6 +1,8 @@
 'use client';
 
-import { Settings, Save, Bell, Globe } from 'lucide-react';
+export const dynamic = 'force-dynamic';
+
+import { Settings, Save, Globe } from 'lucide-react';
 
 export default function AdminSettings() {
   return (
@@ -49,7 +51,7 @@ export default function AdminSettings() {
               <input type="checkbox" className="sr-only peer" />
               <div className="w-10 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#C9A84C]"></div>
             </div>
-            <span className="text-sm text-white/80">Suspendre l'annonce après 3 signalements consécutifs</span>
+            <span className="text-sm text-white/80">Suspendre l&apos;annonce après 3 signalements consécutifs</span>
           </label>
         </div>
       </div>

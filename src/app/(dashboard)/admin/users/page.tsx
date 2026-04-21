@@ -1,7 +1,9 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
-import { Search, Filter, MoreVertical, Shield, UserX, CheckCircle, Mail } from 'lucide-react';
+import { Search, Filter, MoreVertical, CheckCircle } from 'lucide-react';
 
 const mockUsers = [
   { id: 1, name: 'Karim Benali', email: 'karim@example.com', role: 'seller', status: 'active', verified: true, date: '12 Mars 2026' },

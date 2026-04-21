@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { m as motion, AnimatePresence } from "framer-motion";
 import { useRouter } from 'next/navigation';
@@ -8,7 +10,6 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 export default function RegisterPage() {
   const { register, loginWithGoogle } = useAuth();

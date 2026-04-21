@@ -1,17 +1,19 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import { m as motion, AnimatePresence, Variants } from "framer-motion";
 import Link from 'next/link';
 import { Search, Star, Shield, TrendingUp, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
 import LoadingScreen from '@/components/LoadingScreen';
 
-const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), { ssr: false });
-const SocialPopup = dynamic(() => import('@/components/SocialPopup'), { ssr: false });
+const HeroCanvas = nextDynamic(() => import('@/components/HeroCanvas'), { ssr: false });
+const SocialPopup = nextDynamic(() => import('@/components/SocialPopup'), { ssr: false });
 // Removed dynamic import for LoadingScreen to ensure it's in the main bundle for instant appearance
 import CountUp from 'react-countup';
 

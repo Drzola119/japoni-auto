@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { UploadCloud, CheckCircle2 } from 'lucide-react';
 import { CAR_BRANDS } from '@/types';
 

@@ -1,9 +1,12 @@
 'use client';
 
-import { CheckCircle2, ChevronRight, Gauge, Heart, MapPin, MessageSquare, Phone, Share2, ShieldCheck, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 
-export default function CarDetailPage({ params }: { params: { slug: string } }) {
+import { CheckCircle2, ChevronRight, Gauge, Heart, MapPin, MessageSquare, Phone, Share2, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+
+export default function CarDetailPage() {
   // In a real app we would fetch the car using `params.slug`
   return (
     <div className="min-h-screen bg-[#07070A] text-white pt-20 overflow-x-hidden">
@@ -22,7 +25,7 @@ export default function CarDetailPage({ params }: { params: { slug: string } }) 
       {/* Hero Gallery Base */}
       <div className="w-full bg-black relative">
         <div className="aspect-[16/7] md:aspect-[21/9] relative overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=2000&q=80" alt="Mercedes G63" className="w-full h-full object-cover opacity-90" />
+          <Image src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=2000&q=80" alt="Mercedes G63" fill className="object-cover opacity-90" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#07070A] via-transparent to-transparent" />
           
           <button className="absolute top-6 right-6 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:text-rose-500 hover:bg-black/60 transition-all">
@@ -68,7 +71,7 @@ export default function CarDetailPage({ params }: { params: { slug: string } }) 
               <div className="mt-8">
                 <h3 className="text-xl font-bold font-cormorant mb-4">Description</h3>
                 <p className="text-white/60 leading-relaxed font-inter text-sm whitespace-pre-line">
-                  Véhicule d'exception en état strictement neuf. Entretien exclusif réseau Mercedes-Benz. Configuration très riche.
+                  Véhicule d&apos;exception en état strictement neuf. Entretien exclusif réseau Mercedes-Benz. Configuration très riche.
                   
                   • Pack AMG Night Extérieur
                   • Jantes forgées AMG 22 pouces
@@ -76,7 +79,7 @@ export default function CarDetailPage({ params }: { params: { slug: string } }) 
                   • Intérieur Cuir Nappa Exclusif Noir
                   • Sound System Burmester 3D
                   • Toit ouvrant électrique
-                  • Pack d'assistance à la conduite Plus
+                  • Pack d&apos;assistance à la conduite Plus
                   
                   Véhicule disponible de suite, visite sur rendez-vous.
                 </p>
@@ -121,7 +124,7 @@ export default function CarDetailPage({ params }: { params: { slug: string } }) 
 
             <div className="flex items-center justify-center gap-4">
               <button className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
-                <Share2 size={16} /> Partager l'annonce
+                <Share2 size={16} /> Partager l&apos;annonce
               </button>
               <div className="w-px h-4 bg-white/10"></div>
               <button className="flex items-center gap-2 text-sm text-white/40 hover:text-rose-400 transition-colors">
