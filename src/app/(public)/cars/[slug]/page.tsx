@@ -1,3 +1,7 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { CheckCircle2, ChevronRight, Gauge, Heart, MapPin, MessageSquare, Phone, Share2, ShieldCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';

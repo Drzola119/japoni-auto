@@ -67,6 +67,34 @@ export default function AdminOverview() {
     );
   }
 
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold font-cormorant text-white tracking-wide">Vue d&apos;ensemble</h1>
+        <p className="text-white/50 text-sm mt-1">Gérez la plateforme Japoni Auto d&apos;un coup d&apos;œil.</p>
+      </div>
+
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((kpi, index) => (
+          <div key={index} className="bg-[#111116] border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${kpi.color} opacity-5 rounded-full blur-2xl -mr-10 -mt-10 transition-opacity group-hover:opacity-10`} />
+            <div className="flex justify-between items-start mb-4">
+              <div className="text-white/50 text-sm font-medium">{kpi.label}</div>
+              <div className="text-white/20 group-hover:text-[#C9A84C] transition-colors">{kpi.icon}</div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-3xl font-semibold text-white">{kpi.value}</div>
+              <div className={`text-xs font-semibold ${kpi.change.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'} bg-white/5 px-2 py-1 rounded-md`}>
+                {kpi.change}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Chart Placeholder */}
         <div className="lg:col-span-2 bg-[#111116] border border-white/5 rounded-2xl p-6">
@@ -92,7 +120,7 @@ export default function AdminOverview() {
             {recentActivities.map((act) => (
               <div key={act.id} className="flex gap-4">
                 <div className="w-10 h-10 rounded-full bg-[#1a1a20] border border-white/10 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-[#C9A84C]">{act.user.charAt(0)}</span>
+                  <span className="text-xs font-bold text-[#C9A84C]">{act.user?.charAt(0) || 'U'}</span>
                 </div>
                 <div>
                   <p className="text-sm text-white/90">
