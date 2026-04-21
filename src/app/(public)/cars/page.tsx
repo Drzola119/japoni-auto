@@ -27,7 +27,7 @@ export default function CarsListings() {
       if (!db) return;
       setLoading(true);
       try {
-        const q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'));
+        const q = query(collection(db!, 'listings'), orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         const fetchedListings = querySnapshot.docs.map(doc => ({
           id: doc.id,

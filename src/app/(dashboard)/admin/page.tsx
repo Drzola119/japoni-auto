@@ -30,10 +30,10 @@ export default function AdminOverview() {
       if (!db) return;
       try {
         const [userSnap, sellerSnap, listingSnap, reportSnap] = await Promise.all([
-          getCountFromServer(collection(db, 'users')),
-          getCountFromServer(query(collection(db, 'users'), where('role', '==', 'seller'))),
-          getCountFromServer(collection(db, 'listings')),
-          getCountFromServer(collection(db, 'reports'))
+          getCountFromServer(collection(db!, 'users')),
+          getCountFromServer(query(collection(db!, 'users'), where('role', '==', 'seller'))),
+          getCountFromServer(collection(db!, 'listings')),
+          getCountFromServer(collection(db!, 'reports'))
         ]);
 
         setStats({
@@ -44,7 +44,7 @@ export default function AdminOverview() {
         });
 
         // Fetch recent activities (e.g., last 5 listings)
-        const q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'), limit(5));
+        const q = query(collection(db!, 'listings'), orderBy('createdAt', 'desc'), limit(5));
         const snap = await getDocs(q);
         setRecentActivities(snap.docs.map(doc => ({
           id: doc.id,

@@ -64,12 +64,14 @@ export default function NewListing() {
     
     setLoading(true);
     try {
-      if (!db || !storage) throw new Error('Firebase non initialisé');
+      if (!db || !storage || !user) {
+        throw new Error('Service Firebase non initialisé ou utilisateur non connecté');
+      }
 
       // 1. Upload Images
       const imageUrls = await Promise.all(
         images.map(async (file, index) => {
-          const storageRef = ref(storage, `listings/${user.uid}/${Date.now()}-${index}`);
+          const storageRef = ref(storage!, `listings/${user.uid}/${Date.now()}-${index}`);
           const uploadResult = await uploadBytes(storageRef, file);
           return getDownloadURL(uploadResult.ref);
         })
@@ -93,10 +95,10 @@ export default function NewListing() {
         updatedAt: serverTimestamp(),
       };
 
-      const docRef = await addDoc(collection(db, 'listings'), listingData);
+      const docRef = await addDoc(collection(db!, 'listings'), listingData);
 
       // 3. Update User Stats
-      await updateDoc(doc(db, 'users', user.uid), {
+      await updateDoc(doc(db!, 'users', user.uid), {
         totalListings: increment(1)
       });
 

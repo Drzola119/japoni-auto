@@ -23,7 +23,7 @@ export default function CarDetailPage() {
     const fetchListing = async () => {
       if (!db || !id) return;
       try {
-        const docRef = doc(db, 'listings', id);
+        const docRef = doc(db!, 'listings', id);
         const snap = await getDoc(docRef);
         if (snap.exists()) {
           setListing({ id: snap.id, ...snap.data() } as CarListing);
