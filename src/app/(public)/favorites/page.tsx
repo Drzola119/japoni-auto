@@ -2,6 +2,7 @@
 
 import { Heart, Search } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Using a mock array since we don't have real data populated yet
 const mockFavorites = [
@@ -33,8 +34,8 @@ export default function FavoritesPage() {
                 <button className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-colors">
                   <Heart size={16} className="fill-current" />
                 </button>
-                <div className="aspect-[4/3] bg-black overflow-hidden">
-                  <img src={car.image} alt={car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="relative aspect-[4/3] bg-black overflow-hidden">
+                  <Image src={car.image} alt={car.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                 </div>
                 <div className="p-5">
                   <div className="text-lg font-bold font-cormorant text-white mb-1 group-hover:text-[#C9A84C] transition-colors">{car.title}</div>

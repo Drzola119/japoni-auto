@@ -6,7 +6,7 @@ const mockLogs = [
   { id: 1, action: 'Connexion administrateur', ip: '154.121.xx.xx', location: 'Alger, DZ', time: 'Maintentant', status: 'success' },
   { id: 2, action: 'Modification de rôle (Amine F -> Vendeur)', ip: '154.121.xx.xx', location: 'Alger, DZ', time: 'Il y a 2h', status: 'success' },
   { id: 3, action: 'Tentative de connexion échouée', ip: '197.100.xx.xx', location: 'Oran, DZ', time: 'Il y a 5h', status: 'warning' },
-  { id: 4, action: 'Suppression d\'annonce (AN-887)', ip: '154.121.xx.xx', location: 'Alger, DZ', time: 'Hier', status: 'success' },
+  { id: 4, action: "Suppression d'annonce (AN-887)", ip: '154.121.xx.xx', location: 'Alger, DZ', time: 'Hier', status: 'success' },
 ];
 
 export default function AdminSecurity() {
