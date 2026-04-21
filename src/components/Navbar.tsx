@@ -50,7 +50,7 @@ export default function Navbar() {
           height: '32px', 
           background: 'linear-gradient(90deg, #0A0A0F, #1a1508, #0A0A0F)',
           borderBottom: '1px solid rgba(201, 168, 76, 0.12)',
-          transform: isHovered || menuOpen ? 'translateY(0)' : 'translateY(-100%)'
+          transform: scrolled ? 'translateY(-100%)' : 'translateY(0)'
         }}
       >
         <div 
@@ -69,12 +69,11 @@ export default function Navbar() {
         onMouseLeave={() => setIsHovered(false)}
         className="fixed left-0 right-0 z-[100] transition-all duration-500 ease-out"
         style={{
-          top: '32px',
+          top: scrolled ? '0px' : '32px',
           height: '68px',
-          background: scrolled ? 'rgba(7,7,12,0.85)' : 'rgba(7,7,12,0.6)',
+          background: scrolled ? 'rgba(7,7,12,0.95)' : 'rgba(7,7,12,0.7)',
           backdropFilter: 'blur(24px) saturate(180%)',
-          transform: isHovered || menuOpen ? 'translateY(0)' : 'translateY(calc(-100% - 32px))',
-          borderBottom: '1px solid rgba(201,168,76,0.08)'
+          borderBottom: '1px solid rgba(201,168,76,0.1)'
         }}
       >
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
