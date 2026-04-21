@@ -35,9 +35,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth || !db) {
+      setLoading(false);
+      return;
+    }
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
-      if (fbUser) {
+      if (fbUser && db) {
         const docRef = doc(db, 'users', fbUser.uid);
         const snap = await getDoc(docRef);
         if (snap.exists()) {
@@ -52,10 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!auth) throw new Error('Firebase not initialized');
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const register = async (email: string, password: string, name: string) => {
+    if (!auth || !db) throw new Error('Firebase not initialized');
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
     const userData: User = {
@@ -73,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
+    if (!auth || !db) throw new Error('Firebase not initialized');
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
     const docRef = doc(db, 'users', cred.user.uid);
@@ -97,11 +104,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    if (!auth) return;
     await signOut(auth);
     setUser(null);
   };
 
   const resetPassword = async (email: string) => {
+    if (!auth) throw new Error('Firebase not initialized');
     await sendPasswordResetEmail(auth, email);
   };
 

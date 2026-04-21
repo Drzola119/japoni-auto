@@ -31,8 +31,8 @@ export default function RegisterPage() {
       
       // The context sets role to 'user' by default. Update if they registered as seller.
       if (accountType === 'seller') {
-        const { auth } = await import('@/lib/firebase');
-        if (auth.currentUser) {
+        const { auth, db } = await import('@/lib/firebase');
+        if (auth?.currentUser && db) {
           await updateDoc(doc(db, 'users', auth.currentUser.uid), { role: 'seller' });
         }
       }
