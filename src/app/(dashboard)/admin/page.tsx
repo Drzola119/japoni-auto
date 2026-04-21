@@ -7,6 +7,14 @@ import { Users, Car, AlertTriangle, ShieldCheck, TrendingUp, Clock, Loader2 } fr
 import { db } from '@/lib/firebase';
 import { collection, getCountFromServer, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
+interface ActivityItem {
+  id: string;
+  user: string;
+  action: string;
+  target: string;
+  time: string;
+}
+
 export default function AdminOverview() {
   const [stats, setStats] = useState({
     users: 0,
@@ -15,7 +23,7 @@ export default function AdminOverview() {
     reports: 0
   });
   const [loading, setLoading] = useState(true);
-  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {

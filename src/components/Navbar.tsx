@@ -15,7 +15,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -35,16 +34,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Invisible trigger area at the top to detect mouse movement */}
-      <div 
-        className="fixed top-0 left-0 right-0 h-4 z-[102]"
-        onMouseEnter={() => setIsHovered(true)}
-      />
-
       {/* Top Banner */}
       <div 
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         className="w-full flex items-center justify-center fixed top-0 z-[101] transition-transform duration-500 ease-out"
         style={{ 
           height: '32px', 
@@ -65,8 +56,6 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <header 
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         className="fixed left-0 right-0 z-[100] transition-all duration-500 ease-out"
         style={{
           top: scrolled ? '0px' : '32px',
