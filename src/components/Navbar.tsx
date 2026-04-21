@@ -113,15 +113,17 @@ export default function Navbar() {
           </nav>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            {/* Language Toggle */}
+          <div className="hidden md:flex items-center gap-6">
+            {/* Language Switcher */}
             <button
-              onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
-              className="flex items-center gap-2 group hover:text-[#C9A84C] transition-colors duration-200"
-              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.78rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9A9480' }}
+              onClick={() => {
+                const nextLang = language === 'fr' ? 'en' : language === 'en' ? 'ar' : 'fr';
+                setLanguage(nextLang);
+              }}
+              className="px-3 py-1.5 border border-[rgba(201,168,76,0.2)] rounded-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all"
+              style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em' }}
             >
-              <Globe className="w-4 h-4 group-hover:text-[#C9A84C]" />
-              {language === 'fr' ? 'عربي' : 'FR'}
+              {language.toUpperCase()}
             </button>
 
             <div className="w-[1px] h-4 bg-[rgba(255,255,255,0.06)] mx-2" />
@@ -287,12 +289,16 @@ export default function Navbar() {
               <div className="w-full h-[1px] bg-[rgba(201,168,76,0.15)] my-4" />
 
               <button
-                onClick={() => { setLanguage(language === 'fr' ? 'ar' : 'fr'); setMenuOpen(false); }}
+                onClick={() => { 
+                  const nextLang = language === 'fr' ? 'en' : language === 'en' ? 'ar' : 'fr';
+                  setLanguage(nextLang); 
+                  setMenuOpen(false); 
+                }}
                 className="flex items-center gap-2 text-[#C9A84C]"
                 style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
               >
                 <Globe className="w-5 h-5" />
-                {language === 'fr' ? 'عربي' : 'FRANÇAIS'}
+                {language === 'fr' ? 'English' : language === 'en' ? 'عربي' : 'Français'}
               </button>
 
               {!user ? (
