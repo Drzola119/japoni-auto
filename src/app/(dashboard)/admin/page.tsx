@@ -1,50 +1,71 @@
-'use client';
-
-export const dynamic = 'force-dynamic';
-
-import { Users, Car, AlertTriangle, ShieldCheck, TrendingUp, Clock } from 'lucide-react';
-
-const kpis = [
-  { label: 'Utilisateurs', value: '1,248', icon: <Users size={24} />, change: '+12%', color: 'from-[#0ea5e9] to-[#38bdf8]' },
-  { label: 'Vendeurs Pro', value: '142', icon: <ShieldCheck size={24} />, change: '+5%', color: 'from-[#10b981] to-[#34d399]' },
-  { label: 'Annonces Actives', value: '3,890', icon: <Car size={24} />, change: '+18%', color: 'from-[#C9A84C] to-[#E8C96A]' },
-  { label: 'Signalements', value: '12', icon: <AlertTriangle size={24} />, change: '-2%', color: 'from-rose-500 to-red-400' },
-];
-
-const recentActivities = [
-  { id: 1, user: 'Ahmed B.', action: 'a publié une annonce', target: 'Mercedes-Benz Classe G', time: 'Il y a 10 min' },
-  { id: 2, user: 'Karim Auto', action: 'a demandé la vérification pro', target: 'Compte Vendeur', time: 'Il y a 45 min' },
-  { id: 3, user: 'Yacine S.', action: 'a signalé une annonce', target: 'Annonce Suspecte #884', time: 'Il y a 2 heures' },
-];
+import { useState, useEffect } from 'react';
+import { Users, Car, AlertTriangle, ShieldCheck, TrendingUp, Clock, Loader2 } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { collection, getCountFromServer, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
 export default function AdminOverview() {
-  return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold font-cormorant text-white tracking-wide">Vue d&apos;ensemble</h1>
-        <p className="text-white/50 text-sm mt-1">Gérez la plateforme Japoni Auto d&apos;un coup d&apos;œil.</p>
-      </div>
+  const [stats, setStats] = useState({
+    users: 0,
+    sellers: 0,
+    listings: 0,
+    reports: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi, index) => (
-          <div key={index} className="bg-[#111116] border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${kpi.color} opacity-5 rounded-full blur-2xl -mr-10 -mt-10 transition-opacity group-hover:opacity-10`} />
-            <div className="flex justify-between items-start mb-4">
-              <div className="text-white/50 text-sm font-medium">{kpi.label}</div>
-              <div className="text-white/20 group-hover:text-[#C9A84C] transition-colors">{kpi.icon}</div>
-            </div>
-            <div className="flex items-end justify-between">
-              <div className="text-3xl font-semibold text-white">{kpi.value}</div>
-              <div className={`text-xs font-semibold ${kpi.change.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'} bg-white/5 px-2 py-1 rounded-md`}>
-                {kpi.change}
-              </div>
-            </div>
-          </div>
-        ))}
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!db) return;
+      try {
+        const [userSnap, sellerSnap, listingSnap, reportSnap] = await Promise.all([
+          getCountFromServer(collection(db, 'users')),
+          getCountFromServer(query(collection(db, 'users'), where('role', '==', 'seller'))),
+          getCountFromServer(collection(db, 'listings')),
+          getCountFromServer(collection(db, 'reports'))
+        ]);
+
+        setStats({
+          users: userSnap.data().count,
+          sellers: sellerSnap.data().count,
+          listings: listingSnap.data().count,
+          reports: reportSnap.data().count
+        });
+
+        // Fetch recent activities (e.g., last 5 listings)
+        const q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'), limit(5));
+        const snap = await getDocs(q);
+        setRecentActivities(snap.docs.map(doc => ({
+          id: doc.id,
+          user: doc.data().sellerName,
+          action: 'a publié une annonce',
+          target: doc.data().title,
+          time: 'Récemment'
+        })));
+
+      } catch (error) {
+        console.error('Error fetching admin stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const kpis = [
+    { label: 'Utilisateurs', value: stats.users.toLocaleString(), icon: <Users size={24} />, change: '+12%', color: 'from-[#0ea5e9] to-[#38bdf8]' },
+    { label: 'Vendeurs Pro', value: stats.sellers.toLocaleString(), icon: <ShieldCheck size={24} />, change: '+5%', color: 'from-[#10b981] to-[#34d399]' },
+    { label: 'Annonces Actives', value: stats.listings.toLocaleString(), icon: <Car size={24} />, change: '+18%', color: 'from-[#C9A84C] to-[#E8C96A]' },
+    { label: 'Signalements', value: stats.reports.toLocaleString(), icon: <AlertTriangle size={24} />, change: '0%', color: 'from-rose-500 to-red-400' },
+  ];
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-[#C9A84C] animate-spin" />
       </div>
+    );
+  }
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Chart Placeholder */}

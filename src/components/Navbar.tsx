@@ -86,13 +86,17 @@ export default function Navbar() {
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-8">
             {[
-              { href: '/', label: t('nav.home') },
-              { href: '/cars', label: t('nav.listings') },
-              { href: '/seller-dashboard', label: 'Vendre' },
-              { href: '#', label: 'Contact' }
-            ].map((item) => (
+              { href: '/', label: t('nav.home'), show: true },
+              { href: '/cars', label: t('nav.listings'), show: true },
+              { 
+                href: user?.role === 'seller' ? '/seller-dashboard/listings/new' : '/seller-dashboard', 
+                label: user?.role === 'seller' ? 'Vendre' : (user?.role === 'admin' ? 'Dashboard' : 'Devenir Vendeur'),
+                show: true 
+              },
+              { href: '#', label: 'Contact', show: true }
+            ].filter(item => item.show).map((item) => (
               <Link
-                key={item.href}
+                key={item.label}
                 href={item.href}
                 className="relative group py-2"
                 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.78rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9A9480' }}
