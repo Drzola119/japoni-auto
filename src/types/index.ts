@@ -44,7 +44,7 @@ export interface User {
   phone?: string;
   whatsapp?: string;
   wilaya?: string;
-  role: 'user' | 'dealer' | 'admin';
+  role: 'user' | 'seller' | 'admin';
   isPro: boolean;
   isVerified: boolean;
   totalListings: number;
@@ -90,3 +90,56 @@ export const CAR_BRANDS = [
   'Skoda', 'Volvo', 'Mazda', 'Subaru', 'Lexus', 'Jeep', 'Land Rover',
   'Range Rover', 'Tesla', 'BYD', 'Great Wall', 'Chery', 'JAC',
 ] as const;
+
+export interface Inquiry {
+  id: string;
+  listingId: string;
+  buyerId: string;
+  sellerId: string;
+  message: string;
+  status: 'new' | 'replied' | 'closed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Report {
+  id: string;
+  targetType: 'listing' | 'user';
+  targetId: string;
+  reason: string;
+  details: string;
+  reportedBy: string;
+  status: 'open' | 'reviewed' | 'resolved';
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+}
+
+export interface AuditLog {
+  id: string;
+  actorId: string;
+  actorRole: string;
+  action: string;
+  targetType: string;
+  targetId: string;
+  metadata?: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface Favorite {
+  id: string;
+  userId: string;
+  listingId: string;
+  createdAt: string;
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  relatedId?: string;
+  createdAt: string;
+}

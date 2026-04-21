@@ -164,7 +164,7 @@ export default function HomePage() {
       >
       <div className="min-h-screen bg-[#07070C]">
         {/* ===== HERO SECTION ===== */}
-        <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-[60vh] md:min-h-[80vh] lg:min-h-[100dvh] flex items-center justify-center overflow-hidden">
         
         {/* Animated canvas background via component */}
         <HeroCanvas />
@@ -288,7 +288,7 @@ export default function HomePage() {
 
               {/* Search Button */}
               <Link
-                href={`/listings?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
+                href={`/cars?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
                 className="group flex items-center justify-center rounded-[2px] px-8 py-3 mt-2 md:mt-0 transition-all duration-250 cursor-pointer"
                 style={{
                   background: '#C9A84C',
@@ -312,7 +312,7 @@ export default function HomePage() {
 
             {/* Vendre ma voiture link */}
             <Link 
-              href="/sell"
+              href="/seller-dashboard/listings/new"
               className="mt-6 flex items-center gap-2 group transition-colors duration-200"
               style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.85rem', color: '#9A9480' }}
               onMouseEnter={(e) => e.currentTarget.style.color = '#F5F0E8'}
@@ -511,7 +511,7 @@ export default function HomePage() {
             transition={{ delay: 0.3 }}
           >
             <Link 
-              href="/listings" 
+              href="/cars" 
               className="inline-flex transition-all duration-300"
               style={{
                 background: 'transparent',
@@ -580,7 +580,7 @@ export default function HomePage() {
           </p>
           
           <Link 
-            href="/sell" 
+            href="/seller-dashboard/listings/new" 
             className="inline-block transition-all duration-250 cursor-pointer"
             style={{
               background: '#C9A84C',

@@ -40,6 +40,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* iOS Safari input zoom prevention */
+input, select, textarea {
+  font-size: 16px;
+}
+
 body {
   background: var(--bg-primary);
   color: var(--text-primary);

@@ -1,10 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter, Cairo } from 'next/font/google';
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 import MotionProvider from "@/components/MotionProvider";
 
@@ -39,6 +37,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" dir="ltr" className={`${inter.variable} ${cormorant.variable} ${cairo.variable}`}>
@@ -46,13 +50,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preload first animation frame as high priority */}
         <link rel="preload" as="image" href="/frames/ezgif-frame-001.jpg" fetchPriority="high" />
       </head>
-      <body>
+      <body className="overflow-x-hidden antialiased">
         <AuthProvider>
           <LanguageProvider>
             <MotionProvider>
-              <Navbar />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
+              {children}
               <Toaster
                 position="bottom-right"
                 toastOptions={{

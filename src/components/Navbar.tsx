@@ -23,6 +23,16 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024 && menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [menuOpen]);
+
   return (
     <>
       {/* Invisible trigger area at the top to detect mouse movement */}
@@ -78,8 +88,8 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-8">
             {[
               { href: '/', label: t('nav.home') },
-              { href: '/listings', label: t('nav.listings') },
-              { href: '/sell', label: t('nav.sell') },
+              { href: '/cars', label: t('nav.listings') },
+              { href: '/seller-dashboard', label: 'Vendre' },
               { href: '#', label: 'Contact' }
             ].map((item) => (
               <Link
@@ -141,10 +151,16 @@ export default function Navbar() {
                           <p className="text-[#4A4840] text-xs mt-1 truncate">{user.email}</p>
                         </div>
                         <div className="p-2">
-                          <Link href="/profile" onClick={() => setProfileOpen(false)}
+                          <Link href="/account" onClick={() => setProfileOpen(false)}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#9A9480] hover:text-[#C9A84C] hover:bg-[rgba(201,168,76,0.04)] transition-all">
-                            <User className="w-4 h-4" /> {t('nav.profile')}
+                            <User className="w-4 h-4" /> Mon Compte
                           </Link>
+                          {user.role === 'seller' && (
+                            <Link href="/seller-dashboard" onClick={() => setProfileOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
+                              <Shield className="w-4 h-4" /> Espace Vendeur
+                            </Link>
+                          )}
                           {user.role === 'admin' && (
                             <Link href="/admin" onClick={() => setProfileOpen(false)}
                               className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
@@ -164,7 +180,7 @@ export default function Navbar() {
             ) : (
               <>
                 <Link 
-                  href="/auth" 
+                  href="/login" 
                   className="btn-ghost transition-all duration-200"
                   style={{
                     background: 'transparent',
@@ -189,7 +205,7 @@ export default function Navbar() {
                   {t('nav.login')}
                 </Link>
                 <Link 
-                  href="/auth?mode=register" 
+                  href="/register" 
                   className="btn-primary transition-all duration-200"
                   style={{
                     background: '#C9A84C',
@@ -241,8 +257,8 @@ export default function Navbar() {
             <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
               {[
                 { href: '/', label: t('nav.home') },
-                { href: '/listings', label: t('nav.listings') },
-                { href: '/sell', label: t('nav.sell') },
+                { href: '/cars', label: t('nav.listings') },
+                { href: '/seller-dashboard', label: 'Vendre' },
                 { href: '#', label: 'Contact' }
               ].map((item, i) => (
                 <motion.div
@@ -275,10 +291,10 @@ export default function Navbar() {
 
               {!user ? (
                 <div className="flex flex-col w-full gap-4 mt-8">
-                  <Link href="/auth" onClick={() => setMenuOpen(false)} className="btn-secondary w-full py-4 text-center">
+                  <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-secondary w-full py-4 text-center">
                     {t('nav.login')}
                   </Link>
-                  <Link href="/auth?mode=register" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
+                  <Link href="/register" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
                     {t('nav.register')}
                   </Link>
                 </div>

@@ -85,9 +85,9 @@ export default function Footer() {
             <ul className="space-y-4">
               {[
                 { href: '/', label: 'Accueil' },
-                { href: '/listings', label: 'Annonces' },
-                { href: '/sell', label: 'Vendre un véhicule' },
-                { href: '/auth', label: 'Espace client' },
+                { href: '/cars', label: 'Annonces' },
+                { href: '/seller-dashboard/listings/new', label: 'Vendre un véhicule' },
+                { href: '/login', label: 'Espace client' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link 
