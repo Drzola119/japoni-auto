@@ -43,10 +43,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser && db) {
-        const docRef = doc(db, 'users', fbUser.uid);
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          setUser(snap.data() as User);
+        try {
+          const docRef = doc(db, 'users', fbUser.uid);
+          const snap = await getDoc(docRef);
+          if (snap.exists()) {
+            setUser(snap.data() as User);
+          } else {
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+          setUser(null);
         }
       } else {
         setUser(null);

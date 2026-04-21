@@ -49,7 +49,7 @@ export default function CarCard({ car, index = 0 }: Props) {
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
-      <Link href={`/car/${car.id}`} className="block h-full">
+      <Link href={`/cars/${car.id}`} className="block h-full">
         {/* Image Container */}
         <div className="relative aspect-video overflow-hidden bg-[#0A0A0F]">
           {car.images?.[0] && !imgError ? (

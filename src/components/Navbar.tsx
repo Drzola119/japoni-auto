@@ -15,6 +15,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -32,16 +33,27 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, [menuOpen]);
 
+  // Determine if navbar should be hidden or visible
+  const isNavbarVisible = !scrolled || isHovered;
+
   return (
     <>
+      {/* Invisible trigger area at the top to detect mouse movement */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-12 z-[102]"
+        onMouseEnter={() => setIsHovered(true)}
+      />
+
       {/* Top Banner */}
       <div 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className="w-full flex items-center justify-center fixed top-0 z-[101] transition-transform duration-500 ease-out"
         style={{ 
           height: '32px', 
           background: 'linear-gradient(90deg, #0A0A0F, #1a1508, #0A0A0F)',
           borderBottom: '1px solid rgba(201, 168, 76, 0.12)',
-          transform: scrolled ? 'translateY(-100%)' : 'translateY(0)'
+          transform: isNavbarVisible ? 'translateY(0)' : 'translateY(-100%)'
         }}
       >
         <div 
@@ -56,9 +68,11 @@ export default function Navbar() {
 
       {/* Main Navbar */}
       <header 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className="fixed left-0 right-0 z-[100] transition-all duration-500 ease-out"
         style={{
-          top: scrolled ? '0px' : '32px',
+          top: isNavbarVisible ? (scrolled ? '0px' : '32px') : '-100px',
           height: '68px',
           background: scrolled ? 'rgba(7,7,12,0.95)' : 'rgba(7,7,12,0.7)',
           backdropFilter: 'blur(24px) saturate(180%)',
