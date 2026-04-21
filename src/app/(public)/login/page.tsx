@@ -5,7 +5,6 @@ import { m as motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useLanguage } from '@/context/LanguageContext';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 

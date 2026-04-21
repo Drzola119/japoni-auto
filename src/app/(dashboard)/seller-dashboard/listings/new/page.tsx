@@ -32,7 +32,7 @@ export default function NewListing() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Titre de l'annonce</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Titre de l&apos;annonce</label>
               <input type="text" placeholder="Ex: Mercedes G63 AMG Edition 1" className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C] transition-colors" />
             </div>
             <div>
