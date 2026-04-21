@@ -40,7 +40,7 @@ export default function Navbar() {
     <>
       {/* Invisible trigger area at the top to detect mouse movement */}
       <div 
-        className="fixed top-0 left-0 right-0 h-12 z-[102]"
+        className="fixed top-0 left-0 right-0 h-16 z-[102]"
         onMouseEnter={() => setIsHovered(true)}
       />
 
@@ -48,7 +48,7 @@ export default function Navbar() {
       <div 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="w-full flex items-center justify-center fixed top-0 z-[101] transition-transform duration-500 ease-out"
+        className="w-full flex items-center justify-center fixed top-0 z-[101] transition-transform duration-500 ease-out pointer-events-none"
         style={{ 
           height: '32px', 
           background: 'linear-gradient(90deg, #0A0A0F, #1a1508, #0A0A0F)',
@@ -57,7 +57,7 @@ export default function Navbar() {
         }}
       >
         <div 
-          className="text-[#C9A84C] uppercase tracking-[0.2em] relative"
+          className="text-[#C9A84C] uppercase tracking-[0.2em] relative pointer-events-auto"
           style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.7rem' }}
         >
           <span className="opacity-0 lg:opacity-100 transition-opacity">──── </span>
@@ -72,7 +72,7 @@ export default function Navbar() {
         onMouseLeave={() => setIsHovered(false)}
         className="fixed left-0 right-0 z-[100] transition-all duration-500 ease-out"
         style={{
-          top: isNavbarVisible ? (scrolled ? '0px' : '32px') : '-100px',
+          top: isNavbarVisible ? (scrolled ? '0px' : '32px') : '-80px',
           height: '68px',
           background: scrolled ? 'rgba(7,7,12,0.95)' : 'rgba(7,7,12,0.7)',
           backdropFilter: 'blur(24px) saturate(180%)',
