@@ -32,6 +32,7 @@ export interface CarListing {
   importedFrom?: string;
   firstOwner?: boolean;
   warranty?: boolean;
+  status: 'pending' | 'approved' | 'rejected' | 'sold';
   createdAt: string;
   updatedAt: string;
 }
@@ -49,6 +50,9 @@ export interface User {
   isVerified: boolean;
   totalListings: number;
   rating?: number;
+  suspended: boolean;
+  verifiedAt?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  verified?: boolean;
   createdAt: string;
 }
 
@@ -109,6 +113,7 @@ export interface Report {
   reason: string;
   details: string;
   reportedBy: string;
+  reporterName?: string;
   status: 'open' | 'reviewed' | 'resolved';
   createdAt: string;
   reviewedAt?: string;
@@ -122,6 +127,10 @@ export interface AuditLog {
   action: string;
   targetType: string;
   targetId: string;
+  type: string;
+  message: string;
+  userEmail?: string;
+  ip?: string;
   metadata?: Record<string, unknown>;
   createdAt: string;
 }

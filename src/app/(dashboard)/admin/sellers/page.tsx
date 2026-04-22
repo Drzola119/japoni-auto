@@ -1,95 +1,133 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
+import { useState, useEffect } from 'react';
+import { db } from '@/lib/firebase';
+import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { BadgeCheck, ExternalLink, Phone, ShieldCheck } from 'lucide-react';
+import { m as motion } from 'framer-motion';
+import { formatDate } from '@/lib/utils';
+import { toast } from 'react-hot-toast';
+import { User as UserType } from '@/types';
 
-import { ShieldCheck, FileCheck, XCircle } from 'lucide-react';
+export default function AdminSellers() {
+  const [sellers, setSellers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
-const mockSellers = [
-  { id: 1, showroom: 'Luxury Motors DZ', owner: 'Amine K.', activeListings: 14, status: 'pending', requestedAt: 'Aujourd\'hui' },
-  { id: 2, showroom: 'Japoni Imports', owner: 'Rafik M.', activeListings: 42, status: 'approved', requestedAt: 'Fév 2026' },
-  { id: 3, showroom: 'Elite Cars Alger', owner: 'Mounir S.', activeListings: 8, status: 'approved', requestedAt: 'Nov 2025' },
-];
+  useEffect(() => {
+    const q = query(collection(db!, 'users'), where('role', '==', 'seller'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setSellers(snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as unknown as UserType)));
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
-export default function SellersManagement() {
+  const handleVerify = async (id: string, isVerified: boolean) => {
+    try {
+      await updateDoc(doc(db!, 'users', id), { 
+        verified: !isVerified,
+        verifiedAt: !isVerified ? serverTimestamp() : null
+      });
+      toast.success(isVerified ? 'Vérification retirée' : 'Vendeur vérifié avec succès');
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const filteredSellers = sellers.filter(s => {
+    if (filter === 'verified') return s.verified;
+    if (filter === 'pending') return !s.verified;
+    return true;
+  });
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#111111] p-6 rounded-2xl border border-[#2A2A2A]">
         <div>
-          <h1 className="text-2xl font-bold font-cormorant text-white">Validation Vendeurs</h1>
-          <p className="text-white/50 text-sm mt-1">Gérez les demandes de comptes professionnels et showrooms.</p>
+          <h1 className="text-2xl font-serif text-white font-bold">Gestion des Vendeurs</h1>
+          <p className="text-[#555555] text-[10px] uppercase tracking-[0.2em] mt-1 font-bold">Vérification et certification</p>
+        </div>
+        
+        <div className="flex bg-[#0A0A0A] p-1 rounded-xl border border-[#2A2A2A]">
+          {['all', 'verified', 'pending'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                filter === f ? 'bg-[#C9A84C] text-[#07070C]' : 'text-[#555555] hover:text-[#A0A0A0]'
+              }`}
+            >
+              {f === 'all' ? 'Tous' : f === 'verified' ? 'Vérifiés' : 'En Attente'}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Col - Pending Requests */}
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/50 mb-2">Demandes en attente (1)</h2>
-          {mockSellers.filter(s => s.status === 'pending').map(seller => (
-            <div key={seller.id} className="bg-[#111116] border border-[#C9A84C]/30 rounded-2xl p-6 relative">
-              <div className="absolute top-0 right-0 w-2 h-full bg-[#C9A84C] rounded-r-2xl" />
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-white">{seller.showroom}</h3>
-                  <p className="text-sm text-white/50">Propriétaire: {seller.owner}</p>
-                </div>
-                <span className="bg-amber-500/10 text-amber-500 text-xs px-2 py-1 rounded font-medium">À VERIFIER</span>
+      <div className="grid grid-cols-1 gap-4">
+        {filteredSellers.map((s, i) => (
+          <motion.div 
+            key={s.uid}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6 hover:border-[#C9A84C]/30 transition-all flex flex-col lg:flex-row lg:items-center gap-6"
+          >
+            <div className="flex items-center gap-4 lg:w-1/3">
+              <div className="w-16 h-16 rounded-2xl bg-[#1A1A1A] flex items-center justify-center text-[#C9A84C] text-2xl font-bold border border-[#2A2A2A] relative">
+                {s.displayName?.charAt(0) || 'S'}
+                {s.verified && (
+                  <div className="absolute -top-2 -right-2 bg-[#C9A84C] text-[#07070C] p-1 rounded-full shadow-[0_0_10px_#C9A84C]">
+                    <BadgeCheck size={14} />
+                  </div>
+                )}
               </div>
-              <div className="flex gap-3 mt-6">
-                <button className="bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-emerald-600">
-                  <FileCheck size={16} /> Approuver le showroom
-                </button>
-                <button className="bg-white/5 text-white/80 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-white/10">
-                  <XCircle size={16} /> Rejeter
-                </button>
+              <div>
+                <h3 className="text-white font-bold flex items-center gap-2">
+                  {s.displayName}
+                  {s.verified && <span className="text-[10px] text-[#C9A84C] uppercase font-black tracking-widest">Premium</span>}
+                </h3>
+                <p className="text-xs text-[#555555] mt-1">{s.email}</p>
               </div>
             </div>
-          ))}
 
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/50 mt-8 mb-2">Vendeurs Vérifiés</h2>
-          <div className="bg-[#111116] border border-white/5 rounded-2xl overflow-hidden">
-            {mockSellers.filter(s => s.status === 'approved').map((seller, index) => (
-              <div key={seller.id} className={`p-4 flex items-center justify-between ${index !== 0 ? 'border-t border-white/5' : ''}`}>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-[#C9A84C]">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white">{seller.showroom}</h4>
-                    <p className="text-xs text-white/40">{seller.owner} • Approuvé en {seller.requestedAt}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-white">{seller.activeListings}</div>
-                  <div className="text-[10px] uppercase text-white/40 tracking-wider">Annonces</div>
-                </div>
+            <div className="grid grid-cols-2 lg:flex lg:flex-1 items-center gap-8 border-t lg:border-t-0 lg:border-l border-[#1E1E1E] pt-6 lg:pt-0 lg:pl-8">
+              <div className="space-y-1">
+                <p className="text-[10px] text-[#555555] uppercase font-bold tracking-widest">Contact</p>
+                <p className="text-xs text-[#A0A0A0] flex items-center gap-2"><Phone size={12} /> {s.phone || '--'}</p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right Col - Stats widget */}
-        <div className="space-y-6">
-          <div className="bg-[#111116] border border-white/5 rounded-2xl p-6">
-            <h3 className="text-sm font-semibold text-white/80 mb-4">Métrique Pro</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b border-white/5">
-                <span className="text-white/60">Contrôles en attente</span>
-                <span className="font-bold text-amber-500">1</span>
+              <div className="space-y-1">
+                <p className="text-[10px] text-[#555555] uppercase font-bold tracking-widest">Localisation</p>
+                <p className="text-xs text-[#A0A0A0]">{s.wilaya || 'Non spécifiée'}</p>
               </div>
-              <div className="flex justify-between items-center pb-4 border-b border-white/5">
-                <span className="text-white/60">Vendeurs actifs</span>
-                <span className="font-bold text-emerald-500">142</span>
+              <div className="space-y-1">
+                <p className="text-[10px] text-[#555555] uppercase font-bold tracking-widest">Annonces</p>
+                <p className="text-sm text-white font-bold">12</p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/60">Refus (Ce mois)</span>
-                <span className="font-bold text-white/80">3</span>
+              <div className="space-y-1">
+                <p className="text-[10px] text-[#555555] uppercase font-bold tracking-widest">Membre depuis</p>
+                <p className="text-xs text-[#A0A0A0]">{s.createdAt ? formatDate(s.createdAt) : '--'}</p>
               </div>
             </div>
-          </div>
-        </div>
 
+            <div className="flex items-center gap-3 border-t lg:border-t-0 pt-6 lg:pt-0">
+              <button 
+                onClick={() => handleVerify(s.uid, s.verified || false)}
+                className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
+                  s.verified 
+                    ? 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20' 
+                    : 'bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/20 hover:bg-[#C9A84C]/20 shadow-[0_0_15px_rgba(201,168,76,0.1)]'
+                }`}
+              >
+                <ShieldCheck size={16} />
+                {s.verified ? 'Révoquer' : 'Vérifier'}
+              </button>
+              <button className="p-2.5 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-white transition-all border border-[#2A2A2A]">
+                <ExternalLink size={18} />
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80'],
     sellerId: '1', sellerName: 'Karim D.', sellerPhone: '0555123456',
     isPremium: true, isVerified: true, isSold: false, viewCount: 342, favoriteCount: 45,
-    category: 'voiture', color: 'Blanc', createdAt: '2025-01-01', updatedAt: '2025-01-01',
+    category: 'voiture', color: 'Blanc', status: 'approved', createdAt: '2025-01-01', updatedAt: '2025-01-01',
   },
   {
     id: '2', title: 'Hyundai Tucson 2022 1.6 T-GDI', brand: 'Hyundai', model: 'Tucson',
@@ -34,7 +34,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&q=80'],
     sellerId: '2', sellerName: 'Ahmed B.', sellerPhone: '0555234567',
     isPremium: false, isVerified: true, isSold: false, viewCount: 198, favoriteCount: 22,
-    category: 'suv', color: 'Gris', createdAt: '2025-01-02', updatedAt: '2025-01-02',
+    category: 'suv', color: 'Gris', status: 'approved', createdAt: '2025-01-02', updatedAt: '2025-01-02',
   },
   {
     id: '3', title: 'Mercedes-Benz C 220 AMG Line 2021', brand: 'Mercedes-Benz', model: 'Classe C',
@@ -43,7 +43,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80'],
     sellerId: '3', sellerName: 'Salim M.', sellerPhone: '0555345678',
     isPremium: true, isVerified: false, isSold: false, viewCount: 511, favoriteCount: 78,
-    category: 'voiture', color: 'Noir', createdAt: '2025-01-03', updatedAt: '2025-01-03',
+    category: 'voiture', color: 'Noir', status: 'approved', createdAt: '2025-01-03', updatedAt: '2025-01-03',
   },
   {
     id: '4', title: 'Volkswagen Tiguan 2023 R-Line', brand: 'Volkswagen', model: 'Tiguan',
@@ -52,7 +52,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1581540222194-0def2dda95b8?w=800&q=80'],
     sellerId: '4', sellerName: 'Yacine K.', sellerPhone: '0555456789',
     isPremium: false, isVerified: true, isSold: false, viewCount: 124, favoriteCount: 16,
-    category: 'suv', color: 'Bleu', createdAt: '2025-01-04', updatedAt: '2025-01-04',
+    category: 'suv', color: 'Bleu', status: 'approved', createdAt: '2025-01-04', updatedAt: '2025-01-04',
   },
   {
     id: '5', title: 'BMW Série 3 320i 2020', brand: 'BMW', model: 'Série 3',
@@ -61,7 +61,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80'],
     sellerId: '5', sellerName: 'Rachid A.', sellerPhone: '0555567890',
     isPremium: true, isVerified: true, isSold: false, viewCount: 287, favoriteCount: 41,
-    category: 'voiture', color: 'Gris', createdAt: '2025-01-05', updatedAt: '2025-01-05',
+    category: 'voiture', color: 'Gris', status: 'approved', createdAt: '2025-01-05', updatedAt: '2025-01-05',
   },
   {
     id: '6', title: 'Renault Duster 2022 4x4 Privilege', brand: 'Renault', model: 'Duster',
@@ -70,7 +70,7 @@ const DEMO_CARS: CarListing[] = [
     images: ['https://images.unsplash.com/photo-1539794830467-1f1755804d13?w=800&q=80'],
     sellerId: '6', sellerName: 'Hassan L.', sellerPhone: '0555678901',
     isPremium: false, isVerified: false, isSold: false, viewCount: 93, favoriteCount: 11,
-    category: '4x4', color: 'Rouge', createdAt: '2025-01-06', updatedAt: '2025-01-06',
+    category: '4x4', color: 'Rouge', status: 'approved', createdAt: '2025-01-06', updatedAt: '2025-01-06',
   },
 ];
 

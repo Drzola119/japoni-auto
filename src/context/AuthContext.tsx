@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isPro: false,
       isVerified: false,
       totalListings: 0,
+      suspended: false,
       createdAt: new Date().toISOString(),
     };
     await setDoc(doc(db, 'users', cred.user.uid), { ...userData });
@@ -102,6 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isPro: false,
         isVerified: false,
         totalListings: 0,
+        suspended: false,
         createdAt: new Date().toISOString(),
       };
       await setDoc(docRef, userData);

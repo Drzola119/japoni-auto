@@ -1,156 +1,186 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import { useState, useEffect } from 'react';
-import { Users, Car, AlertTriangle, ShieldCheck, TrendingUp, Clock, Loader2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { collection, getCountFromServer, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { m as motion } from 'framer-motion';
+import { 
+  Car, 
+  Users, 
+  BadgeCheck, 
+  Clock, 
+  TrendingUp, 
+  MapPin, 
+  Calendar,
+  ChevronRight
+} from 'lucide-react';
+import StatsCard from '@/components/admin/StatsCard';
+import RecentListingsTable from '@/components/admin/RecentListingsTable';
+import ActivityFeed from '@/components/admin/ActivityFeed';
+import UsersTable from '@/components/admin/UsersTable';
+import { useAuth } from '@/context/AuthContext';
 
-interface ActivityItem {
-  id: string;
-  user: string;
-  action: string;
-  target: string;
-  time: string;
-}
-
-export default function AdminOverview() {
+export default function AdminDashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
-    users: 0,
-    sellers: 0,
-    listings: 0,
-    reports: 0
+    totalListings: 0,
+    totalUsers: 0,
+    activeSellers: 0,
+    pendingListings: 0
   });
-  const [loading, setLoading] = useState(true);
-  const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      if (!db) return;
-      try {
-        const [userSnap, sellerSnap, listingSnap, reportSnap] = await Promise.all([
-          getCountFromServer(collection(db!, 'users')),
-          getCountFromServer(query(collection(db!, 'users'), where('role', '==', 'seller'))),
-          getCountFromServer(collection(db!, 'listings')),
-          getCountFromServer(collection(db!, 'reports'))
-        ]);
+    // Total Listings
+    const unsubListings = onSnapshot(collection(db!, 'listings'), (snap) => {
+      setStats(prev => ({ ...prev, totalListings: snap.size }));
+    });
 
-        setStats({
-          users: userSnap.data().count,
-          sellers: sellerSnap.data().count,
-          listings: listingSnap.data().count,
-          reports: reportSnap.data().count
-        });
+    // Total Users
+    const unsubUsers = onSnapshot(collection(db!, 'users'), (snap) => {
+      setStats(prev => ({ ...prev, totalUsers: snap.size }));
+    });
 
-        // Fetch recent activities (e.g., last 5 listings)
-        const q = query(collection(db!, 'listings'), orderBy('createdAt', 'desc'), limit(5));
-        const snap = await getDocs(q);
-        setRecentActivities(snap.docs.map(doc => ({
-          id: doc.id,
-          user: doc.data().sellerName,
-          action: 'a publié une annonce',
-          target: doc.data().title,
-          time: 'Récemment'
-        })));
+    // Active Sellers
+    const qSellers = query(collection(db!, 'users'), where('role', '==', 'seller'));
+    const unsubSellers = onSnapshot(qSellers, (snap) => {
+      setStats(prev => ({ ...prev, activeSellers: snap.size }));
+    });
 
-      } catch (error) {
-        console.error('Error fetching admin stats:', error);
-      } finally {
-        setLoading(false);
-      }
+    // Pending Listings
+    const qPending = query(collection(db!, 'listings'), where('status', '==', 'pending'));
+    const unsubPending = onSnapshot(qPending, (snap) => {
+      setStats(prev => ({ ...prev, pendingListings: snap.size }));
+    });
+
+    return () => {
+      unsubListings();
+      unsubUsers();
+      unsubSellers();
+      unsubPending();
     };
-
-    fetchStats();
   }, []);
 
-  const kpis = [
-    { label: 'Utilisateurs', value: stats.users.toLocaleString(), icon: <Users size={24} />, change: '+12%', color: 'from-[#0ea5e9] to-[#38bdf8]' },
-    { label: 'Vendeurs Pro', value: stats.sellers.toLocaleString(), icon: <ShieldCheck size={24} />, change: '+5%', color: 'from-[#10b981] to-[#34d399]' },
-    { label: 'Annonces Actives', value: stats.listings.toLocaleString(), icon: <Car size={24} />, change: '+18%', color: 'from-[#C9A84C] to-[#E8C96A]' },
-    { label: 'Signalements', value: stats.reports.toLocaleString(), icon: <AlertTriangle size={24} />, change: '0%', color: 'from-rose-500 to-red-400' },
-  ];
-
-  if (loading) {
-    return (
-      <div className="h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-[#C9A84C] animate-spin" />
-      </div>
-    );
-  }
+  const today = new Intl.DateTimeFormat('fr-FR', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  }).format(new Date());
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold font-cormorant text-white tracking-wide">Vue d&apos;ensemble</h1>
-        <p className="text-white/50 text-sm mt-1">Gérez la plateforme Japoni Auto d&apos;un coup d&apos;œil.</p>
-      </div>
-
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((kpi, index) => (
-          <div key={index} className="bg-[#111116] border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${kpi.color} opacity-5 rounded-full blur-2xl -mr-10 -mt-10 transition-opacity group-hover:opacity-10`} />
-            <div className="flex justify-between items-start mb-4">
-              <div className="text-white/50 text-sm font-medium">{kpi.label}</div>
-              <div className="text-white/20 group-hover:text-[#C9A84C] transition-colors">{kpi.icon}</div>
-            </div>
-            <div className="flex items-end justify-between">
-              <div className="text-3xl font-semibold text-white">{kpi.value}</div>
-              <div className={`text-xs font-semibold ${kpi.change.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'} bg-white/5 px-2 py-1 rounded-md`}>
-                {kpi.change}
-              </div>
-            </div>
+    <div className="space-y-8 pb-12">
+      {/* Welcome Banner */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl bg-[#111111] border border-[#2A2A2A] p-8 shadow-2xl"
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C9A84C]/5 blur-[100px] rounded-full -mr-20 -mt-20" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#C9A84C]/5 blur-[80px] rounded-full -ml-20 -mb-20" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-3xl font-serif text-white font-light">
+              Bonjour, <span className="font-bold text-[#C9A84C]">{user?.displayName || 'Admin'}</span> 👋
+            </h2>
+            <p className="text-[#A0A0A0] mt-2 font-medium">
+              Voici ce qui se passe sur <span className="text-white">Japoni Auto</span> aujourd&apos;hui.
+            </p>
           </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Chart Placeholder */}
-        <div className="lg:col-span-2 bg-[#111116] border border-white/5 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-lg font-semibold text-white">Évolution des annonces</h2>
-            <select className="bg-[#0a0a0f] border border-white/10 text-white/70 text-sm rounded-lg px-3 py-1.5 outline-none">
-              <option>Ces 30 jours</option>
-              <option>Ces 7 jours</option>
-            </select>
-          </div>
-          <div className="flex items-center justify-center h-[280px] border border-dashed border-white/10 rounded-xl bg-white/[0.02]">
-            <div className="text-center">
-              <TrendingUp className="w-8 h-8 text-white/20 mx-auto mb-3" />
-              <p className="text-sm text-white/40">Graphique des tendances (Intégration Recharts recommandée)</p>
-            </div>
+          
+          <div className="flex items-center gap-3 px-6 py-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-2xl">
+            <Calendar size={18} className="text-[#C9A84C]" />
+            <span className="text-sm font-bold text-[#F5F0E8] capitalize">{today}</span>
           </div>
         </div>
+      </motion.div>
 
-        {/* Activity Feed */}
-        <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 flex flex-col">
-          <h2 className="text-lg font-semibold text-white mb-6">Activité Récente</h2>
-          <div className="flex-1 space-y-6">
-            {recentActivities.map((act) => (
-              <div key={act.id} className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-[#1a1a20] border border-white/10 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-[#C9A84C]">{act.user?.charAt(0) || 'U'}</span>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <StatsCard 
+          icon={Car} 
+          value={stats.totalListings} 
+          label="Annonces Totales" 
+          trend={{ value: "+12% ce mois", isPositive: true }}
+          delay={0.1}
+        />
+        <StatsCard 
+          icon={Users} 
+          value={stats.totalUsers} 
+          label="Utilisateurs Inscrits" 
+          trend={{ value: "+8% ce mois", isPositive: true }}
+          delay={0.2}
+        />
+        <StatsCard 
+          icon={BadgeCheck} 
+          value={stats.activeSellers} 
+          label="Vendeurs Actifs" 
+          delay={0.3}
+        />
+        <StatsCard 
+          icon={Clock} 
+          value={stats.pendingListings} 
+          label="En Attente" 
+          delay={0.4}
+        />
+      </div>
+
+      {/* Main Grid Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left: Recent Listings */}
+        <div className="lg:col-span-2">
+          <RecentListingsTable />
+        </div>
+
+        {/* Right: Activity Feed */}
+        <div className="lg:col-span-1">
+          <ActivityFeed />
+        </div>
+      </div>
+
+      {/* Bottom Grid Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Wilayas Chart Placeholder (Custom CSS Bars) */}
+        <div className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-white font-serif text-lg font-semibold border-l-2 border-[#C9A84C] pl-3">
+              Annonces par Wilaya
+            </h3>
+            <button className="text-[10px] text-[#C9A84C] font-bold uppercase tracking-widest flex items-center gap-1 hover:opacity-70 transition-opacity">
+              Détails <ChevronRight size={12} />
+            </button>
+          </div>
+          
+          <div className="space-y-5">
+            {[
+              { name: 'Alger', count: 1420, percent: 85 },
+              { name: 'Oran', count: 850, percent: 65 },
+              { name: 'Blida', count: 620, percent: 45 },
+              { name: 'Sétif', count: 430, percent: 35 },
+              { name: 'Constantine', count: 390, percent: 30 },
+              { name: 'Annaba', count: 210, percent: 15 },
+            ].map((w, i) => (
+              <div key={w.name}>
+                <div className="flex justify-between text-[11px] font-bold mb-2">
+                  <span className="text-[#A0A0A0] uppercase tracking-wider">{w.name}</span>
+                  <span className="text-white">{w.count}</span>
                 </div>
-                <div>
-                  <p className="text-sm text-white/90">
-                    <span className="font-semibold">{act.user}</span> {act.action} <span className="font-medium text-[#C9A84C]">{act.target}</span>
-                  </p>
-                  <div className="flex items-center gap-1 mt-1 text-[11px] text-white/40 font-medium">
-                    <Clock size={12} /> {act.time}
-                  </div>
+                <div className="h-2 bg-[#0A0A0A] rounded-full overflow-hidden border border-[#2A2A2A]">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${w.percent}%` }}
+                    transition={{ delay: i * 0.1, duration: 1, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-[#A07830] to-[#C9A84C]"
+                  />
                 </div>
               </div>
             ))}
           </div>
-          <button className="w-full text-center text-[13px] font-medium text-[#C9A84C] mt-6 py-2 border border-[#C9A84C]/20 rounded-lg hover:bg-[#C9A84C]/10 transition-colors">
-            Voir tout l&apos;historique
-          </button>
         </div>
+
+        {/* Right: Recent Users */}
+        <UsersTable />
       </div>
-      
     </div>
   );
 }
