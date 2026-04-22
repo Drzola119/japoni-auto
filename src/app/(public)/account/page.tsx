@@ -2,7 +2,8 @@
 
 export const dynamic = 'force-dynamic';
 
-import { Settings, LogOut, FileText, Lock } from 'lucide-react';
+import { Settings, LogOut, FileText, Lock, Shield } from 'lucide-react';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -50,6 +51,12 @@ export default function AccountPage() {
               <FileText size={18} />
               Mes Données (RGPD)
             </button>
+            {(user.role === 'admin' || user.email === 'zickowiko@gmail.com') && (
+              <Link href="/admin" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 text-[#C9A84C] font-bold text-sm transition-colors mt-4">
+                <Shield size={18} />
+                Dashboard Admin
+              </Link>
+            )}
             <div className="pt-4 mt-4 border-t border-white/5">
               <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-rose-500/10 text-rose-500 font-medium text-sm transition-colors">
                 <LogOut size={18} />

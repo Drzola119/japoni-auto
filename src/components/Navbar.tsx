@@ -169,7 +169,7 @@ export default function Navbar() {
                               <Shield className="w-4 h-4" /> Espace Vendeur
                             </Link>
                           )}
-                          {user.role === 'admin' && (
+                          {(user.role === 'admin' || user.email === 'zickowiko@gmail.com') && (
                             <Link href="/admin" onClick={() => setProfileOpen(false)}
                               className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
                               <Shield className="w-4 h-4" /> {t('nav.admin')}
