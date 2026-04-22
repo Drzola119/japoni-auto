@@ -10,8 +10,10 @@ import {
   BadgeCheck, 
   Clock, 
   Calendar,
-  ChevronRight
+  ChevronRight,
+  AlertTriangle
 } from 'lucide-react';
+import Link from 'next/link';
 import StatsCard from '@/components/admin/StatsCard';
 import RecentListingsTable from '@/components/admin/RecentListingsTable';
 import ActivityFeed from '@/components/admin/ActivityFeed';
@@ -122,6 +124,32 @@ export default function AdminDashboard() {
           delay={0.4}
         />
       </div>
+
+      {/* Pending Alert Banner */}
+      {stats.pendingListings > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-[#F39C12]/10 border border-[#F39C12]/30 rounded-2xl p-4 flex items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-3">
+            <AlertTriangle size={20} className="text-[#F39C12]" />
+            <div>
+              <p className="text-white font-medium">
+                ⚡ {stats.pendingListings} annonce{stats.pendingListings !== 1 ? 's' : ''} attendent votre approbation
+              </p>
+              <p className="text-xs text-[#A0A0A0]">Traitez-les rapidement dans la file d&apos;attente</p>
+            </div>
+          </div>
+          <Link
+            href="/admin/queue"
+            className="flex items-center gap-2 px-4 py-2 bg-[#F39C12] text-black font-medium rounded-xl hover:bg-[#E8C96A] transition-all"
+          >
+            Traiter maintenant
+            <ChevronRight size={16} />
+          </Link>
+        </motion.div>
+      )}
 
       {/* Main Grid Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -8,25 +8,35 @@ import {
   Car, 
   Users, 
   BadgeCheck, 
+  BarChart2,
   BarChart3, 
   Activity, 
   Settings, 
   LogOut,
   X,
-  Shield
+  Shield,
+  LucideIcon,
+  Inbox,
+  Megaphone
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
+import {
+  collection, query, where, onSnapshot
+} from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface SidebarItemProps {
   href: string;
-  icon: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  icon: LucideIcon;
   label: string;
   active: boolean;
+  badge?: number;
   onClick?: () => void;
 }
 
-function SidebarItem({ href, icon: Icon, label, active, onClick }: SidebarItemProps) {
+function SidebarItem({ href, icon: Icon, label, active, badge, onClick }: SidebarItemProps) {
   return (
     <Link href={href} onClick={onClick}>
       <motion.div
@@ -40,7 +50,12 @@ function SidebarItem({ href, icon: Icon, label, active, onClick }: SidebarItemPr
         )}
       >
         <Icon size={18} className={cn(active ? "text-[#C9A84C]" : "text-[#555555] group-hover:text-white")} />
-        {label}
+        <span className="flex-1">{label}</span>
+        {badge !== undefined && badge > 0 && (
+          <span className="bg-[#F39C12]/20 text-[#F39C12] text-xs px-2 py-0.5 rounded-full">
+            {badge}
+          </span>
+        )}
       </motion.div>
     </Link>
   );
@@ -54,6 +69,14 @@ interface Props {
 export default function AdminSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    if (!db) return
+    const q = query(collection(db, 'listings'), where('status', '==', 'pending'))
+    const unsub = onSnapshot(q, (snap) => setPendingCount(snap.size))
+    return () => unsub()
+  }, [])
 
   const sections = [
     {
@@ -61,6 +84,7 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
       items: [
         { href: "/admin", icon: LayoutDashboard, label: "Tableau de Bord" },
         { href: "/admin/listings", icon: Car, label: "Annonces" },
+        { href: "/admin/queue", icon: Inbox, label: "File d'attente", badge: pendingCount },
         { href: "/admin/users", icon: Users, label: "Utilisateurs" },
         { href: "/admin/sellers", icon: BadgeCheck, label: "Vendeurs" },
       ]
@@ -68,21 +92,22 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
     {
       title: "ANALYSE",
       items: [
+        { href: "/admin/analytics", icon: BarChart2, label: "Analytics" },
         { href: "/admin/reports", icon: BarChart3, label: "Rapports" },
-        { href: "/admin/security", icon: Activity, label: "Activité" },
+        { href: "/admin/security", icon: Shield, label: "Sécurité & Audit" },
       ]
     },
     {
       title: "SYSTÈME",
       items: [
         { href: "/admin/settings", icon: Settings, label: "Paramètres" },
+        { href: "/admin/broadcast", icon: Megaphone, label: "Diffusion" },
       ]
     }
   ];
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-[#0D0D0D] border-r border-[#1E1E1E]">
-      {/* Logo */}
       <div className="p-6">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-lg bg-[#C9A84C] flex items-center justify-center text-[#07070C] font-bold shadow-[0_0_15px_rgba(201,168,76,0.3)]">
@@ -95,7 +120,6 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent mt-6 opacity-30" />
       </div>
 
-      {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-4">
         {sections.map((section, idx) => (
           <div key={idx} className="mb-6">
@@ -116,7 +140,6 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
         ))}
       </div>
 
-      {/* Bottom Profile */}
       <div className="p-4 border-t border-[#1E1E1E] bg-[#0A0A0A]/50">
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#111111] border border-[#2A2A2A]">
           <div className="w-10 h-10 rounded-full bg-[#C9A84C] flex items-center justify-center text-[#07070C] font-bold border-2 border-[#0D0D0D] shadow-[0_0_10px_rgba(201,168,76,0.2)]">
@@ -144,12 +167,10 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 z-50">
         {sidebarContent}
       </aside>
 
-      {/* Mobile Drawer */}
       <AnimatePresence>
         {isOpen && (
           <>
