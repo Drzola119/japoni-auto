@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ import toast from 'react-hot-toast';
 export default function AccountPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState('general');
 
   const handleLogout = async () => {
     try {
@@ -39,16 +41,25 @@ export default function AccountPage() {
           
           {/* Sidebar Menu */}
           <div className="md:col-span-1 space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium text-sm transition-colors">
-              <Settings size={18} className="text-[#C9A84C]" />
+            <button 
+              onClick={() => setActiveTab('general')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'general' ? 'bg-white/5 border border-white/10 text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            >
+              <Settings size={18} className={activeTab === 'general' ? 'text-[#C9A84C]' : ''} />
               Profil Général
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white font-medium text-sm transition-colors">
-              <Lock size={18} />
+            <button 
+              onClick={() => setActiveTab('security')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'security' ? 'bg-white/5 border border-white/10 text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            >
+              <Lock size={18} className={activeTab === 'security' ? 'text-[#C9A84C]' : ''} />
               Sécurité & Mot de passe
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-white/60 hover:text-white font-medium text-sm transition-colors">
-              <FileText size={18} />
+            <button 
+              onClick={() => setActiveTab('data')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'data' ? 'bg-white/5 border border-white/10 text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            >
+              <FileText size={18} className={activeTab === 'data' ? 'text-[#C9A84C]' : ''} />
               Mes Données (RGPD)
             </button>
             {(user.role === 'admin' || user.email === 'zickowiko@gmail.com') && (

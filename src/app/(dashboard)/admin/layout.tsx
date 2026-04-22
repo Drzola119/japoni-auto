@@ -23,7 +23,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [user, loading, router]);
 
   if (loading || !user || (user.role !== 'admin' && user.email !== 'zickowiko@gmail.com')) {
-    return <LoadingScreen onComplete={() => {}} />;
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#C9A84C]/20 border-t-[#C9A84C] rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
