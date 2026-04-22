@@ -9,8 +9,6 @@ import {
   Users, 
   BadgeCheck, 
   Clock, 
-  TrendingUp, 
-  MapPin, 
   Calendar,
   ChevronRight
 } from 'lucide-react';

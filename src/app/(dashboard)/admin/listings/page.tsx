@@ -22,7 +22,6 @@ import { CarListing } from '@/types';
 
 export default function AdminListings() {
   const [listings, setListings] = useState<CarListing[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -33,7 +32,6 @@ export default function AdminListings() {
     const q = query(collection(db!, 'listings'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setListings(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as CarListing)));
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);

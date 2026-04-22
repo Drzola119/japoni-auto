@@ -17,13 +17,11 @@ import { AuditLog } from '@/types';
 
 export default function AdminSecurity() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const q = query(collection(db!, 'security_logs'), orderBy('createdAt', 'desc'), limit(50));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setLogs(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as AuditLog)));
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -78,7 +76,7 @@ export default function AdminSecurity() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1E1E1E]">
-                  {logs.length > 0 ? logs.map((log, i) => (
+                  {logs.length > 0 ? logs.map((log) => (
                     <motion.tr 
                       key={log.id}
                       initial={{ opacity: 0 }}

@@ -11,14 +11,12 @@ import { User as UserType } from '@/types';
 
 export default function AdminSellers() {
   const [sellers, setSellers] = useState<UserType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const q = query(collection(db!, 'users'), where('role', '==', 'seller'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setSellers(snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as unknown as UserType)));
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -30,7 +28,7 @@ export default function AdminSellers() {
         verifiedAt: !isVerified ? serverTimestamp() : null
       });
       toast.success(isVerified ? 'Vérification retirée' : 'Vendeur vérifié avec succès');
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la mise à jour');
     }
   };

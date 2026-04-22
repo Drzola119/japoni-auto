@@ -19,13 +19,11 @@ import { Report } from '@/types';
 
 export default function AdminReports() {
   const [reports, setReports] = useState<Report[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const q = query(collection(db!, 'reports'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setReports(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as Report)));
-      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -34,7 +32,7 @@ export default function AdminReports() {
     try {
       await updateDoc(doc(db!, 'reports', id), { status });
       toast.success('Statut du rapport mis à jour');
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la mise à jour');
     }
   };
@@ -44,7 +42,7 @@ export default function AdminReports() {
       try {
         await deleteDoc(doc(db!, 'reports', id));
         toast.success('Rapport supprimé');
-      } catch (error) {
+      } catch {
         toast.error('Erreur lors de la suppression');
       }
     }
@@ -103,7 +101,7 @@ export default function AdminReports() {
                   
                   <div className="flex items-center gap-2">
                     <button className="p-2.5 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-[#C9A84C] transition-all border border-[#2A2A2A] flex items-center gap-2 text-xs font-bold uppercase tracking-widest px-4">
-                      <ExternalLink size={14} /> Voir l'annonce
+                      <ExternalLink size={14} /> Voir l&apos;annonce
                     </button>
                     <button 
                       onClick={() => handleUpdateStatus(r.id, 'resolved')}

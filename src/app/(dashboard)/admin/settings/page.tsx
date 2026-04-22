@@ -45,8 +45,8 @@ export default function AdminSettings() {
     try {
       await setDoc(doc(db!, 'settings', 'general'), settings);
       toast.success('Paramètres enregistrés avec succès');
-    } catch (error) {
-      toast.error('Erreur lors de l\'enregistrement');
+    } catch {
+      toast.error("Erreur lors de l'enregistrement");
     } finally {
       setLoading(false);
     }

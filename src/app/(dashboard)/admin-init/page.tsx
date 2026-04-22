@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -30,9 +30,10 @@ export default function AdminInitPage() {
         isVerified: true
       });
       setStatus('success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || 'Une erreur est survenue');
+      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue';
+      setError(errorMessage);
       setStatus('error');
     }
   };
@@ -126,7 +127,7 @@ export default function AdminInitPage() {
 
         <div className="mt-8 pt-8 border-t border-[#1E1E1E]">
           <p className="text-[10px] text-[#555555] italic">
-            Une fois l'opération terminée, il est recommandé de supprimer cette page pour des raisons de sécurité.
+            Une fois l&apos;opération terminée, il est recommandé de supprimer cette page pour des raisons de sécurité.
           </p>
         </div>
       </motion.div>

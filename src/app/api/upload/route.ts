@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
     const url = await uploadToBunny(buffer, fileName);
 
     return NextResponse.json({ success: true, url, fileName });
-  } catch (e) {
-    console.error(e);
+  } catch (err: unknown) {
+    console.error(err);
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }
@@ -35,7 +35,7 @@ export async function DELETE(req: NextRequest) {
     if (!fileName) return NextResponse.json({ error: 'No fileName' }, { status: 400 });
     await deleteFromBunny(fileName);
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
   }
 }
