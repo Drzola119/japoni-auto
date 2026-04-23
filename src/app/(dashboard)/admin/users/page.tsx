@@ -168,7 +168,7 @@ export default function AdminUsers() {
               <p className="text-[10px] text-[#555555] font-bold uppercase tracking-widest">Inscrit le {(u.createdAt as any) ? formatDate(u.createdAt) : '--'}</p>
               <div className="flex items-center gap-2">
                 <button 
-                  onClick={() => handleToggleStatus(u.uid, u.suspended)}
+                  onClick={() => handleToggleStatus(u.uid, u.suspended || false)}
                   className={`p-2 rounded-xl transition-all ${u.suspended ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'}`}
                   title={u.suspended ? 'Réactiver' : 'Suspendre'}
                 >

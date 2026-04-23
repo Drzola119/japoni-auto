@@ -17,7 +17,8 @@ import {
   Shield,
   LucideIcon,
   Inbox,
-  Megaphone
+  Megaphone,
+  Search
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
@@ -26,6 +27,7 @@ import {
   collection, query, where, onSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Building2 } from 'lucide-react';
 
 interface SidebarItemProps {
   href: string;
@@ -70,11 +72,19 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [pendingCount, setPendingCount] = useState(0)
+  const [showroomAppCount, setShowroomAppCount] = useState(0)
 
   useEffect(() => {
     if (!db) return
     const q = query(collection(db, 'listings'), where('status', '==', 'pending'))
     const unsub = onSnapshot(q, (snap) => setPendingCount(snap.size))
+    return () => unsub()
+  }, [])
+
+  useEffect(() => {
+    if (!db) return
+    const q = query(collection(db, 'showroomApplications'), where('status', '==', 'pending'))
+    const unsub = onSnapshot(q, (snap) => setShowroomAppCount(snap.size))
     return () => unsub()
   }, [])
 
@@ -85,6 +95,7 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
         { href: "/admin", icon: LayoutDashboard, label: "Tableau de Bord" },
         { href: "/admin/listings", icon: Car, label: "Annonces" },
         { href: "/admin/queue", icon: Inbox, label: "File d'attente", badge: pendingCount },
+        { href: "/admin/showroom-applications", icon: Building2, label: "Demandes Showroom", badge: showroomAppCount },
         { href: "/admin/users", icon: Users, label: "Utilisateurs" },
         { href: "/admin/sellers", icon: BadgeCheck, label: "Vendeurs" },
       ]
@@ -93,8 +104,10 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
       title: "ANALYSE",
       items: [
         { href: "/admin/analytics", icon: BarChart2, label: "Analytics" },
+        { href: "/admin/search-analytics", icon: Search, label: "Recherches" },
+        { href: "/admin/tracking", icon: Activity, label: "Suivi & S&#233;curit&#233;" },
         { href: "/admin/reports", icon: BarChart3, label: "Rapports" },
-        { href: "/admin/security", icon: Shield, label: "Sécurité & Audit" },
+        { href: "/admin/security", icon: Shield, label: "S&#233;curit&#233; & Audit" },
       ]
     },
     {

@@ -18,10 +18,13 @@ import StatsCard from '@/components/admin/StatsCard';
 import RecentListingsTable from '@/components/admin/RecentListingsTable';
 import ActivityFeed from '@/components/admin/ActivityFeed';
 import UsersTable from '@/components/admin/UsersTable';
+import TopSearchesWidget from '@/components/admin/TopSearchesWidget';
+import { DashboardHomeSkeleton } from '@/components/admin/Skeletons';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalListings: 0,
     totalUsers: 0,
@@ -52,6 +55,8 @@ export default function AdminDashboard() {
       setStats(prev => ({ ...prev, pendingListings: snap.size }));
     });
 
+    setLoading(false);
+
     return () => {
       unsubListings();
       unsubUsers();
@@ -66,6 +71,10 @@ export default function AdminDashboard() {
     month: 'long', 
     year: 'numeric' 
   }).format(new Date());
+
+  if (loading) {
+    return <DashboardHomeSkeleton />;
+  }
 
   return (
     <div className="space-y-8 pb-12">
@@ -206,6 +215,13 @@ export default function AdminDashboard() {
 
         {/* Right: Recent Users */}
         <UsersTable />
+      </div>
+
+      {/* Top Searches Widget */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1">
+          <TopSearchesWidget />
+        </div>
       </div>
     </div>
   );

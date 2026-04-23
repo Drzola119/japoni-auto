@@ -1,42 +1,16 @@
-export type Language = 'fr' | 'ar';
+// Core Role Types
+export type UserRole = 'buyer' | 'seller' | 'showroom' | 'admin';
+export type UserStatus = 'active' | 'pending' | 'rejected' | 'suspended';
+export type ShowroomTier = 'bronze' | 'silver' | 'gold';
+export type VideoPlatform = 'youtube' | 'facebook' | 'instagram' | 'tiktok' | 'dailymotion';
+export type ApplicationStatus = 'pending' | 'approved' | 'rejected';
+export type ListingStatus = 'pending' | 'approved' | 'rejected' | 'sold';
+export type FuelType = 'essence' | 'diesel' | 'electrique' | 'hybride' | 'gpl';
+export type TransmissionType = 'manuelle' | 'automatique';
+export type ConditionType = 'neuf' | 'occasion' | 'accidente';
+export type CategoryType = 'voiture' | 'suv' | '4x4' | 'utilitaire' | 'camion' | 'moto';
 
-export interface CarListing {
-  id: string;
-  title: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  fuel: 'essence' | 'diesel' | 'electrique' | 'hybride' | 'gpl';
-  transmission: 'manuelle' | 'automatique';
-  condition: 'neuf' | 'occasion' | 'accidente';
-  wilaya: string;
-  description: string;
-  images: string[];
-  sellerId: string;
-  sellerName: string;
-  sellerPhone: string;
-  sellerWhatsapp?: string;
-  isPremium: boolean;
-  isVerified: boolean;
-  isSold: boolean;
-  viewCount: number;
-  favoriteCount: number;
-  category: 'voiture' | 'suv' | '4x4' | 'utilitaire' | 'camion' | 'moto';
-  color: string;
-  doors?: number;
-  seats?: number;
-  engineSize?: string;
-  power?: string;
-  importedFrom?: string;
-  firstOwner?: boolean;
-  warranty?: boolean;
-  status: 'pending' | 'approved' | 'rejected' | 'sold';
-  createdAt: string;
-  updatedAt: string;
-}
-
+// User Document Interface
 export interface User {
   uid: string;
   email: string;
@@ -45,17 +19,129 @@ export interface User {
   phone?: string;
   whatsapp?: string;
   wilaya?: string;
-  role: 'user' | 'seller' | 'admin';
-  isPro: boolean;
-  isVerified: boolean;
-  totalListings: number;
-  rating?: number;
-  suspended: boolean;
-  verifiedAt?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  verified?: boolean;
+  role: UserRole;
+  status: UserStatus;
+  suspended?: boolean;
   createdAt: string;
+  
+  // Seller-specific
+  dailyPostCount?: number;
+  lastPostDate?: string;
+  
+  // Showroom-specific
+  showroomTier?: ShowroomTier;
+  showroomName?: string;
+  showroomApplicationId?: string;
+  showroomAddress?: string;
+  showroomWilaya?: string;
+  isVerified?: boolean;
+  
+  // Legacy fields (for backwards compatibility)
+  isPro?: boolean;
+  totalListings?: number;
+  rating?: number;
+  verified?: boolean;
 }
 
+// Showroom Application Interface
+export interface ShowroomApplication {
+  id: string;
+  
+  // User reference (set after creation)
+  userId?: string;
+  
+  // Owner info
+  ownerName: string;
+  email: string;
+  phone: string;
+  wilaya: string;
+  tempPassword?: string;
+  
+  // Business info
+  showroomName: string;
+  nif: string;
+  registreCommerce: string;
+  address: string;
+  showroomWilaya: string;
+  
+  // Documents
+  documents?: {
+    registreCommerce?: string;
+    nif?: string;
+    officialDocument?: string;
+  };
+  
+  // Workflow
+  status: ApplicationStatus;
+  tier?: ShowroomTier;
+  adminNote?: string;
+  
+  // Timestamps
+  createdAt?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+}
+
+// Video Link Interface
+export interface VideoLink {
+  url: string;
+  platform: VideoPlatform;
+  embedId: string;
+  thumbnailUrl?: string;
+}
+
+// Car Listing Interface
+export interface CarListing {
+  id: string;
+  title: string;
+  brand: string;
+  model: string;
+  year: number;
+  price: number;
+  mileage: number;
+  fuel: FuelType;
+  transmission: TransmissionType;
+  condition: ConditionType;
+  wilaya: string;
+  description: string;
+  images: string[];
+  mainImage?: string;
+  videoUrl?: string;
+  videoUrlRaw?: string;
+  
+  sellerId?: string;
+  sellerRole?: 'seller' | 'showroom';
+  sellerName?: string;
+  sellerWilaya?: string;
+  sellerPhone?: string;
+  sellerWhatsapp?: string;
+  
+  isPremium?: boolean;
+  isVerified?: boolean;
+  isSold?: boolean;
+  isExpired?: boolean;
+  viewCount?: number;
+  favoriteCount?: number;
+  
+category?: CategoryType;
+  color?: string;
+  doors?: number;
+  seats?: number;
+  engineSize?: string;
+  power?: string;
+  importedFrom?: string;
+  firstOwner?: boolean;
+  warranty?: boolean;
+  
+  expiresAt?: string;
+  postedDate?: string;
+  
+  status?: ListingStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Filter State Interface
 export interface FilterState {
   brand?: string;
   model?: string;
@@ -72,29 +158,7 @@ export interface FilterState {
   sortBy: 'recent' | 'price-asc' | 'price-desc' | 'mileage' | 'year';
 }
 
-export const WILAYAS = [
-  '01 - Adrar', '02 - Chlef', '03 - Laghouat', '04 - Oum El Bouaghi', '05 - Batna', '06 - Béjaïa', '07 - Biskra',
-  '08 - Béchar', '09 - Blida', '10 - Bouïra', '11 - Tamanrasset', '12 - Tébessa', '13 - Tlemcen', '14 - Tiaret',
-  '15 - Tizi Ouzou', '16 - Alger', '17 - Djelfa', '18 - Jijel', '19 - Sétif', '20 - Saïda', '21 - Skikda',
-  '22 - Sidi Bel Abbès', '23 - Annaba', '24 - Guelma', '25 - Constantine', '26 - Médéa', '27 - Mostaganem',
-  "28 - M'Sila", '29 - Mascara', '30 - Ouargla', '31 - Oran', '32 - El Bayadh', '33 - Illizi',
-  '34 - Bordj Bou Arréridj', '35 - Boumerdès', '36 - El Tarf', '37 - Tindouf', '38 - Tissemsilt',
-  '39 - El Oued', '40 - Khenchela', '41 - Souk Ahras', '42 - Tipaza', '43 - Mila', '44 - Aïn Defla', '45 - Naâma',
-  '46 - Aïn Témouchent', '47 - Ghardaïa', '48 - Relizane', '49 - Timimoun', '50 - Bordj Badji Mokhtar',
-  '51 - Ouled Djellal', '52 - Béni Abbès', '53 - In Salah', '54 - In Guezzam', '55 - Touggourt',
-  '56 - Djanet', "57 - El M'Ghair", '58 - El Meniaâ', '59 - Aflou', '60 - Bir El Ater', '61 - El Kantara',
-  '62 - Barika', '63 - El Aricha', '64 - Ksar Chellala', '65 - Aïn Oussera', '66 - Messaad',
-  '67 - Ksar El Boukhari', '68 - Bou Saâda', '69 - El Abiodh Sidi Cheikh'
-] as const;
-
-export const CAR_BRANDS = [
-  'Toyota', 'Hyundai', 'Volkswagen', 'Renault', 'Peugeot', 'Citroën',
-  'Mercedes-Benz', 'BMW', 'Audi', 'Ford', 'Chevrolet', 'Kia', 'Nissan',
-  'Honda', 'Mitsubishi', 'Suzuki', 'Dacia', 'Fiat', 'Opel', 'Seat',
-  'Skoda', 'Volvo', 'Mazda', 'Subaru', 'Lexus', 'Jeep', 'Land Rover',
-  'Range Rover', 'Tesla', 'BYD', 'Great Wall', 'Chery', 'JAC',
-] as const;
-
+// Inquiry Interface
 export interface Inquiry {
   id: string;
   listingId: string;
@@ -106,6 +170,7 @@ export interface Inquiry {
   updatedAt: string;
 }
 
+// Report Interface
 export interface Report {
   id: string;
   targetType: 'listing' | 'user';
@@ -120,6 +185,7 @@ export interface Report {
   reviewedBy?: string;
 }
 
+// Audit Log Interface
 export interface AuditLog {
   id: string;
   actorId: string;
@@ -135,6 +201,7 @@ export interface AuditLog {
   createdAt: string;
 }
 
+// Favorite Interface
 export interface Favorite {
   id: string;
   userId: string;
@@ -142,6 +209,7 @@ export interface Favorite {
   createdAt: string;
 }
 
+// Notification Interface
 export interface Notification {
   id: string;
   userId: string;
@@ -152,3 +220,63 @@ export interface Notification {
   relatedId?: string;
   createdAt: string;
 }
+
+// Language type (for i18n)
+export type Language = 'fr' | 'ar';
+
+// Tier Pricing (DA per month)
+export const SHOWROOM_PRICING = {
+  bronze: 2900,
+  silver: 5900,
+  gold: 9900,
+} as const;
+
+export const DAILY_LIMITS = {
+  buyer: 0,
+  seller: 1,
+  showroom: {
+    bronze: 20,
+    silver: 50,
+    gold: Infinity,
+  },
+} as const;
+
+export const IMAGE_LIMITS = {
+  seller: 1,
+  showroom: 4,
+} as const;
+
+export const EXPIRY_DAYS = {
+  seller: 30,
+  showroom: 60,
+  gold: 9999,
+} as const;
+
+// WILAYAS - Clean list without numbers for dropdowns
+export const WILAYAS = [
+  'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna',
+  'Béjaïa', 'Biskra', 'Béchar', 'Blida', 'Bouïra',
+  'Tamanrasset', 'Tébessa', 'Tlemcen', 'Tiaret', 'Tizi Ouzou',
+  'Alger', 'Djelfa', 'Jijel', 'Sétif', 'Saïda',
+  'Skikda', 'Sidi Bel Abbès', 'Annaba', 'Guelma', 'Constantine',
+  'Médéa', 'Mostaganem', "M'Sila", 'Mascara', 'Ouargla',
+  'Oran', 'El Bayadh', 'Illizi', 'Bordj Bou Arréridj', 'Boumerdès',
+  'El Tarf', 'Tindouf', 'Tissemsilt', 'El Oued', 'Khenchela',
+  'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma',
+  'Aïn Témouchent', 'Ghardaïa', 'Relizane'
+] as const;
+
+// CAR BRANDS
+export const CAR_BRANDS = [
+  'Toyota', 'Hyundai', 'Volkswagen', 'Renault', 'Peugeot', 'Citroën',
+  'Mercedes-Benz', 'BMW', 'Audi', 'Ford', 'Chevrolet', 'Kia', 'Nissan',
+  'Honda', 'Mitsubishi', 'Suzuki', 'Dacia', 'Fiat', 'Opel', 'Seat',
+  'Skoda', 'Volvo', 'Mazda', 'Subaru', 'Lexus', 'Jeep', 'Land Rover',
+  'Range Rover', 'Tesla', 'BYD', 'Great Wall', 'Chery', 'JAC',
+  'Porsche', 'Lamborghini', 'Ferrari', 'Maserati', 'Rolls Royce', 'Bentley',
+  'McLaren', 'Aston Martin', 'Bugatti', 'Jaguar', 'Alfa Romeo', 'Dodge'
+] as const;
+
+// Export all as const for type safety
+export type WILAYA = typeof WILAYAS[number];
+export type CAR_BRAND = typeof CAR_BRANDS[number];

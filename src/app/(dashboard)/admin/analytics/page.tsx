@@ -11,6 +11,7 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts'
 import { Car, Users, CheckCircle, Eye, TrendingUp, BarChart2, Download } from 'lucide-react'
+import { AnalyticsPageSkeleton, KPIRowSkeleton, ChartSkeleton, DonutSkeleton } from '@/components/admin/Skeletons'
 
 const GOLD = '#C9A84C'
 const COLORS = ['#C9A84C','#3498DB','#2ECC71','#E74C3C','#9B59B6','#F39C12','#1ABC9C','#E67E22']
@@ -54,10 +55,6 @@ function useCounter(target: number, duration = 1200) {
     return () => clearInterval(t)
   }, [target, duration])
   return val
-}
-
-function Skel({ h }: { h: string }) {
-  return <div className={`animate-pulse bg-[#1A1A1A] rounded-xl ${h}`} />
 }
 
 const Tip = ({ active, payload, label }: {
@@ -181,6 +178,10 @@ export default function AnalyticsPage() {
   const avg     = prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : 0
   const maxDay  = Math.max(...dayData.map(d=>d.count),1)
 
+  if (loading) {
+    return <AnalyticsPageSkeleton />
+  }
+
   return (
     <motion.div
       initial={{opacity:0,y:16}} animate={{opacity:1,y:0}}
@@ -241,7 +242,7 @@ export default function AnalyticsPage() {
           <TrendingUp size={16} className="text-[#C9A84C]"/>
           <h2 className="text-sm font-semibold text-white">Évolution des Annonces — 12 Mois</h2>
         </div>
-        {loading ? <Skel h="h-[320px]"/> : (
+        {loading ? <ChartSkeleton height={320}/> : (
           <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={monthData}>
               <defs>
@@ -269,7 +270,7 @@ export default function AnalyticsPage() {
         {/* DONUT */}
         <div className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6">
           <h2 className="text-sm font-semibold text-white mb-4">Marques les Plus Populaires</h2>
-          {loading ? <Skel h="h-[260px]"/> : (
+          {loading ? <ChartSkeleton height={260}/> : (
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -306,7 +307,7 @@ export default function AnalyticsPage() {
         <div className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6">
           <h2 className="text-sm font-semibold text-white mb-1">Activité par Jour de la Semaine</h2>
           <p className="text-xs text-[#A0A0A0] mb-4">Annonces publiées par jour</p>
-          {loading ? <Skel h="h-[260px]"/> : (
+          {loading ? <ChartSkeleton height={260}/> : (
             <>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={dayData} barSize={28}>
@@ -353,7 +354,7 @@ export default function AnalyticsPage() {
             </div>
           )}
         </div>
-        {loading ? <Skel h="h-[280px]"/> : (
+        {loading ? <ChartSkeleton height={280}/> : (
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={priceData} layout="vertical" barSize={16}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E1E1E" horizontal={false}/>
@@ -369,7 +370,7 @@ export default function AnalyticsPage() {
       {/* WILAYA */}
       <div className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6">
         <h2 className="text-sm font-semibold text-white mb-4">Activité par Wilaya</h2>
-        {loading ? <Skel h="h-[300px]"/> : (
+        {loading ? <ChartSkeleton height={300}/> : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Ranked */}
             <div className="space-y-1.5">

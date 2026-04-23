@@ -2,13 +2,14 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, SlidersHorizontal, MapPin, Gauge, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import { CarListing, CAR_BRANDS } from '@/types';
+import { trackSearch } from '@/lib/searchTracker';
 
 export default function CarsListings() {
   const [showFilters, setShowFilters] = useState(false);
@@ -56,6 +57,25 @@ export default function CarsListings() {
 
     return matchesSearch && matchesBrand && matchesPrice && matchesYear && matchesFuel;
   });
+
+  const prevSearchRef = useRef({ term: '', filters: '' });
+
+  useEffect(() => {
+    const searchKey = `${searchTerm}_${JSON.stringify(filters)}`;
+    if (searchKey === prevSearchRef.current.filters) return;
+
+    const hasSearch = searchTerm || filters.brand || filters.maxPrice || filters.year || filters.fuel;
+    if (hasSearch && filteredListings.length > 0) {
+      prevSearchRef.current.filters = searchKey;
+      trackSearch({
+        keyword: searchTerm || undefined,
+        make: filters.brand || undefined,
+        minPrice: filters.maxPrice ? parseInt(filters.maxPrice) : undefined,
+        maxPrice: filters.maxPrice ? parseInt(filters.maxPrice) : undefined,
+        resultsCount: filteredListings.length,
+      });
+    }
+  }, [searchTerm, filters, filteredListings.length]);
 
   return (
     <div className="min-h-screen pt-28 pb-20 bg-[#07070A] text-white">

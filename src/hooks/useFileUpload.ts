@@ -44,5 +44,5 @@ export function useFileUpload() {
     });
   };
 
-  return { uploading, progress, error, uploadFile, uploadMultiple, deleteFile };
+  return { uploading, progress, error, uploadFile, uploadSingle: uploadFile, uploadMultiple, deleteFile };
 }

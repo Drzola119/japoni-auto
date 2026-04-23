@@ -3,13 +3,37 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle2, ChevronRight, Gauge, Heart, MapPin, MessageSquare, Phone, Share2, ShieldCheck, Loader2 } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Gauge, Heart, MapPin, MessageSquare, Phone, Play, Share2, ShieldCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { CarListing } from '@/types';
+
+interface VideoData {
+  platform: string;
+  videoId: string;
+}
+
+function getVideoEmbedUrl(videoData: VideoData | null): string | null {
+  if (!videoData) return null;
+  const { platform, videoId } = videoData;
+  switch (platform) {
+    case 'youtube':
+      return `https://www.youtube.com/embed/${videoId}`;
+    case 'facebook':
+      return `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/video/${videoId}&show_text=0&width=auto`;
+    case 'instagram':
+      return `https://www.instagram.com/p/${videoId}/embed`;
+    case 'tiktok':
+      return `https://www.tiktok.com/embed/v2/${videoId}`;
+    case 'dailymotion':
+      return `https://www.dailymotion.com/embed/video/${videoId}`;
+    default:
+      return null;
+  }
+}
 
 export default function CarDetailPage() {
   const params = useParams();
@@ -18,7 +42,8 @@ export default function CarDetailPage() {
   const [listing, setListing] = useState<CarListing | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPhone, setShowPhone] = useState(false);
-
+  const [videoData, setVideoData] = useState<VideoData | null>(null);
+  
   useEffect(() => {
     const fetchListing = async () => {
       if (!db || !id) return;
@@ -26,7 +51,14 @@ export default function CarDetailPage() {
         const docRef = doc(db!, 'listings', id);
         const snap = await getDoc(docRef);
         if (snap.exists()) {
-          setListing({ id: snap.id, ...snap.data() } as CarListing);
+          const data = { id: snap.id, ...snap.data() } as CarListing;
+          setListing(data);
+          
+          // Parse video data if present
+          if (data.videoUrlRaw) {
+            const parsed = parseVideoUrl(data.videoUrlRaw);
+            setVideoData(parsed);
+          }
         }
       } catch (error) {
         console.error('Error fetching listing:', error);
@@ -37,6 +69,20 @@ export default function CarDetailPage() {
 
     fetchListing();
   }, [id]);
+
+  const parseVideoUrl = (url: string): VideoData | null => {
+    const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+    if (youtubeMatch) return { platform: 'youtube', videoId: youtubeMatch[1] };
+    const facebookMatch = url.match(/facebook\.com\/.*\/videos\/(\d+)/);
+    if (facebookMatch) return { platform: 'facebook', videoId: facebookMatch[1] };
+    const instagramMatch = url.match(/instagram\.com\/reel\/([^/?]+)/);
+    if (instagramMatch) return { platform: 'instagram', videoId: instagramMatch[1] };
+    const tiktokMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+    if (tiktokMatch) return { platform: 'tiktok', videoId: tiktokMatch[1] };
+    const dailymotionMatch = url.match(/dailymotion\.com\/video\/([^_?]+)/);
+    if (dailymotionMatch) return { platform: 'dailymotion', videoId: dailymotionMatch[1] };
+    return null;
+  };
 
   if (loading) {
     return (
@@ -141,6 +187,24 @@ export default function CarDetailPage() {
                   {listing.description || 'Aucune description fournie.'}
                 </p>
               </div>
+
+              {/* Video Section */}
+              {videoData && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-bold font-cormorant mb-4 flex items-center gap-2">
+                    <Play size={20} className="text-[#C9A84C]" />
+                    Vidéo de présentation
+                  </h3>
+                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/5">
+                    <iframe
+                      src={getVideoEmbedUrl(videoData) || ''}
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

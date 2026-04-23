@@ -2,16 +2,20 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { UploadCloud, CheckCircle2, X, Loader2 } from 'lucide-react';
+import { UploadCloud, CheckCircle2, X, Loader2, Link2 } from 'lucide-react';
 import { CAR_BRANDS, WILAYAS } from '@/types';
 import { useAuth } from '@/context/AuthContext';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
+import { auth } from '@/lib/firebase';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+
+const MAX_IMAGES = {
+  seller: 1,
+  showroom: 4,
+};
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -22,6 +26,9 @@ export default function NewListing() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  
+  const userRole = user?.role || 'seller';
+  const maxImages = userRole === 'showroom' ? MAX_IMAGES.showroom : MAX_IMAGES.seller;
   
   const [form, setForm] = useState({
     title: '',
@@ -36,6 +43,7 @@ export default function NewListing() {
     wilaya: '16 - Alger',
     description: '',
     color: '',
+    videoUrl: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -46,9 +54,16 @@ export default function NewListing() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      setImages(prev => [...prev, ...newFiles]);
+      const remainingSlots = maxImages - images.length;
+      const filesToAdd = newFiles.slice(0, remainingSlots);
       
-      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+      if (newFiles.length > remainingSlots) {
+        toast.error(`Vous pouvez ajouter ${remainingSlots} photo(s) maximum`);
+      }
+      
+      setImages(prev => [...prev, ...filesToAdd]);
+      
+      const newPreviews = filesToAdd.map(file => URL.createObjectURL(file));
       setPreviews(prev => [...prev, ...newPreviews]);
     }
   };
@@ -58,6 +73,31 @@ export default function NewListing() {
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const parseVideoUrl = (url: string) => {
+    if (!url) return null;
+    const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+    if (youtubeMatch) {
+      return { platform: 'youtube', videoId: youtubeMatch[1] };
+    }
+    const facebookMatch = url.match(/facebook\.com\/.*\/videos\/(\d+)/);
+    if (facebookMatch) {
+      return { platform: 'facebook', videoId: facebookMatch[1] };
+    }
+    const instagramMatch = url.match(/instagram\.com\/reel\/([^/?]+)/);
+    if (instagramMatch) {
+      return { platform: 'instagram', videoId: instagramMatch[1] };
+    }
+    const tiktokMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+    if (tiktokMatch) {
+      return { platform: 'tiktok', videoId: tiktokMatch[1] };
+    }
+    const dailymotionMatch = url.match(/dailymotion\.com\/video\/([^_?]+)/);
+    if (dailymotionMatch) {
+      return { platform: 'dailymotion', videoId: dailymotionMatch[1] };
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return toast.error('Vous devez être connecté');
@@ -65,11 +105,13 @@ export default function NewListing() {
     
     setLoading(true);
     try {
-      if (!db || !user) {
-        throw new Error('Service Firebase non initialisé ou utilisateur non connecté');
+      // Get fresh ID token
+      const currentUser = auth?.currentUser;
+      if (!currentUser) {
+        throw new Error('Utilisateur non connecté');
       }
+      const idToken = await currentUser.getIdToken();
 
-      // 1. Upload Images to Bunny.net
       const uploadResults = await uploadMultiple(images, `listings/${user.uid}`);
       const imageUrls = uploadResults.map(r => r.url);
 
@@ -77,36 +119,45 @@ export default function NewListing() {
         throw new Error('Échec de l\'upload des images');
       }
 
-      // 2. Save to Firestore
+      const videoData = parseVideoUrl(form.videoUrl);
+
       const listingData = {
         ...form,
         year: parseInt(form.year),
         price: parseInt(form.price),
         mileage: parseInt(form.mileage),
         images: imageUrls,
-        sellerId: user.uid,
-        sellerName: user.displayName,
-        sellerEmail: user.email,
-        isVerified: user.isVerified || false,
-        isSold: false,
-        viewCount: 0,
-        favoriteCount: 0,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        videoUrl: videoData ? JSON.stringify(videoData) : null,
+        videoUrlRaw: form.videoUrl || null,
       };
 
-      const docRef = await addDoc(collection(db!, 'listings'), listingData);
-
-      // 3. Update User Stats
-      await updateDoc(doc(db!, 'users', user.uid), {
-        totalListings: increment(1)
+      const response = await fetch('/api/listings/create', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(listingData),
       });
 
+      const result = await response.json();
+
+      // Handle rate limit (429)
+      if (response.status === 429) {
+        toast.error(result.message || 'Limite atteinte pour aujourd\'hui');
+        router.push('/seller-dashboard');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Erreur lors de la création');
+      }
+
       toast.success('Annonce publiée avec succès !');
-      router.push(`/cars/${docRef.id}`);
-    } catch (error) {
+      router.push(`/cars/${result.listingId}`);
+    } catch (error: any) {
       console.error(error);
-      toast.error('Erreur lors de la publication');
+      toast.error(error.message || 'Erreur lors de la publication');
     } finally {
       setLoading(false);
     }
@@ -124,40 +175,89 @@ export default function NewListing() {
         
         {/* Photos Section */}
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Photos du véhicule ({images.length})</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">
+              {userRole === 'seller' 
+                ? `Photo du véhicule (1 maximal)` 
+                : `Photos du véhicule (${images.length}/${maxImages})`}
+            </h2>
+            {userRole === 'showroom' && (
+              <span className="text-xs text-[#C9A84C] bg-[#C9A84C]/10 px-2 py-1 rounded">Showroom</span>
+            )}
+          </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            {previews.map((preview, index) => (
-              <div key={index} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
-                <Image src={preview} alt="preview" fill className="object-cover" />
+          {/* Dynamic slots based on role */}
+          {userRole === 'showroom' ? (
+            /* Showrooms: show up to 4 slots */
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+              {Array.from({ length: maxImages }).map((_, index) => {
+                const hasImage = previews[index];
+                return (
+                  <div key={index} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
+                    {hasImage ? (
+                      <>
+                        <Image src={previews[index]} alt="preview" fill className="object-cover" />
+                        <button 
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 w-6 h-6 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-rose-500 transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
+                        {index === 0 && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Principale</div>
+                        )}
+                      </>
+                    ) : (
+                      <button 
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={images.length >= maxImages}
+                        className="w-full h-full border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:bg-white/5 hover:border-[#C9A84C]/50 transition-colors group disabled:opacity-50"
+                      >
+                        <UploadCloud className="text-white/20 group-hover:text-[#C9A84C] transition-colors" size={24} />
+                        <span className="text-[10px] uppercase font-bold text-white/40 mt-2">
+                          {index === 0 ? 'Principale' : 'Optional'}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Sellers: show only 1 slot */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              {previews.length > 0 ? (
+                <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group">
+                  <Image src={previews[0]} alt="preview" fill className="object-cover" />
+                  <button 
+                    type="button"
+                    onClick={() => removeImage(0)}
+                    className="absolute top-2 right-2 w-6 h-6 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-rose-500 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Photo principale</div>
+                </div>
+              ) : (
                 <button 
                   type="button"
-                  onClick={() => removeImage(index)}
-                  className="absolute top-2 right-2 w-6 h-6 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-rose-500 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-video border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:bg-white/5 hover:border-[#C9A84C]/50 transition-colors group"
                 >
-                  <X size={14} />
+                  <UploadCloud className="text-white/20 group-hover:text-[#C9A84C] transition-colors" size={24} />
+                  <span className="text-[10px] uppercase font-bold text-white/40 mt-2">Photo principale (obligatoire)</span>
                 </button>
-                {index === 0 && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Couverture</div>
-                )}
-              </div>
-            ))}
-            
-            <button 
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="aspect-video border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:bg-white/5 hover:border-[#C9A84C]/50 transition-colors group"
-            >
-              <UploadCloud className="text-white/20 group-hover:text-[#C9A84C] transition-colors" size={24} />
-              <span className="text-[10px] uppercase font-bold text-white/40 mt-2">Ajouter</span>
-            </button>
-          </div>
+              )}
+            </div>
+          )}
           
           <input 
             type="file" 
             ref={fileInputRef} 
             onChange={handleImageChange} 
-            multiple 
+            multiple={userRole === 'showroom'}
             accept="image/*" 
             className="hidden" 
           />
@@ -326,6 +426,30 @@ export default function NewListing() {
             ></textarea>
           </div>
         </div>
+
+        {/* Video Section - Only for Showrooms */}
+        {userRole === 'showroom' && (
+          <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4 flex items-center gap-2">
+              <Link2 size={20} className="text-[#C9A84C]" />
+              Vidéo du véhicule
+            </h2>
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Lien vidéo (YouTube, Facebook, Instagram, TikTok, Dailymotion)</label>
+              <input 
+                name="videoUrl"
+                value={form.videoUrl}
+                onChange={handleChange}
+                type="text" 
+                placeholder="https://www.youtube.com/watch?v=..." 
+                className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C] transition-colors" 
+              />
+              <p className="text-white/30 text-xs mt-2">
+                Ajoutez une vidéo de présentation de votre véhicule. Formats supportés: YouTube, Facebook, Instagram, TikTok, Dailymotion
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Submit */}
         <div className="flex justify-end gap-4 border-t border-white/5 pt-6">

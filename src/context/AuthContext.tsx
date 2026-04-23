@@ -12,16 +12,17 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { logUserSession } from '@/lib/sessionTracker';
 import { auth, db } from '@/lib/firebase';
-import { User } from '@/types';
+import { User, UserRole } from '@/types';
 
 interface AuthContextType {
   user: User | null;
   firebaseUser: FirebaseUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  register: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
+
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser && db) {
@@ -47,9 +49,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const docRef = doc(db, 'users', fbUser.uid);
           const snap = await getDoc(docRef);
           if (snap.exists()) {
-            setUser(snap.data() as User);
+            const userData = snap.data() as User;
+            setUser(userData);
+            
+            const sessionKey = `session_logged_${fbUser.uid}`;
+            if (typeof window !== 'undefined' && !sessionStorage.getItem(sessionKey)) {
+              sessionStorage.setItem(sessionKey, '1');
+              logUserSession(
+                fbUser.uid,
+                fbUser.email || '',
+                fbUser.displayName || '',
+                userData.role
+              );
+            }
           } else {
-            setUser(null);
+            // Create new user document if doesn't exist
+            const defaultUser: User = {
+              uid: fbUser.uid,
+              email: fbUser.email || '',
+              displayName: fbUser.displayName || 'Utilisateur',
+              role: 'buyer', // Default role
+              status: 'active',
+              createdAt: new Date().toISOString(),
+            };
+            await setDoc(docRef, defaultUser);
+            setUser(defaultUser);
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -60,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false);
     });
+
     return () => unsub();
   }, []);
 
@@ -68,21 +93,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (email: string, password: string, name: string, role: UserRole = 'buyer') => {
     if (!auth || !db) throw new Error('Firebase not initialized');
+    
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
+    
     const userData: User = {
       uid: cred.user.uid,
       email,
       displayName: name,
-      role: 'user',
-      isPro: false,
-      isVerified: false,
-      totalListings: 0,
-      suspended: false,
+      role,
+      status: 'active',
+      dailyPostCount: 0,
+      lastPostDate: '',
       createdAt: new Date().toISOString(),
     };
+    
     await setDoc(doc(db, 'users', cred.user.uid), { ...userData });
     setUser(userData);
   };
@@ -93,17 +120,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const cred = await signInWithPopup(auth, provider);
     const docRef = doc(db, 'users', cred.user.uid);
     const snap = await getDoc(docRef);
+    
     if (!snap.exists()) {
       const userData: User = {
         uid: cred.user.uid,
         email: cred.user.email!,
         displayName: cred.user.displayName || 'Utilisateur',
-        photoURL: cred.user.photoURL || undefined,
-        role: 'user',
-        isPro: false,
-        isVerified: false,
-        totalListings: 0,
-        suspended: false,
+        role: 'buyer',
+        status: 'active',
         createdAt: new Date().toISOString(),
       };
       await setDoc(docRef, userData);
@@ -136,3 +160,5 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
   return ctx;
 }
+
+export default AuthContext;

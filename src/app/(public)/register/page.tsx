@@ -9,7 +9,6 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, BadgeCheck } fr
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import { doc, updateDoc } from 'firebase/firestore';
 
 export default function RegisterPage() {
   const { register, loginWithGoogle } = useAuth();
@@ -28,15 +27,14 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(form.email, form.password, form.name);
-      
-      // The context sets role to 'user' by default. Update if they registered as seller.
-      if (accountType === 'seller') {
-        const { auth, db } = await import('@/lib/firebase');
-        if (auth?.currentUser && db) {
-          await updateDoc(doc(db, 'users', auth.currentUser.uid), { role: 'seller' });
-        }
-      }
+      const role = accountType === 'seller' ? 'seller' : 'buyer';
+      await register(form.email, form.password, form.name, role);
+
+      toast.success('Compte créé avec succès !');
+      router.push('/account');
+
+      toast.success('Compte créé avec succès !');
+      router.push('/account');
       
       toast.success('Compte créé avec succès !');
       router.push('/account'); // Auth redirection logic handles role

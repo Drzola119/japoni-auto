@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminTopbar from '@/components/admin/AdminTopbar';
+import CommandPalette from '@/components/admin/CommandPalette';
 import LoadingScreen from '@/components/LoadingScreen';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -46,6 +47,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {children}
           </div>
         </main>
+
+        {/* Command Palette */}
+        <CommandPalette />
       </div>
     </div>
   );
