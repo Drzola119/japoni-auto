@@ -90,7 +90,7 @@ export default function CarsListings() {
                 type="text" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Rechercher une marque, un modèle..." 
+                placeholder="Search for a make, model..." 
                 className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-[#C9A84C] font-medium"
               />
             </div>
@@ -100,7 +100,7 @@ export default function CarsListings() {
                 showFilters ? 'bg-[#C9A84C] text-[#111] border-[#C9A84C]' : 'bg-white/5 border-white/10 hover:bg-white/10'
               }`}
             >
-              <SlidersHorizontal size={18} /> Filtres
+              <SlidersHorizontal size={18} /> Filters
             </button>
           </div>
 
@@ -112,7 +112,7 @@ export default function CarsListings() {
                 onChange={(e) => setFilters({...filters, brand: e.target.value})}
                 className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
-                <option value="">Toutes les marques</option>
+                <option value="">All Brands</option>
                 {CAR_BRANDS.map(brand => <option key={brand} value={brand}>{brand}</option>)}
               </select>
               <select 
@@ -120,7 +120,7 @@ export default function CarsListings() {
                 onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
                 className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
-                <option value="">Budget Maximum</option>
+                <option value="">Maximum Budget</option>
                 <option value="5000000">5,000,000 DZD</option>
                 <option value="10000000">10,000,000 DZD</option>
                 <option value="20000000">20,000,000 DZD</option>
@@ -132,7 +132,7 @@ export default function CarsListings() {
                 onChange={(e) => setFilters({...filters, year: e.target.value})}
                 className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
-                <option value="">Toutes les années</option>
+                <option value="">All Years</option>
                 {[2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map(y => <option key={y} value={y}>{y}</option>)}
               </select>
               <select 
@@ -140,7 +140,7 @@ export default function CarsListings() {
                 onChange={(e) => setFilters({...filters, fuel: e.target.value})}
                 className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
-                <option value="">Carburant</option>
+                <option value="">Fuel</option>
                 <option value="essence">Essence</option>
                 <option value="diesel">Diesel</option>
                 <option value="hybride">Hybride</option>
@@ -154,14 +154,14 @@ export default function CarsListings() {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold font-cormorant">
-            {loading ? 'Recherche...' : `${filteredListings.length} Véhicules trouvés`}
+            {loading ? 'Searching...' : `${filteredListings.length} Vehicles Found`}
           </h2>
         </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 className="w-12 h-12 text-[#C9A84C] animate-spin" />
-            <p className="text-white/40 font-medium">Chargement des annonces...</p>
+            <p className="text-white/40 font-medium">Loading listings...</p>
           </div>
         ) : filteredListings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -190,8 +190,8 @@ export default function CarsListings() {
                   </div>
 
                   <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-xs font-medium text-white/40">{car.isVerified ? 'Vendeur vérifié' : 'Particulier'}</span>
-                    <span className="text-[#C9A84C] text-[13px] font-bold group-hover:translate-x-1 transition-transform">Découvrir →</span>
+                    <span className="text-xs font-medium text-white/40">{car.isVerified ? 'Verified Seller' : 'Private Seller'}</span>
+                    <span className="text-[#C9A84C] text-[13px] font-bold group-hover:translate-x-1 transition-transform">Explore →</span>
                   </div>
                 </div>
               </Link>
@@ -199,12 +199,12 @@ export default function CarsListings() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-white/40 text-lg">Aucun véhicule ne correspond à vos critères.</p>
+            <p className="text-white/40 text-lg">No vehicles match your criteria.</p>
             <button 
               onClick={() => {setSearchTerm(''); setFilters({brand: '', maxPrice: '', year: '', fuel: ''})}}
               className="mt-4 text-[#C9A84C] hover:underline"
             >
-              Réinitialiser les filtres
+              Reset Filters
             </button>
           </div>
         )}

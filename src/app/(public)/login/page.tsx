@@ -27,10 +27,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-      toast.success('Bienvenue de retour !');
-      router.push('/account'); // The layout or context will do proper routing if admin/seller
+toast.success('Welcome back!');
+      router.push('/account');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Email ou mot de passe incorrect');
+      toast.error((err as Error).message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -40,10 +40,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await loginWithGoogle();
-      toast.success('Connecté avec succès !');
+      toast.success('Signed in with Google!');
       router.push('/account');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Erreur Google');
+      toast.error((err as Error).message || 'Google error');
     } finally {
       setLoading(false);
     }
@@ -67,10 +67,10 @@ export default function LoginPage() {
             <div className="w-12 h-1 bg-[#C9A84C] transition-all group-hover:w-full duration-500" />
           </Link>
           <h2 className="text-4xl font-semibold mb-6 leading-tight" style={{ fontFamily: 'var(--font-cormorant)' }}>
-            L&apos;excellence automobile. <br/>Votre prochaine étape.
+            Automotive excellence. <br/>Your next step.
           </h2>
           <p className="text-white/60 text-lg leading-relaxed">
-            Trouvez les meilleures offres en Algérie. Les voitures les plus exclusives vous attendent dans notre showroom digital.
+            Find the best deals in Algeria. The most exclusive cars await you in our digital showroom.
           </p>
         </div>
       </div>
@@ -93,8 +93,8 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-10 text-center lg:text-left">
-            <h3 className="text-2xl font-semibold mb-2">Bienvenue</h3>
-            <p className="text-white/50">Connectez-vous pour continuer</p>
+            <h3 className="text-2xl font-semibold mb-2">Welcome</h3>
+            <p className="text-white/50">Sign in to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -107,7 +107,7 @@ export default function LoginPage() {
                     value={form.email} 
                     onChange={handleChange('email')} 
                     type="email" 
-                    placeholder="votre@email.com" 
+                    placeholder="your@email.com" 
                     className="w-full bg-[#111116] border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:outline-none focus:border-[#C9A84C] disabled:opacity-50 transition-all" 
                     style={{ fontSize: '16px' }}
                     required 
@@ -117,9 +117,9 @@ export default function LoginPage() {
 
               <div>
                 <div className="flex justify-between mb-2">
-                  <label className="text-white/60 text-sm font-medium block uppercase tracking-wider text-[11px]">Mot de passe</label>
+                  <label className="text-white/60 text-sm font-medium block uppercase tracking-wider text-[11px]">Password</label>
                   <Link href="/forgot-password" className="text-[11px] text-[#C9A84C] hover:text-[#E8C96A] transition-colors">
-                    Mot de passe oublié ?
+                    Forgot password?
                   </Link>
                 </div>
                 <div className="relative group">
@@ -146,14 +146,14 @@ export default function LoginPage() {
               disabled={loading} 
               className="w-full bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(201,168,76,0.3)]"
             >
-              {loading ? 'Connexion en cours...' : 'Se connecter'}
+              {loading ? 'Signing in...' : 'Login'}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
 
           <div className="flex items-center gap-4 mt-8 mb-8">
             <hr className="flex-1 border-white/10" />
-            <span className="text-white/30 text-xs uppercase tracking-widest">Ou connectez-vous avec</span>
+            <span className="text-white/30 text-xs uppercase tracking-widest">Or sign in with</span>
             <hr className="flex-1 border-white/10" />
           </div>
 
@@ -173,9 +173,9 @@ export default function LoginPage() {
           </button>
 
           <p className="text-center text-white/50 text-sm mt-10">
-            Pas encore de compte ?{' '}
+            Don't have an account ?{' '}
             <Link href="/register" className="text-[#C9A84C] hover:text-[#E8C96A] font-medium transition-colors">
-              Créer un compte
+              Create Account
             </Link>
           </p>
         </motion.div>

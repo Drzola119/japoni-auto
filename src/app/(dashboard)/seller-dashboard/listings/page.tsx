@@ -47,10 +47,10 @@ export default function MyListings() {
         updatedAt: new Date().toISOString(),
       });
       
-      toast.success('Annonce renouvelée avec succès');
+      toast.success('Listing renewed successfully');
     } catch (error) {
       console.error('Error renewing:', error);
-      toast.error('Erreur lors du renouvellement');
+      toast.error('Error renewing listing');
     } finally {
       setRenewingId(null);
     }
@@ -75,22 +75,22 @@ export default function MyListings() {
       
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-cormorant text-white">Mes Annonces</h1>
-          <p className="text-white/50 text-sm mt-1">Gérez votre flotte et vos publications.</p>
+          <h1 className="text-2xl font-bold font-cormorant text-white">My Listings</h1>
+          <p className="text-white/50 text-sm mt-1">Manage your fleet and publications.</p>
         </div>
         <Link href="/seller-dashboard/listings/new" className="bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:opacity-90">
-          <Plus size={18} /> Ajouter
+          <Plus size={18} /> Add New
         </Link>
       </div>
 
       <div className="bg-[#111116] border border-white/5 rounded-2xl overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-white/40">Chargement...</div>
+          <div className="p-12 text-center text-white/40">Loading...</div>
         ) : listings.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-white/40 mb-4">Vous n'avez pas encore d'annonces</p>
+            <p className="text-white/40 mb-4">You don&apos;t have any listings yet</p>
             <Link href="/seller-dashboard/listings/new" className="text-[#C9A84C] hover:underline">
-              Créer votre première annonce
+              Create your first listing
             </Link>
           </div>
         ) : (
@@ -98,11 +98,11 @@ export default function MyListings() {
             <table className="w-full text-left text-sm text-white/70">
               <thead className="bg-[#0a0a0f] text-[10px] uppercase tracking-wider text-white/50 border-b border-white/5">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Véhicule</th>
-                  <th className="px-6 py-4 font-semibold">Prix</th>
-                  <th className="px-6 py-4 font-semibold">Vues</th>
+                  <th className="px-6 py-4 font-semibold">Vehicle</th>
+                  <th className="px-6 py-4 font-semibold">Price</th>
+                  <th className="px-6 py-4 font-semibold">Views</th>
                   <th className="px-6 py-4 font-semibold">Expiration</th>
-                  <th className="px-6 py-4 font-semibold">Statut</th>
+                  <th className="px-6 py-4 font-semibold">Status</th>
                   <th className="px-6 py-4 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
@@ -135,13 +135,13 @@ export default function MyListings() {
                       </td>
                       <td className="px-6 py-4">
                         {isExpired ? (
-                          <span className="text-white/40 text-xs">Expirée</span>
+                          <span className="text-white/40 text-xs">Expired</span>
                         ) : isExpiringSoon ? (
                           <span className="text-amber-400 text-xs flex items-center gap-1">
-                            <AlertTriangle size={12} /> Expire dans {daysLeft} jour(s)
+                            <AlertTriangle size={12} /> Expires in {daysLeft} day(s)
                           </span>
                         ) : (
-                          <span className="text-white/40 text-xs">{daysLeft} jours</span>
+                          <span className="text-white/40 text-xs">{daysLeft} days</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
@@ -152,7 +152,7 @@ export default function MyListings() {
                               ? 'bg-white/5 text-white/40' 
                               : 'bg-emerald-500/10 text-emerald-400'
                         }`}>
-                          {isExpired ? 'EXPIRÉE' : listing.isSold ? 'VENDU' : 'EN LIGNE'}
+                          {isExpired ? 'EXPIRED' : listing.isSold ? 'SOLD' : 'LIVE'}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -162,7 +162,7 @@ export default function MyListings() {
                               onClick={() => renewListing(listing.id)}
                               disabled={renewingId === listing.id}
                               className="text-amber-400 hover:text-amber-300 p-2 rounded-lg hover:bg-amber-500/10 transition-colors"
-                              title="Renouveler"
+                              title="Renew"
                             >
                               {renewingId === listing.id ? (
                                 <RefreshCw size={16} className="animate-spin" />
@@ -174,11 +174,11 @@ export default function MyListings() {
                           <Link 
                             href={`/cars/${listing.id}`}
                             className="text-white/40 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors"
-                            title="Voir"
+                            title="View"
                           >
                             <Eye size={16} />
                           </Link>
-                          <button className="text-rose-500/50 hover:text-rose-400 p-2 rounded-lg hover:bg-rose-500/10 transition-colors" title="Supprimer">
+                          <button className="text-rose-500/50 hover:text-rose-400 p-2 rounded-lg hover:bg-rose-500/10 transition-colors" title="Delete">
                             <Trash2 size={16} />
                           </button>
                         </div>

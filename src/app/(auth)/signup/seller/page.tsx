@@ -37,17 +37,17 @@ export default function SellerSignupPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    if (!form.name.trim()) newErrors.name = 'Le nom est requis';
-    if (!form.email.trim()) newErrors.email = 'L\'email est requis';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Email invalide';
-    if (!form.phone.trim()) newErrors.phone = 'Le téléphone est requis';
+    if (!form.name.trim()) newErrors.name = 'Name is required';
+    if (!form.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email';
+    if (!form.phone.trim()) newErrors.phone = 'Phone is required';
     else if (!/^(\+213|0)[5-7][0-9]{8}$/.test(form.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Format: +213 XXX XXX XXX ou 0XXX XXX XXX';
+      newErrors.phone = 'Format: +213 XXX XXX XXX or 0XXX XXX XXX';
     }
-    if (!form.wilaya) newErrors.wilaya = 'Sélectionnez une wilaya';
-    if (form.password.length < 8) newErrors.password = 'Minimum 8 caractères';
-    if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
-    if (!form.agreeTerms) newErrors.agreeTerms = 'Vous devez accepter les conditions';
+    if (!form.wilaya) newErrors.wilaya = 'Select a wilaya';
+    if (form.password.length < 8) newErrors.password = 'Minimum 8 characters';
+    if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (!form.agreeTerms) newErrors.agreeTerms = 'You must accept the terms';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -75,10 +75,10 @@ export default function SellerSignupPage() {
         });
       }
       
-      toast.success('Compte vendeur créé avec succès !');
+      toast.success('Seller account created successfully!');
       router.push('/seller-dashboard');
     } catch (err: any) {
-      toast.error(err.message || 'Erreur lors de la création du compte');
+      toast.error(err.message || 'Error creating account');
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ export default function SellerSignupPage() {
   };
 
   const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
-  const strengthLabels = ['Très faible', 'Faible', 'Moyen', 'Fort'];
+  const strengthLabels = ['Very Weak', 'Weak', 'Medium', 'Strong'];
 
   return (
     <div className="min-h-screen bg-[#07070A] text-white flex flex-col">
@@ -104,7 +104,7 @@ export default function SellerSignupPage() {
       <div className="p-6 border-b border-white/5">
         <Link href="/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} />
-          Retour
+          Back
         </Link>
       </div>
 
@@ -117,10 +117,10 @@ export default function SellerSignupPage() {
         >
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold mb-2">
-              Créer un compte <span className="text-[#2ECC71]">Vendeur</span>
+              Create <span className="text-[#2ECC71]">Seller</span> Account
             </h1>
             <p className="text-[#A0A0A0]">
-              Publiez vos annonces et vendez vos véhicules
+              Post your listings and sell your vehicles
             </p>
           </div>
 
@@ -129,8 +129,8 @@ export default function SellerSignupPage() {
             <div className="flex items-center gap-3">
               <Calendar className="text-[#2ECC71]" size={20} />
               <div>
-                <p className="text-sm font-medium text-[#2ECC71]">1 annonce gratuite par jour</p>
-                <p className="text-xs text-[#A0A0A0]">Réinitialisation à minuit</p>
+                <p className="text-sm font-medium text-[#2ECC71]">1 free listing per day</p>
+                <p className="text-xs text-[#A0A0A0]">Resets at midnight</p>
               </div>
             </div>
           </div>
@@ -138,14 +138,14 @@ export default function SellerSignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm text-[#A0A0A0] mb-2">Nom complet</label>
+              <label className="block text-sm text-[#A0A0A0] mb-2">Full Name</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555]" size={18} />
                 <input
                   type="text"
                   value={form.name}
                   onChange={handleChange('name')}
-                  placeholder="Votre nom complet"
+                  placeholder="Your full name"
                   className={`w-full bg-[#111111] border ${errors.name ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl pl-12 pr-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#2ECC71]`}
                 />
               </div>
@@ -170,7 +170,7 @@ export default function SellerSignupPage() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm text-[#A0A0A0] mb-2">Téléphone</label>
+              <label className="block text-sm text-[#A0A0A0] mb-2">Phone</label>
               <div className="relative">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555]" size={18} />
                 <input
@@ -195,7 +195,7 @@ export default function SellerSignupPage() {
                   onChange={handleChange('wilaya')}
                   className={`w-full bg-[#111111] border ${errors.wilaya ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#2ECC71] appearance-none`}
                 >
-                  <option value="">Sélectionnez une wilaya</option>
+                  <option value="">Select a wilaya</option>
                   {WILAYAS.map(w => (
                     <option key={w} value={w}>{w}</option>
                   ))}
@@ -206,14 +206,14 @@ export default function SellerSignupPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm text-[#A0A0A0] mb-2">Mot de passe</label>
+              <label className="block text-sm text-[#A0A0A0] mb-2">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555]" size={18} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={form.password}
                   onChange={handleChange('password')}
-                  placeholder="Minimum 8 caractères"
+                  placeholder="Minimum 8 characters"
                   className={`w-full bg-[#111111] border ${errors.password ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl pl-12 pr-12 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#2ECC71]`}
                 />
                 <button
@@ -241,14 +241,14 @@ export default function SellerSignupPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm text-[#A0A0A0] mb-2">Confirmer le mot de passe</label>
+              <label className="block text-sm text-[#A0A0A0] mb-2">Confirm Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#555]" size={18} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={form.confirmPassword}
                   onChange={handleChange('confirmPassword')}
-                  placeholder="Confirmez votre mot de passe"
+                  placeholder="Confirm your password"
                   className={`w-full bg-[#111111] border ${errors.confirmPassword ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl pl-12 pr-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#2ECC71]`}
                 />
               </div>
@@ -265,8 +265,8 @@ export default function SellerSignupPage() {
                 className="mt-1 w-4 h-4 rounded bg-[#111111] border-[#2A2A2A] text-[#2ECC71] focus:ring-[#2ECC71]"
               />
               <label htmlFor="agreeTerms" className="text-sm text-[#A0A0A0]">
-                J'accepte les{' '}
-                <Link href="/terms" className="text-[#2ECC71] hover:underline">conditions d'utilisation</Link>
+                I accept the{' '}
+                <Link href="/terms" className="text-[#2ECC71] hover:underline">terms of use</Link>
               </label>
             </div>
             {errors.agreeTerms && <p className="text-red-500 text-xs">{errors.agreeTerms}</p>}
@@ -281,7 +281,7 @@ export default function SellerSignupPage() {
                 <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  Créer mon compte vendeur
+                  Create My Seller Account
                   <ArrowRight size={18} />
                 </>
               )}
@@ -289,9 +289,9 @@ export default function SellerSignupPage() {
           </form>
 
           <p className="text-center text-[#A0A0A0] text-sm mt-6">
-            Déjà un compte ?{' '}
+            Already have an account?{' '}
             <Link href="/login" className="text-[#2ECC71] hover:underline">
-              Se connecter
+              Login
             </Link>
           </p>
         </motion.div>

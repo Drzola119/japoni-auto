@@ -8,6 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import AnimatedLogo from './AnimatedLogo';
+import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -16,6 +18,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [siteLogo, setSiteLogo] = useState<string | null>(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -33,18 +36,30 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, [menuOpen]);
 
-  // Determine if navbar should be hidden or visible
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const docRef = doc(db!, 'settings', 'general');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().logoUrl) {
+          setSiteLogo(docSnap.data().logoUrl);
+        }
+      } catch (e) {
+        console.error('Failed to fetch logo:', e);
+      }
+    };
+    fetchLogo();
+  }, []);
+
   const isNavbarVisible = !scrolled || isHovered;
 
   return (
     <>
-      {/* Invisible trigger area at the top to detect mouse movement */}
       <div 
         className="fixed top-0 left-0 right-0 h-16 z-[102]"
         onMouseEnter={() => setIsHovered(true)}
       />
 
-      {/* Top Banner */}
       <div 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -60,13 +75,12 @@ export default function Navbar() {
           className="text-[#C9A84C] uppercase tracking-[0.2em] relative pointer-events-auto"
           style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.7rem' }}
         >
-          <span className="opacity-0 lg:opacity-100 transition-opacity">──── </span>
-          ⭐ Algérie&apos;s #1 Car Marketplace
-          <span className="opacity-0 lg:opacity-100 transition-opacity"> ────</span>
+          <span className="opacity-0 lg:opacity-100 transition-opacity">---- </span>
+          Algeria's #1 Car Marketplace
+          <span className="opacity-0 lg:opacity-100 transition-opacity"> ----</span>
         </div>
       </div>
 
-      {/* Main Navbar */}
       <header 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -81,19 +95,21 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
           
-          {/* Logo */}
           <Link href="/" className="group">
-            <AnimatedLogo variant="navbar" />
+            {siteLogo ? (
+              <img src={siteLogo} alt="Logo" className="h-10 w-auto object-contain" />
+            ) : (
+              <AnimatedLogo variant="navbar" />
+            )}
           </Link>
 
-          {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-8">
             {[
-              { href: '/', label: t('nav.home'), show: true },
-              { href: '/cars', label: t('nav.listings'), show: true },
+              { href: '/', label: 'Home', show: true },
+              { href: '/cars', label: 'Cars', show: true },
               { 
-                href: user?.role === 'seller' ? '/seller-dashboard/listings/new' : '/seller-dashboard', 
-                label: user?.role === 'seller' ? 'Vendre' : (user?.role === 'admin' ? 'Dashboard' : 'Devenir Vendeur'),
+                href: user?.role === 'seller' || user?.role === 'showroom' ? '/seller-dashboard/listings/new' : '/seller-dashboard', 
+                label: user?.role === 'seller' || user?.role === 'showroom' ? 'Sell' : (user?.role === 'admin' ? 'Dashboard' : 'Become a Seller'),
                 show: true 
               },
               { href: '#', label: 'Contact', show: true }
@@ -112,9 +128,7 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Right Actions */}
           <div className="hidden md:flex items-center gap-6">
-            {/* Language Switcher */}
             <button
               onClick={() => {
                 const nextLang = language === 'fr' ? 'en' : language === 'en' ? 'ar' : 'fr';
@@ -161,23 +175,23 @@ export default function Navbar() {
                         <div className="p-2">
                           <Link href="/account" onClick={() => setProfileOpen(false)}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#9A9480] hover:text-[#C9A84C] hover:bg-[rgba(201,168,76,0.04)] transition-all">
-                            <User className="w-4 h-4" /> Mon Compte
+                            <User className="w-4 h-4" /> My Account
                           </Link>
-                          {user.role === 'seller' && (
+                          {(user.role === 'seller' || user.role === 'showroom') && (
                             <Link href="/seller-dashboard" onClick={() => setProfileOpen(false)}
                               className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
-                              <Shield className="w-4 h-4" /> Espace Vendeur
+                              <Shield className="w-4 h-4" /> My Dashboard
                             </Link>
                           )}
                           {(user.role === 'admin' || user.email === 'zickowiko@gmail.com') && (
                             <Link href="/admin" onClick={() => setProfileOpen(false)}
                               className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.08)] transition-all mt-1">
-                              <Shield className="w-4 h-4" /> {t('nav.admin')}
+                              <Shield className="w-4 h-4" /> Admin Panel
                             </Link>
                           )}
                           <button onClick={() => { logout(); setProfileOpen(false); }}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-[#9A9480] hover:text-[#F5F0E8] hover:bg-[rgba(255,255,255,0.03)] transition-all w-full text-left mt-1">
-                            <LogOut className="w-4 h-4" /> {t('nav.logout')}
+                            <LogOut className="w-4 h-4" /> Logout
                           </button>
                         </div>
                       </motion.div>
@@ -210,10 +224,10 @@ export default function Navbar() {
                     e.currentTarget.style.color = '#C9A84C';
                   }}
                 >
-                  {t('nav.login')}
+                  Login
                 </Link>
                 <Link 
-                  href="/register" 
+                  href="/signup" 
                   className="btn-primary transition-all duration-200"
                   style={{
                     background: '#C9A84C',
@@ -236,13 +250,12 @@ export default function Navbar() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  {t('nav.register')}
+                  Sign Up
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 rounded-sm text-[#C9A84C] hover:bg-[rgba(201,168,76,0.1)] transition-all"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -252,7 +265,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Menu Full Screen Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -264,9 +276,9 @@ export default function Navbar() {
           >
             <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
               {[
-                { href: '/', label: t('nav.home') },
-                { href: '/cars', label: t('nav.listings') },
-                { href: '/seller-dashboard', label: 'Vendre' },
+                { href: '/', label: 'Home' },
+                { href: '/cars', label: 'Cars' },
+                { href: '/seller-dashboard', label: 'Sell' },
                 { href: '#', label: 'Contact' }
               ].map((item, i) => (
                 <motion.div
@@ -298,22 +310,22 @@ export default function Navbar() {
                 style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
               >
                 <Globe className="w-5 h-5" />
-                {language === 'fr' ? 'English' : language === 'en' ? 'عربي' : 'Français'}
+                {language === 'fr' ? 'English' : language === 'en' ? 'Arabic' : 'Francais'}
               </button>
 
               {!user ? (
                 <div className="flex flex-col w-full gap-4 mt-8">
                   <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-secondary w-full py-4 text-center">
-                    {t('nav.login')}
+                    Login
                   </Link>
-                  <Link href="/register" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
-                    {t('nav.register')}
+                  <Link href="/signup" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
+                    Sign Up
                   </Link>
                 </div>
               ) : (
                 <button onClick={() => { logout(); setMenuOpen(false); }}
                   className="flex items-center justify-center gap-3 w-full py-4 mt-8 text-[#9A9480] hover:text-[#F5F0E8] border border-[rgba(255,255,255,0.06)] rounded-sm">
-                  <LogOut className="w-5 h-5" /> {t('nav.logout')}
+                  <LogOut className="w-5 h-5" /> Logout
                 </button>
               )}
             </div>

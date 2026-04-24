@@ -95,8 +95,8 @@ export default function CarDetailPage() {
   if (!listing) {
     return (
       <div className="min-h-screen bg-[#07070A] flex flex-col items-center justify-center text-white">
-        <h1 className="text-4xl font-bold font-cormorant mb-4">Annonce introuvable</h1>
-        <Link href="/cars" className="text-[#C9A84C] hover:underline">Retour au catalogue</Link>
+        <h1 className="text-4xl font-bold font-cormorant mb-4">Listing not found</h1>
+        <Link href="/cars" className="text-[#C9A84C] hover:underline">Back to catalog</Link>
       </div>
     );
   }
@@ -109,9 +109,9 @@ export default function CarDetailPage() {
       {/* Breadcrumb */}
       <div className="border-b border-white/5">
         <div className="container mx-auto px-4 max-w-7xl py-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
-          <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <ChevronRight size={12} />
-          <Link href="/cars" className="hover:text-white transition-colors">Catalogue</Link>
+          <Link href="/cars" className="hover:text-white transition-colors">Catalog</Link>
           <ChevronRight size={12} />
           <span className="text-[#C9A84C]">{listing.title}</span>
         </div>
@@ -150,22 +150,22 @@ export default function CarDetailPage() {
               {/* Quick Specs Bar */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-white/5">
                 <div className="flex flex-col gap-2">
-                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Année</span>
+                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Year</span>
                   <span className="text-base md:text-lg font-semibold">{listing.year}</span>
                 </div>
                 <div className="flex flex-col gap-2 md:border-l md:pl-4 border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
-                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Kilométrage</span>
+                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Mileage</span>
                   <span className="text-base md:text-lg font-semibold flex items-center gap-2">
                     <Gauge size={16} className="text-[#C9A84C] w-4 h-4"/> 
                     {listing.mileage.toLocaleString()} km
                   </span>
                 </div>
                 <div className="flex flex-col gap-2 md:border-l md:pl-4 border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
-                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Boîte</span>
+                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Transmission</span>
                   <span className="text-base md:text-lg font-semibold capitalize">{listing.transmission}</span>
                 </div>
                 <div className="flex flex-col gap-2 md:border-l md:pl-4 border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
-                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Carburant</span>
+                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Fuel</span>
                   <span className="text-base md:text-lg font-semibold capitalize">{listing.fuel}</span>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function CarDetailPage() {
               <div className="mt-8">
                 <h3 className="text-xl font-bold font-cormorant mb-4">Description</h3>
                 <p className="text-white/60 leading-relaxed font-inter text-sm whitespace-pre-line">
-                  {listing.description || 'Aucune description fournie.'}
+                  {listing.description || 'No description provided.'}
                 </p>
               </div>
 
@@ -193,7 +193,7 @@ export default function CarDetailPage() {
                 <div className="mt-8">
                   <h3 className="text-xl font-bold font-cormorant mb-4 flex items-center gap-2">
                     <Play size={20} className="text-[#C9A84C]" />
-                    Vidéo de présentation
+                    Presentation Video
                   </h3>
                   <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/5">
                     <iframe
@@ -215,7 +215,7 @@ export default function CarDetailPage() {
               
               <h3 className="text-xs uppercase font-bold tracking-widest text-[#C9A84C] mb-6 flex items-center gap-2">
                 <ShieldCheck size={16} /> 
-                {listing.isVerified ? 'Vendeur Professionnel' : 'Vendeur Particulier'}
+                {listing.isVerified ? 'Professional Seller' : 'Private Seller'}
               </h3>
               
               <div className="flex items-center gap-4 mb-6">
@@ -236,25 +236,25 @@ export default function CarDetailPage() {
                   className="w-full bg-[#E8C96A] text-[#111] font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:bg-white transition-colors shadow-lg"
                 >
                   <Phone size={18} /> 
-                  {showPhone ? listing.sellerPhone || 'Non spécifié' : 'Afficher le numéro'}
+                  {showPhone ? listing.sellerPhone || 'Not specified' : 'Show Phone Number'}
                 </button>
                 <button className="w-full bg-white/5 border border-white/10 text-white font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
-                  <MessageSquare size={18} /> Envoyer un message
+                  <MessageSquare size={18} /> Send Message
                 </button>
               </div>
 
               <div className="mt-6 pt-6 border-t border-white/5 text-center text-[11px] text-white/40 uppercase tracking-wider font-semibold">
-                Membre Japoni Auto
+                Japoni Auto Member
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-4">
               <button className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
-                <Share2 size={16} /> Partager l&apos;annonce
+                <Share2 size={16} /> Share Listing
               </button>
               <div className="w-px h-4 bg-white/10"></div>
               <button className="flex items-center gap-2 text-sm text-white/40 hover:text-rose-400 transition-colors">
-                <CheckCircle2 size={16} /> Signaler
+                <CheckCircle2 size={16} /> Report
               </button>
             </div>
           </div>

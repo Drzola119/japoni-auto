@@ -81,7 +81,7 @@ export default function AdminShowroomApplications() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Erreur lors de la création du compte');
+        throw new Error(result.error || 'Error creating account');
       }
 
       const userId = result.uid;
@@ -95,11 +95,11 @@ export default function AdminShowroomApplications() {
         tempPassword: deleteField(), // Clear temp password for security
       });
 
-      toast.success(`Showroom approuvé — Tier ${tier.charAt(0).toUpperCase() + tier.slice(1)}`);
+      toast.success(`Showroom approved — Tier ${tier.charAt(0).toUpperCase() + tier.slice(1)}`);
       setApplications(prev => prev.filter(a => a.id !== application.id));
     } catch (error) {
       console.error('Error approving application:', error);
-      toast.error(error instanceof Error ? error.message : 'Une erreur est survenue');
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setProcessingId(null);
     }
@@ -113,10 +113,10 @@ export default function AdminShowroomApplications() {
         status: 'rejected',
         reviewedAt: new Date().toISOString(),
       });
-      toast.success('Demande rejetée');
+      toast.success('Application rejected');
     } catch (error) {
       console.error('Error rejecting application:', error);
-      toast.error('Erreur lors du rejet');
+      toast.error('Error rejecting application');
     } finally {
       setProcessingId(null);
     }
@@ -138,10 +138,10 @@ export default function AdminShowroomApplications() {
         <div className="relative z-10">
           <h1 className="text-2xl font-serif text-white font-bold flex items-center gap-3">
             <Building2 className="text-[#C9A84C]" />
-            Demandes Showroom
+            Showroom Applications
           </h1>
           <p className="text-white/50 text-sm mt-2">
-            Gérez les demandes de création de showrooms professionnels
+            Manage professional showroom creation requests
           </p>
 
           <div className="flex flex-wrap gap-6 mt-6">
@@ -149,7 +149,7 @@ export default function AdminShowroomApplications() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={16} />
               <input
                 type="text"
-                placeholder="Rechercher..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl pl-10 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#C9A84C] w-64"
@@ -167,7 +167,7 @@ export default function AdminShowroomApplications() {
                       : 'bg-[#0A0A0A] text-white/50 hover:text-white border border-[#2A2A2A]'
                   }`}
                 >
-                  {status === 'pending' ? 'En attente' : status === 'approved' ? 'Approuvées' : 'Rejetées'}
+                  {status === 'pending' ? 'Pending' : status === 'approved' ? 'Approved' : 'Rejected'}
                 </button>
               ))}
             </div>
@@ -183,7 +183,7 @@ export default function AdminShowroomApplications() {
       ) : filteredApps.length === 0 ? (
         <div className="bg-[#111111] rounded-2xl border border-[#2A2A2A] p-12 text-center">
           <FileText className="w-12 h-12 text-white/20 mx-auto mb-4" />
-          <p className="text-white/40">Aucune demande trouvée</p>
+          <p className="text-white/40">No applications found</p>
         </div>
       ) : (
         <div className="grid gap-6">
@@ -216,7 +216,7 @@ export default function AdminShowroomApplications() {
 
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <div className="bg-[#0A0A0A] rounded-xl p-4">
-                      <span className="text-white/30 text-[10px] uppercase font-bold tracking-wider">Adresse</span>
+                      <span className="text-white/30 text-[10px] uppercase font-bold tracking-wider">Address</span>
                       <p className="text-white text-sm mt-1 flex items-center gap-1">
                         <MapPin size={14} className="text-[#C9A84C]" />
                         {application.address}
@@ -227,7 +227,7 @@ export default function AdminShowroomApplications() {
                       <p className="text-white text-sm mt-1">{application.wilaya}</p>
                     </div>
                     <div className="bg-[#0A0A0A] rounded-xl p-4">
-                      <span className="text-white/30 text-[10px] uppercase font-bold tracking-wider">Statut</span>
+                      <span className="text-white/30 text-[10px] uppercase font-bold tracking-wider">Status</span>
                       <p className="text-white text-sm mt-1 capitalize flex items-center gap-1">
                         {application.status === 'pending' && <Clock size={14} className="text-yellow-500" />}
                         {application.status === 'approved' && <CheckCircle2 size={14} className="text-green-500" />}
@@ -278,7 +278,7 @@ export default function AdminShowroomApplications() {
                       ) : (
                         <CheckCircle2 size={18} />
                       )}
-                      Approuver
+                      Approve
                     </button>
 
                     <div className="grid grid-cols-3 gap-2">
@@ -295,7 +295,7 @@ export default function AdminShowroomApplications() {
                               : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                           } hover:opacity-80 transition-opacity disabled:opacity-50`}
                         >
-                          {TIER_LIMITS[tier].name} ({TIER_LIMITS[tier].daily}/jour)
+                          {TIER_LIMITS[tier].name} ({TIER_LIMITS[tier].daily}/day)
                         </button>
                       ))}
                     </div>
@@ -306,7 +306,7 @@ export default function AdminShowroomApplications() {
                       className="w-full bg-red-500/10 text-red-500 border border-red-500/20 font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors disabled:opacity-50"
                     >
                       <XCircle size={18} />
-                      Rejeter
+                      Reject
                     </button>
                   </div>
                 )}

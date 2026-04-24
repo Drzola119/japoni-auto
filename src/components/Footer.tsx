@@ -34,7 +34,7 @@ export default function Footer() {
                 lineHeight: 1.9 
               }}
             >
-              La plateforme N°1 pour acheter et vendre des voitures de prestige en Algérie. L&apos;excellence à chaque transaction.
+              Algeria's #1 platform for buying and selling premium cars. Excellence in every transaction.
             </p>
             
             <div className="flex items-center gap-3">
@@ -84,10 +84,10 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4">
               {[
-                { href: '/', label: 'Accueil' },
-                { href: '/cars', label: 'Annonces' },
-                { href: '/seller-dashboard/listings/new', label: 'Vendre un véhicule' },
-                { href: '/login', label: 'Espace client' },
+                { href: '/', label: 'Home' },
+                { href: '/cars', label: 'Cars' },
+                { href: '/seller-dashboard/listings/new', label: 'Sell Your Car' },
+                { href: '/login', label: 'My Account' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link 
@@ -130,7 +130,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <MapPin size={14} color="#C9A84C" />
-                <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.875rem', color: '#4A4840' }}>Alger, Algérie</span>
+                <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.875rem', color: '#4A4840' }}>Algiers, Algeria</span>
               </li>
             </ul>
           </div>
@@ -145,7 +145,7 @@ export default function Footer() {
           }}
         >
           <p style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.75rem', color: '#4A4840' }}>
-            © {new Date().getFullYear()} Japoni Auto. Tous droits réservés.
+            © {new Date().getFullYear()} Japoni Auto. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link 
@@ -155,7 +155,7 @@ export default function Footer() {
               onMouseEnter={(e) => e.currentTarget.style.color = '#9A9480'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#4A4840'}
             >
-              Confidentialité
+              Privacy Policy
             </Link>
             <Link 
               href="/terms" 
@@ -164,7 +164,7 @@ export default function Footer() {
               onMouseEnter={(e) => e.currentTarget.style.color = '#9A9480'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#4A4840'}
             >
-              Conditions d&apos;utilisation
+              Terms of Service
             </Link>
           </div>
         </div>

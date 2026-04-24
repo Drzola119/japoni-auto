@@ -21,46 +21,46 @@ export default function ShowroomPendingPage() {
         </motion.div>
 
         <h1 className="text-3xl font-bold font-cormorant text-white mb-4">
-          Demande en Attente
+          Application Pending
         </h1>
 
         <p className="text-white/50 text-sm mb-8 leading-relaxed">
-          Votre demande de création de showroom est en cours d'examen par notre équipe.
-          Ce processus prend généralement entre 24 et 48 heures.
+          Your showroom application is currently under review by our team.
+          This process typically takes between 24 and 48 hours.
         </p>
 
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 mb-8">
           <h2 className="text-white font-semibold mb-4 flex items-center justify-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-green-500" />
-            Étapes suivantes
+            Next Steps
           </h2>
           <ul className="text-white/40 text-sm space-y-3 text-left">
             <li className="flex items-center gap-3">
               <span className="w-6 h-6 rounded-full bg-[#C9A84C]/20 text-[#C9A84C] text-xs flex items-center justify-center font-bold">1</span>
-              Examination de vos documents
+              Document review
             </li>
             <li className="flex items-center gap-3">
               <span className="w-6 h-6 rounded-full bg-[#C9A84C]/20 text-[#C9A84C] text-xs flex items-center justify-center font-bold">2</span>
-              Vérification des informations
+              Information verification
             </li>
             <li className="flex items-center gap-3">
               <span className="w-6 h-6 rounded-full bg-[#C9A84C]/20 text-[#C9A84C] text-xs flex items-center justify-center font-bold">3</span>
-              Notification par email
+              Email notification
             </li>
           </ul>
         </div>
 
         <div className="space-y-3">
-          <Link
+<Link
             href="/"
             className="block w-full py-3 rounded-xl bg-[#C9A84C]/10 text-[#C9A84C] font-bold hover:bg-[#C9A84C]/20 transition-colors"
           >
-            Retour à l'accueil
+            Back to Home
           </Link>
           <p className="text-white/30 text-xs">
-            Vous avez des questions ?{' '}
+            Have questions?{' '}
             <a href="mailto:contact@japoniauto.dz" className="text-[#C9A84C] hover:underline">
-             Contactez-nous
+              Contact us
             </a>
           </p>
         </div>

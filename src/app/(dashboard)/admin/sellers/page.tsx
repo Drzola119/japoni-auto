@@ -12,6 +12,7 @@ import { User as UserType } from '@/types';
 export default function AdminSellers() {
   const [sellers, setSellers] = useState<UserType[]>([]);
   const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const q = query(collection(db!, 'users'), where('role', '==', 'seller'));
@@ -37,6 +38,12 @@ export default function AdminSellers() {
     if (filter === 'verified') return s.verified;
     if (filter === 'pending') return !s.verified;
     return true;
+  }).filter(s => {
+    const matchesSearch = !searchTerm || 
+      s.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.phone?.includes(searchTerm);
+    return matchesSearch;
   });
 
   return (
@@ -47,18 +54,33 @@ export default function AdminSellers() {
           <p className="text-[#555555] text-[10px] uppercase tracking-[0.2em] mt-1 font-bold">Vérification et certification</p>
         </div>
         
-        <div className="flex bg-[#0A0A0A] p-1 rounded-xl border border-[#2A2A2A]">
-          {['all', 'verified', 'pending'].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
-                filter === f ? 'bg-[#C9A84C] text-[#07070C]' : 'text-[#555555] hover:text-[#A0A0A0]'
-              }`}
-            >
-              {f === 'all' ? 'Tous' : f === 'verified' ? 'Vérifiés' : 'En Attente'}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Rechercher un vendeur..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
+            />
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          
+          <div className="flex bg-[#0A0A0A] p-1 rounded-xl border border-[#2A2A2A]">
+            {['all', 'verified', 'pending'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                  filter === f ? 'bg-[#C9A84C] text-[#07070C]' : 'text-[#555555] hover:text-[#A0A0A0]'
+                }`}
+              >
+                {f === 'all' ? 'Tous' : f === 'verified' ? 'Vérifiés' : 'En Attente'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

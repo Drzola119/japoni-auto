@@ -76,8 +76,8 @@ export default function PublicShowroomPage() {
   if (!showroom || showroom.role !== 'showroom' || showroom.status !== 'active') {
     return (
       <div className="min-h-screen bg-[#07070A] flex flex-col items-center justify-center text-white">
-        <h1 className="text-4xl font-bold font-cormorant mb-4">Showroom introuvable</h1>
-        <Link href="/cars" className="text-[#C9A84C] hover:underline">Retour au catalogue</Link>
+        <h1 className="text-4xl font-bold font-cormorant mb-4">Showroom not found</h1>
+        <Link href="/cars" className="text-[#C9A84C] hover:underline">Back to catalog</Link>
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function PublicShowroomPage() {
                 className="bg-[#C9A84C] text-[#111] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-[#E8C96A] transition-colors"
               >
                 <Phone size={18} />
-                Appeler
+                Call
               </a>
               {showroom.whatsapp && (
                 <a 
@@ -155,11 +155,11 @@ export default function PublicShowroomPage() {
           <div className="flex gap-12">
             <div>
               <span className="text-[#C9A84C] text-2xl font-bold">{listings.length}</span>
-              <span className="text-white/40 text-sm ml-2">véhicules</span>
+              <span className="text-white/40 text-sm ml-2">vehicles</span>
             </div>
             <div>
               <span className="text-white/40 text-2xl font-bold">{showroom.totalListings || 0}</span>
-              <span className="text-white/40 text-sm">publiés</span>
+              <span className="text-white/40 text-sm">published</span>
             </div>
           </div>
         </div>
@@ -168,13 +168,13 @@ export default function PublicShowroomPage() {
       <div className="container mx-auto px-4 max-w-7xl py-12">
         <h2 className="text-2xl font-bold font-cormorant mb-6 flex items-center gap-3">
           <Car size={24} className="text-[#C9A84C]" />
-          Véhicules en vente
+          Vehicles for Sale
         </h2>
 
         {listings.length === 0 ? (
           <div className="bg-[#111] rounded-2xl border border-white/5 p-12 text-center">
             <Car className="w-12 h-12 text-white/20 mx-auto mb-4" />
-            <p className="text-white/40">Aucun véhicule en vente pour le moment</p>
+            <p className="text-white/40">No vehicles for sale at this time</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

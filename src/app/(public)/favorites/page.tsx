@@ -20,12 +20,12 @@ export default function FavoritesPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold font-cormorant tracking-wide flex items-center gap-3">
-              Mes Favoris <Heart className="text-rose-500 fill-rose-500" />
+              My Favorites <Heart className="text-rose-500 fill-rose-500" />
             </h1>
-            <p className="text-white/50 text-sm mt-1">Retrouvez les véhicules que vous avez sauvegardés.</p>
+            <p className="text-white/50 text-sm mt-1">Find the vehicles you have saved.</p>
           </div>
           <Link href="/cars" className="bg-white/5 text-white/80 hover:text-white hover:bg-white/10 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
-            <Search size={16} /> Parcourir les annonces
+            <Search size={16} /> Browse listings
           </Link>
         </div>
 
@@ -48,7 +48,7 @@ export default function FavoritesPage() {
                     <span>{car.mileage}</span>
                   </div>
                   <Link href={`/cars/${car.id}`} className="block w-full text-center mt-5 py-2.5 rounded-lg border border-white/10 text-white/80 text-sm font-medium hover:bg-white hover:text-[#111] hover:border-white transition-all">
-                    Voir les détails
+                    View details
                   </Link>
                 </div>
               </div>
@@ -57,10 +57,10 @@ export default function FavoritesPage() {
         ) : (
           <div className="bg-[#111116] border border-white/5 rounded-3xl p-16 text-center">
             <Heart size={48} className="mx-auto text-white/10 mb-6" />
-            <h2 className="text-xl font-bold font-cormorant mb-2">Aucun favori pour le moment</h2>
-            <p className="text-white/50 text-sm max-w-sm mx-auto mb-8">Vous n&apos;avez pas encore sauvegardé de véhicule. Parcourez nos annonces et cliquez sur le cœur pour les retrouver ici.</p>
+            <h2 className="text-xl font-bold font-cormorant mb-2">No favorites yet</h2>
+            <p className="text-white/50 text-sm max-w-sm mx-auto mb-8">You haven&apos;t saved any vehicles yet. Browse our listings and click the heart to find them here.</p>
             <Link href="/cars" className="bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] px-6 py-3 rounded-xl text-sm font-bold inline-block hover:shadow-[0_0_15px_rgba(201,168,76,0.3)] transition-all">
-              Découvrir les véhicules
+              Discover vehicles
             </Link>
           </div>
         )}

@@ -24,47 +24,47 @@ export default function SignupRolePage() {
   const roles = [
     {
       id: 'buyer',
-      title: 'Acheteur',
-      subtitle: 'Parcourez des milliers d\'annonces et trouvez votre voiture idéale',
+      title: 'Buyer',
+      subtitle: 'Browse thousands of listings and find your ideal car',
       icon: Search,
       color: 'blue',
       features: [
-        'Accès gratuit à toutes les annonces',
-        'Contactez directement les vendeurs',
-        'Sauvegardez vos favoris',
+        'Free access to all listings',
+        'Contact sellers directly',
+        'Save your favorites',
       ],
-      buttonText: "S'inscrire comme Acheteur",
+      buttonText: "Sign Up as Buyer",
       buttonLink: '/signup/buyer',
       badge: null,
     },
     {
       id: 'seller',
-      title: 'Vendeur Particulier',
-      subtitle: 'Publiez votre annonce et vendez votre véhicule rapidement',
+      title: 'Private Seller',
+      subtitle: 'Post your listing and sell your vehicle quickly',
       icon: Tag,
       color: 'green',
       features: [
-        '1 annonce gratuite par jour',
-        '1 photo par annonce',
-        'Approbation instantanée',
+        '1 free listing per day',
+        '1 photo per listing',
+        'Instant approval',
       ],
-      buttonText: "S'inscrire comme Vendeur",
+      buttonText: "Sign Up as Seller",
       buttonLink: '/signup/seller',
-      badge: 'Gratuit',
+      badge: 'Free',
     },
     {
       id: 'showroom',
-      title: 'Showroom Professionnel',
-      subtitle: 'Gérez votre stock et touchez des milliers d\'acheteurs potentiels',
+      title: 'Professional Showroom',
+      subtitle: 'Manage your inventory and reach thousands of potential buyers',
       icon: Building2,
       color: 'amber',
       features: [
-        'Jusqu\'à 20 annonces par jour',
-        '4 photos + lien vidéo par annonce',
-        'Badge Showroom Vérifié',
-        'Profil showroom dédié',
+        'Up to 20 listings per day',
+        '4 photos + video link per listing',
+        'Verified Showroom Badge',
+        'Dedicated showroom profile',
       ],
-      buttonText: 'Créer un compte Showroom',
+      buttonText: 'Create Showroom Account',
       buttonLink: '/signup/showroom',
       badge: 'Premium',
     },
@@ -116,10 +116,10 @@ export default function SignupRolePage() {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Rejoignez <span className="text-[#C9A84C]">Japoni Auto</span>
+            Join <span className="text-[#C9A84C]">Japoni Auto</span>
           </h1>
           <p className="text-[#A0A0A0] text-lg">
-            Choisissez votre type de compte pour commencer
+            Choose your account type to get started
           </p>
         </motion.div>
 
@@ -199,9 +199,9 @@ export default function SignupRolePage() {
           className="mt-12 text-center"
         >
           <p className="text-[#A0A0A0]">
-            Déjà un compte ?{' '}
+            Already have an account?{' '}
             <Link href="/login" className="text-[#C9A84C] hover:underline">
-              Se connecter
+              Login
             </Link>
           </p>
         </motion.div>

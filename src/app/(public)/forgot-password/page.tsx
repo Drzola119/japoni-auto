@@ -21,9 +21,9 @@ export default function ForgotPasswordPage() {
     try {
       await resetPassword(email);
       setSent(true);
-      toast.success('Email de réinitialisation envoyé !');
+      toast.success('Password reset email sent!');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Erreur lors de l\'envoi');
+      toast.error((err as Error).message || 'Error sending email');
     } finally {
       setLoading(false);
     }
@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
         className="w-full max-w-md relative z-10"
       >
         <Link href="/login" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-8 text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Retour à la connexion
+          <ArrowLeft className="w-4 h-4" /> Back to login
         </Link>
         
         <div className="bg-[#111116] border border-white/5 p-8 rounded-2xl shadow-2xl relative overflow-hidden">
@@ -52,25 +52,25 @@ export default function ForgotPasswordPage() {
           </div>
           
           <h1 className="relative z-10 text-3xl font-bold text-white mb-2 tracking-wide" style={{ fontFamily: 'var(--font-cormorant)' }}>
-            Mot de passe oublié ?
+            Forgot password?
           </h1>
           
           {sent ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 relative z-10">
               <p className="text-white/60 leading-relaxed text-sm font-inter">
-                Un email contenant les instructions pour réinitialiser votre mot de passe a été envoyé à <strong>{email}</strong>.
+                An email with instructions to reset your password has been sent to <strong>{email}</strong>.
               </p>
               <button 
                 onClick={() => setSent(false)}
                 className="text-[#C9A84C] hover:text-[#E8C96A] text-sm font-medium transition-colors"
               >
-                Essayer avec une autre adresse email
+                Try another email address
               </button>
             </motion.div>
           ) : (
             <div className="relative z-10">
               <p className="text-white/60 leading-relaxed text-sm mb-8 font-inter">
-                Entrez l&apos;adresse email associée à votre compte, et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                Enter the email address associated with your account, and we will send you a link to reset your password.
               </p>
               
               <form onSubmit={handleSubmit} className="space-y-6 font-inter">
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                       value={email} 
                       onChange={(e) => setEmail(e.target.value)} 
                       type="email" 
-                      placeholder="votre@email.com" 
+                      placeholder="your@email.com" 
                       className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:outline-none focus:border-[#C9A84C] disabled:opacity-50 transition-all font-medium" 
                       required 
                     />
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
                   disabled={loading || !email} 
                   className="w-full bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:opacity-90 shadow-[0_0_15px_rgba(201,168,76,0.2)] disabled:opacity-50 transition-all duration-300"
                 >
-                  {loading ? 'Envoi en cours...' : 'Envoyer le lien'}
+                  {loading ? 'Sending...' : 'Send link'}
                 </button>
               </form>
             </div>

@@ -15,9 +15,14 @@ import {
   MapPin,
   Edit2,
   Eye,
-  MoreVertical
+  MoreVertical,
+  X,
+  User,
+  Calendar,
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
-import { m as motion } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { formatDate } from '@/lib/utils';
 import { toast } from 'react-hot-toast';
 import { User as UserType } from '@/types';
@@ -27,6 +32,10 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [viewUser, setViewUser] = useState<UserType | null>(null);
+  const [editUser, setEditUser] = useState<UserType | null>(null);
+  const [editRole, setEditRole] = useState('');
+  const [editStatus, setEditStatus] = useState('');
 
   useEffect(() => {
     const q = query(collection(db!, 'users'), orderBy('createdAt', 'desc'));
@@ -53,6 +62,26 @@ export default function AdminUsers() {
     } catch (error) {
       toast.error('Erreur lors de la mise à jour');
     }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editUser) return;
+    try {
+      await updateDoc(doc(db!, 'users', editUser.uid), { 
+        role: editRole,
+        suspended: editStatus === 'suspended'
+      });
+      toast.success('Utilisateur mis à jour');
+      setEditUser(null);
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const handleOpenEdit = (user: UserType) => {
+    setEditUser(user);
+    setEditRole(user.role || 'user');
+    setEditStatus(user.suspended ? 'suspended' : 'active');
   };
 
   const filteredUsers = users.filter(u => {
@@ -174,10 +203,16 @@ export default function AdminUsers() {
                 >
                   <Ban size={16} />
                 </button>
-                <button className="p-2 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-[#C9A84C] transition-all">
+                <button 
+                  onClick={() => handleOpenEdit(u)}
+                  className="p-2 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-[#C9A84C] transition-all"
+                >
                   <Edit2 size={16} />
                 </button>
-                <button className="p-2 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-white transition-all">
+                <button 
+                  onClick={() => setViewUser(u)}
+                  className="p-2 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-white transition-all"
+                >
                   <Eye size={16} />
                 </button>
               </div>
@@ -185,6 +220,186 @@ export default function AdminUsers() {
           </motion.div>
         ))}
       </div>
+
+      {/* View User Modal */}
+      <AnimatePresence>
+        {viewUser && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setViewUser(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6 w-full max-w-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Détails de l'utilisateur</h2>
+                <button onClick={() => setViewUser(null)} className="p-2 text-[#555555] hover:text-white transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-[#0A0A0A] rounded-xl">
+                  <div className="w-16 h-16 rounded-2xl bg-[#C9A84C] flex items-center justify-center text-[#07070C] text-2xl font-bold">
+                    {viewUser.displayName?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg">{viewUser.displayName}</h3>
+                    <div className="mt-1">{getRoleBadge(viewUser.role || 'user')}</div>
+                    {viewUser.suspended && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-500/10 text-red-500 text-[9px] font-bold uppercase rounded-full border border-red-500/20 mt-1">
+                        <AlertTriangle size={10} /> Suspendu
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-[#0A0A0A] rounded-xl">
+                    <div className="flex items-center gap-2 text-[#555555] text-xs mb-1">
+                      <Mail size={14} /> Email
+                    </div>
+                    <p className="text-white text-sm">{viewUser.email}</p>
+                  </div>
+                  <div className="p-4 bg-[#0A0A0A] rounded-xl">
+                    <div className="flex items-center gap-2 text-[#555555] text-xs mb-1">
+                      <Phone size={14} /> Téléphone
+                    </div>
+                    <p className="text-white text-sm">{viewUser.phone || 'Non renseigné'}</p>
+                  </div>
+                  <div className="p-4 bg-[#0A0A0A] rounded-xl">
+                    <div className="flex items-center gap-2 text-[#555555] text-xs mb-1">
+                      <MapPin size={14} /> Wilaya
+                    </div>
+                    <p className="text-white text-sm">{viewUser.wilaya || 'Non renseignée'}</p>
+                  </div>
+                  <div className="p-4 bg-[#0A0A0A] rounded-xl">
+                    <div className="flex items-center gap-2 text-[#555555] text-xs mb-1">
+                      <Calendar size={14} /> Inscrit le
+                    </div>
+                    <p className="text-white text-sm">{(viewUser.createdAt as any) ? formatDate(viewUser.createdAt) : '--'}</p>
+                  </div>
+                </div>
+
+                {viewUser.role === 'seller' && (
+                  <div className="p-4 bg-[#0A0A0A] rounded-xl">
+                    <div className="flex items-center gap-2 text-[#555555] text-xs mb-2">
+                      <Activity size={14} /> Activité
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[10px] text-[#555555] uppercase">Annonces</p>
+                        <p className="text-white font-bold">{viewUser.dailyPostCount || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-[#555555] uppercase">Dernière publication</p>
+                        <p className="text-white text-sm">{viewUser.lastPostDate ? formatDate(viewUser.lastPostDate) : '--'}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-[#1E1E1E] flex justify-end">
+                <button
+                  onClick={() => setViewUser(null)}
+                  className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl text-sm font-bold hover:bg-[#2A2A2A] transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit User Modal */}
+      <AnimatePresence>
+        {editUser && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setEditUser(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#111111] border border-[#2A2A2A] rounded-2xl p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white">Modifier l'utilisateur</h2>
+                <button onClick={() => setEditUser(null)} className="p-2 text-[#555555] hover:text-white transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-[#0A0A0A] rounded-xl">
+                  <div className="w-12 h-12 rounded-xl bg-[#C9A84C] flex items-center justify-center text-[#07070C] text-xl font-bold">
+                    {editUser.displayName?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold">{editUser.displayName}</h3>
+                    <p className="text-[#555555] text-xs">{editUser.email}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] text-[#555555] font-bold uppercase tracking-widest mb-2">Rôle</label>
+                  <select
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value)}
+                    className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white focus:border-[#C9A84C]/50 outline-none transition-colors"
+                  >
+                    <option value="user">Client</option>
+                    <option value="seller">Vendeur</option>
+                    <option value="showroom">Showroom</option>
+                    <option value="admin">Administrateur</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] text-[#555555] font-bold uppercase tracking-widest mb-2">Statut</label>
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                    className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-3 text-white focus:border-[#C9A84C]/50 outline-none transition-colors"
+                  >
+                    <option value="active">Actif</option>
+                    <option value="suspended">Suspendu</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-[#1E1E1E] flex gap-3 justify-end">
+                <button
+                  onClick={() => setEditUser(null)}
+                  className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl text-sm font-bold hover:bg-[#2A2A2A] transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-6 py-2 bg-[#C9A84C] text-[#07070C] rounded-xl text-sm font-bold hover:bg-[#D4B55D] transition-colors"
+                >
+                  Enregistrer
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -15,9 +15,9 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import toast from 'react-hot-toast';
 
 const steps = [
-  { id: 1, title: 'Informations personnelles' },
-  { id: 2, title: 'Informations showroom' },
-  { id: 3, title: 'Documents officiels' },
+  { id: 1, title: 'Personal Information' },
+  { id: 2, title: 'Showroom Information' },
+  { id: 3, title: 'Official Documents' },
 ];
 
 export default function ShowroomSignupPage() {
@@ -63,27 +63,27 @@ export default function ShowroomSignupPage() {
     const newErrors: Record<string, string> = {};
     
     if (step === 1) {
-      if (!form.ownerName.trim()) newErrors.ownerName = 'Le nom est requis';
-      if (!form.email.trim()) newErrors.email = 'L\'email est requis';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Email invalide';
-      if (!form.phone.trim()) newErrors.phone = 'Le téléphone est requis';
-      if (!form.wilaya) newErrors.wilaya = 'Sélectionnez une wilaya';
-      if (form.password.length < 8) newErrors.password = 'Minimum 8 caractères';
-      if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+      if (!form.ownerName.trim()) newErrors.ownerName = 'Name is required';
+      if (!form.email.trim()) newErrors.email = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email';
+      if (!form.phone.trim()) newErrors.phone = 'Phone is required';
+      if (!form.wilaya) newErrors.wilaya = 'Select a wilaya';
+      if (form.password.length < 8) newErrors.password = 'Minimum 8 characters';
+      if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     }
     
     if (step === 2) {
-      if (!form.showroomName.trim()) newErrors.showroomName = 'Le nom du showroom est requis';
-      if (!form.nif.trim()) newErrors.nif = 'Le NIF est requis';
-      if (!form.registreCommerce.trim()) newErrors.registreCommerce = 'Le RC est requis';
-      if (!form.address.trim()) newErrors.address = 'L\'adresse est requise';
-      if (!form.showroomWilaya) newErrors.showroomWilaya = 'Sélectionnez une wilaya';
+      if (!form.showroomName.trim()) newErrors.showroomName = 'Showroom name is required';
+      if (!form.nif.trim()) newErrors.nif = 'NIF is required';
+      if (!form.registreCommerce.trim()) newErrors.registreCommerce = 'RC is required';
+      if (!form.address.trim()) newErrors.address = 'Address is required';
+      if (!form.showroomWilaya) newErrors.showroomWilaya = 'Select a wilaya';
     }
     
     if (step === 3) {
-      if (!form.officialDocumentUrl && !form.officialDocument) newErrors.officialDocument = 'Le document officiel est requis';
-      if (!form.agreeTerms) newErrors.agreeTerms = 'Vous devez accepter les conditions';
-      if (!form.agreeProfessional) newErrors.agreeProfessional = 'Vous devez accepter les conditions professionnelles';
+      if (!form.officialDocumentUrl && !form.officialDocument) newErrors.officialDocument = 'Official document is required';
+      if (!form.agreeTerms) newErrors.agreeTerms = 'You must accept the terms';
+      if (!form.agreeProfessional) newErrors.agreeProfessional = 'You must accept the professional terms';
     }
 
     setErrors(newErrors);
@@ -105,13 +105,13 @@ export default function ShowroomSignupPage() {
     if (!file) return;
     
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Le fichier doit faire moins de 5MB');
+      toast.error('File must be less than 5MB');
       return;
     }
     
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Formats acceptés: PDF, JPG, PNG, WEBP');
+      toast.error('Accepted formats: PDF, JPG, PNG, WEBP');
       return;
     }
 
@@ -128,7 +128,7 @@ export default function ShowroomSignupPage() {
       const result = await uploadSingle(form.officialDocument, `showroom_docs/${Date.now()}_${form.officialDocument.name}`);
       setUploadProgress(100);
       if (!result) {
-        throw new Error('Échec de l\'upload du document');
+        throw new Error('Document upload failed');
       }
       return result.url;
     } finally {
@@ -168,10 +168,10 @@ export default function ShowroomSignupPage() {
         submittedAt: serverTimestamp(),
       });
 
-      toast.success('Demande soumise avec succès !');
+      toast.success('Application submitted successfully!');
       router.push('/signup/showroom/pending');
     } catch (err: any) {
-      toast.error(err.message || 'Erreur lors de la soumission');
+      toast.error(err.message || 'Error submitting application');
     } finally {
       setLoading(false);
     }
@@ -193,7 +193,7 @@ export default function ShowroomSignupPage() {
       <div className="p-6 border-b border-white/5">
         <Link href="/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} />
-          Retour
+          Back
         </Link>
       </div>
 
@@ -236,25 +236,25 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Informations <span className="text-[#C9A84C]">personnelles</span>
+                  Personal <span className="text-[#C9A84C]">Information</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Coordonnées du responsable du showroom</p>
+                <p className="text-[#A0A0A0]">Contact details for the showroom owner</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Nom complet du responsable</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Owner's Full Name</label>
                   <input
                     type="text"
                     value={form.ownerName}
                     onChange={handleChange('ownerName')}
-                    placeholder="Nom et prénom"
+                    placeholder="First and last name"
                     className={`w-full bg-[#111111] border ${errors.ownerName ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Email professionnel</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Professional Email</label>
                   <input
                     type="email"
                     value={form.email}
@@ -265,7 +265,7 @@ export default function ShowroomSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Téléphone</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Phone</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -276,35 +276,35 @@ export default function ShowroomSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Wilaya de résidence</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Residence Wilaya</label>
                   <select
                     value={form.wilaya}
                     onChange={handleChange('wilaya')}
                     className={`w-full bg-[#111111] border ${errors.wilaya ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C9A84C] appearance-none`}
                   >
-                    <option value="">Sélectionnez</option>
+                    <option value="">Select</option>
                     {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Mot de passe temporaire</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Temporary Password</label>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
                     onChange={handleChange('password')}
-                    placeholder="Sera utilisé pour créer le compte après approbation"
+                    placeholder="Will be used to create account after approval"
                     className={`w-full bg-[#111111] border ${errors.password ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Confirmer le mot de passe</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Confirm Password</label>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange('confirmPassword')}
-                    placeholder="Confirmez"
+                    placeholder="Confirm"
                     className={`w-full bg-[#111111] border ${errors.confirmPassword ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
                 </div>
@@ -317,36 +317,36 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Informations <span className="text-[#C9A84C]">showroom</span>
+                  Showroom <span className="text-[#C9A84C]">Information</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Détails de votre établissement</p>
+                <p className="text-[#A0A0A0]">Details about your establishment</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Nom du showroom</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Showroom Name</label>
                   <input
                     type="text"
                     value={form.showroomName}
                     onChange={handleChange('showroomName')}
-                    placeholder="Ex: Showroom Auto Alger"
+                    placeholder="e.g. Auto Showroom Algiers"
                     className={`w-full bg-[#111111] border ${errors.showroomName ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-2">NIF</label>
+                    <label className="block text-sm text-[#A0A0A0] mb-2">NIF (Tax ID)</label>
                     <input
                       type="text"
                       value={form.nif}
                       onChange={handleChange('nif')}
-                      placeholder="Numéro d'identification"
+                      placeholder="Identification number"
                       className={`w-full bg-[#111111] border ${errors.nif ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-2">Registre de Commerce</label>
+                    <label className="block text-sm text-[#A0A0A0] mb-2">Business Register (RC)</label>
                     <input
                       type="text"
                       value={form.registreCommerce}
@@ -358,24 +358,24 @@ export default function ShowroomSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Adresse complète du showroom</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Full Showroom Address</label>
                   <textarea
                     value={form.address}
                     onChange={handleChange('address')}
-                    placeholder="Adresse complète incluant la wilaya"
+                    placeholder="Full address including wilaya"
                     rows={3}
                     className={`w-full bg-[#111111] border ${errors.address ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C] resize-none`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Wilaya du showroom</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Showroom Wilaya</label>
                   <select
                     value={form.showroomWilaya}
                     onChange={handleChange('showroomWilaya')}
                     className={`w-full bg-[#111111] border ${errors.showroomWilaya ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C9A84C] appearance-none`}
                   >
-                    <option value="">Sélectionnez</option>
+                    <option value="">Select</option>
                     {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
                   </select>
                 </div>
@@ -388,14 +388,14 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Documents <span className="text-[#C9A84C]">officiels</span>
+                  Official <span className="text-[#C9A84C]">Documents</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Upload de votre document officiel (RC ou NIF)</p>
+                <p className="text-[#A0A0A0]">Upload your official document (RC or NIF)</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Document officiel</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Official Document</label>
                   <div className={`border-2 border-dashed ${errors.officialDocument ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl p-6 text-center hover:border-[#C9A84C] transition-colors`}>
                     {form.officialDocument || form.officialDocumentUrl ? (
                       <div className="flex items-center justify-center gap-3">
@@ -408,7 +408,7 @@ export default function ShowroomSignupPage() {
                     ) : (
                       <label className="cursor-pointer">
                         <Upload className="mx-auto text-[#C9A84C] mb-2" size={32} />
-                        <p className="text-[#A0A0A0] mb-1">Cliquez pour upload ou glissez</p>
+                        <p className="text-[#A0A0A0] mb-1">Click to upload or drag and drop</p>
                         <p className="text-[#555] text-xs">PDF, JPG, PNG, WEBP - Max 5MB</p>
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleDocumentUpload} className="hidden" />
                       </label>
@@ -432,7 +432,7 @@ export default function ShowroomSignupPage() {
                       className="mt-1 w-4 h-4 rounded bg-[#111111] border-[#2A2A2A] text-[#C9A84C]"
                     />
                     <span className="text-sm text-[#A0A0A0]">
-                      Je certifie que les informations fournies sont exactes
+                      I certify that the information provided is accurate
                     </span>
                   </label>
 
@@ -444,9 +444,9 @@ export default function ShowroomSignupPage() {
                       className="mt-1 w-4 h-4 rounded bg-[#111111] border-[#2A2A2A] text-[#C9A84C]"
                     />
                     <span className="text-sm text-[#A0A0A0]">
-                      J'accepte les{' '}
-                      <Link href="/terms" className="text-[#C9A84C] hover:underline">conditions d'utilisation</Link>{' '}
-                      professionnelles
+                      I accept the{' '}
+                      <Link href="/terms" className="text-[#C9A84C] hover:underline">terms of use</Link>{' '}
+                      and professional conditions
                     </span>
                   </label>
                 </div>
@@ -462,7 +462,7 @@ export default function ShowroomSignupPage() {
                 className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#111111] border border-[#2A2A2A] text-white rounded-xl hover:border-[#555] transition-colors"
               >
                 <ArrowLeft size={18} />
-                Précédent
+                Previous
               </button>
             )}
             
@@ -471,7 +471,7 @@ export default function ShowroomSignupPage() {
                 onClick={nextStep}
                 className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#C9A84C] text-black font-bold rounded-xl hover:bg-[#E8C96A] transition-colors"
               >
-                Suivant
+                Next
                 <ArrowRight size={18} />
               </button>
             ) : (
@@ -484,7 +484,7 @@ export default function ShowroomSignupPage() {
                   <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <>
-                    Soumettre la demande
+                    Submit Application
                     <CheckCircle size={18} />
                   </>
                 )}

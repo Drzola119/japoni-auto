@@ -75,9 +75,9 @@ const DEMO_CARS: CarListing[] = [
 ];
 
 const STATS = [
-  { value: 12400, suffix: '+', label: 'Annonces actives' },
-  { value: 32, suffix: '', label: 'Marques disponibles' },
-  { value: 58, suffix: '', label: 'Wilayas couvertes' },
+  { value: 12400, suffix: '+', label: 'Active Listings' },
+  { value: 32, suffix: '', label: 'Available Brands' },
+  { value: 58, suffix: '', label: 'Covered Wilayas' },
 ];
 
 const staggerVariants = {
@@ -139,10 +139,10 @@ export default function HomePage() {
   }, [isLoading]);
 
   const filters = [
-    { id: 'all', label: 'Tout' },
+    { id: 'all', label: 'All' },
     { id: 'premium', label: 'Premium' },
-    { id: 'neuf', label: 'Neufs' },
-    { id: 'occasion', label: 'Occasions' },
+    { id: 'neuf', label: 'New' },
+    { id: 'occasion', label: 'Used' },
   ];
 
   const filteredCars = DEMO_CARS.filter(car => {
@@ -218,13 +218,7 @@ export default function HomePage() {
                 className="block text-[#F5F0E8] leading-none mb-2"
                 style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: 'clamp(2rem, 6vw, 4rem)' }}
               >
-                Trouvez Votre Voiture
-              </span>
-              <span 
-                className="block text-[#C9A84C] italic leading-none"
-                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: 'clamp(2rem, 6vw, 4rem)' }}
-              >
-                Idéale
+                Find Your Perfect Car
               </span>
             </h2>
 
@@ -233,7 +227,7 @@ export default function HomePage() {
               className="mx-auto mb-16 text-[#9A9480]"
               style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '1rem', maxWidth: '48ch', lineHeight: 1.8 }}
             >
-              La plus grande plateforme de vente et d&apos;achat de voitures en Algérie.
+              Algeria&apos;s premium marketplace for buying and selling vehicles.
             </p>
 
             {/* Search Bar Container */}
@@ -248,10 +242,10 @@ export default function HomePage() {
             >
               {/* Query Input */}
               <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Recherche</label>
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Search</label>
                 <input
                   type="text"
-                  placeholder="Marque, modèle..."
+                  placeholder="Make, model..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
@@ -261,14 +255,14 @@ export default function HomePage() {
 
               {/* Location Input */}
               <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Localisation</label>
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Location</label>
                 <select
                   value={selectedWilaya}
                   onChange={(e) => setSelectedWilaya(e.target.value)}
                   className="w-full bg-transparent border-none outline-none text-[#F5F0E8] appearance-none cursor-pointer"
                   style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
                 >
-                  <option value="" style={{ background: '#0A0A0F', color: '#9A9480' }}>Toute l&apos;Algérie</option>
+                  <option value="" style={{ background: '#0A0A0F', color: '#9A9480' }}>All of Algeria</option>
                   {WILAYAS.map(w => (
                     <option key={w} value={w} style={{ background: '#0A0A0F' }}>{w}</option>
                   ))}
@@ -277,10 +271,10 @@ export default function HomePage() {
 
               {/* Price Max Input */}
               <div className="flex-1 px-4 py-3 relative text-left">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Budget Max</label>
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Max Budget</label>
                 <input
                   type="number"
-                  placeholder="Illimité"
+                  placeholder="Unlimited"
                   value={priceMax}
                   onChange={(e) => setPriceMax(e.target.value)}
                   className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
@@ -307,7 +301,7 @@ export default function HomePage() {
               >
                 <Search className="w-4 h-4 mr-2" />
                 <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  AFFICHER
+                  SHOW
                 </span>
               </Link>
             </div>
@@ -320,7 +314,7 @@ export default function HomePage() {
               onMouseEnter={(e) => e.currentTarget.style.color = '#F5F0E8'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#9A9480'}
             >
-              Vendre ma voiture
+              Sell My Car
               <ArrowRightIcon className="w-3 h-3 text-[#C9A84C] transform group-hover:translate-x-1 transition-transform" />
             </Link>
 
@@ -380,9 +374,9 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
           >
             {[
-              { icon: Shield, title: 'Annonces Vérifiées', desc: 'Chaque transaction est approuvée par notre équipe spécialisée pour garantir authenticité et sécurité absolue.' },
-              { icon: Star, title: 'Excellence Premium', desc: 'Accédez aux véhicules les plus prestigieux avec des fiches détaillées et des vendeurs certifiés.' },
-              { icon: TrendingUp, title: 'Vente Exclusive', desc: 'Une visibilité exceptionnelle pour votre véhicule auprès d\'une clientèle ciblée et sérieuse.' },
+              { icon: Shield, title: 'Verified Listings', desc: 'Every transaction is approved by our specialized team to guarantee authenticity and absolute security.' },
+              { icon: Star, title: 'Premium Excellence', desc: 'Access the most prestigious vehicles with detailed listings and certified sellers.' },
+              { icon: TrendingUp, title: 'Exclusive Sales', desc: 'Exceptional visibility for your vehicle to a targeted and serious clientele.' },
             ].map(({ icon: Icon, title, desc }) => (
               <motion.div 
                 key={title} 
@@ -442,13 +436,13 @@ export default function HomePage() {
                 className="uppercase mb-2 text-[#C9A84C]"
                 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.3em' }}
               >
-                Annonces Récentes
+                Latest Listings
               </p>
               <h2 
                 className="text-[#F5F0E8]"
                 style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '2.5rem' }}
               >
-                Dernières Annonces
+                Featured Vehicles
               </h2>
             </motion.div>
             
@@ -536,7 +530,7 @@ export default function HomePage() {
                 e.currentTarget.style.borderColor = 'rgba(201,168,76,0.3)';
               }}
             >
-              Voir toutes les annonces <ArrowRightIcon className="w-4 h-4 ml-2 my-auto" />
+              View All Listings <ArrowRightIcon className="w-4 h-4 ml-2 my-auto" />
             </Link>
           </motion.div>
         </div>
@@ -564,13 +558,13 @@ export default function HomePage() {
               className="text-[#F5F0E8] block md:inline" 
               style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '3.5rem', lineHeight: 1.1 }}
             >
-              Vendez votre voiture{' '}
+              Sell Your Car{' '}
             </span>
             <span 
               className="text-[#C9A84C] italic" 
               style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: '3.5rem', lineHeight: 1.1 }}
             >
-              rapidement
+              Quickly
             </span>
           </h2>
           
@@ -578,7 +572,7 @@ export default function HomePage() {
             className="mb-10 mx-auto text-[#9A9480]"
             style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '1rem', maxWidth: '52ch' }}
           >
-            Publiez votre annonce gratuitement en quelques minutes et atteignez une exclusivité d&apos;acheteurs premium sélectionnés dans toute l&apos;Algérie.
+            Post your listing for free in minutes and reach an exclusivity of premium buyers selected across Algeria.
           </p>
           
           <Link 
@@ -606,7 +600,7 @@ export default function HomePage() {
               e.currentTarget.style.boxShadow = '0 0 0 0 rgba(201,168,76,0.4)';
             }}
           >
-            Démarrer L&apos;évaluation
+            Start Your Evaluation
           </Link>
         </motion.div>
       </section>

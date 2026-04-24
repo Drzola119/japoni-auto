@@ -92,29 +92,29 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
     {
       title: "PRINCIPAL",
       items: [
-        { href: "/admin", icon: LayoutDashboard, label: "Tableau de Bord" },
-        { href: "/admin/listings", icon: Car, label: "Annonces" },
-        { href: "/admin/queue", icon: Inbox, label: "File d'attente", badge: pendingCount },
-        { href: "/admin/showroom-applications", icon: Building2, label: "Demandes Showroom", badge: showroomAppCount },
-        { href: "/admin/users", icon: Users, label: "Utilisateurs" },
-        { href: "/admin/sellers", icon: BadgeCheck, label: "Vendeurs" },
+        { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+        { href: "/admin/listings", icon: Car, label: "Listings" },
+        { href: "/admin/queue", icon: Inbox, label: "Queue", badge: pendingCount },
+        { href: "/admin/showroom-applications", icon: Building2, label: "Showroom Applications", badge: showroomAppCount },
+        { href: "/admin/users", icon: Users, label: "Users" },
+        { href: "/admin/sellers", icon: BadgeCheck, label: "Sellers" },
       ]
     },
     {
       title: "ANALYSE",
       items: [
         { href: "/admin/analytics", icon: BarChart2, label: "Analytics" },
-        { href: "/admin/search-analytics", icon: Search, label: "Recherches" },
-        { href: "/admin/tracking", icon: Activity, label: "Suivi & S&#233;curit&#233;" },
-        { href: "/admin/reports", icon: BarChart3, label: "Rapports" },
-        { href: "/admin/security", icon: Shield, label: "S&#233;curit&#233; & Audit" },
+        { href: "/admin/search-analytics", icon: Search, label: "Searches" },
+        { href: "/admin/tracking", icon: Activity, label: "Tracking & Security" },
+        { href: "/admin/reports", icon: BarChart3, label: "Reports" },
+        { href: "/admin/security", icon: Shield, label: "Security & Audit" },
       ]
     },
     {
       title: "SYSTÈME",
       items: [
-        { href: "/admin/settings", icon: Settings, label: "Paramètres" },
-        { href: "/admin/broadcast", icon: Megaphone, label: "Diffusion" },
+        { href: "/admin/settings", icon: Settings, label: "Settings" },
+        { href: "/admin/broadcast", icon: Megaphone, label: "Broadcast" },
       ]
     }
   ];
@@ -172,7 +172,7 @@ export default function AdminSidebar({ isOpen, onClose }: Props) {
           className="w-full flex items-center gap-3 px-4 py-3 mt-4 rounded-xl text-sm text-[#E74C3C] hover:bg-red-500/10 transition-all group"
         >
           <LogOut size={18} className="transition-transform group-hover:-translate-x-1" />
-          Déconnexion
+          Logout
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { 
@@ -12,10 +12,13 @@ import {
   Mail, 
   Phone,
   Image as ImageIcon,
-  CheckCircle2
+  CheckCircle2,
+  Upload,
+  X
 } from 'lucide-react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
@@ -27,18 +30,45 @@ export default function AdminSettings() {
     requireApproval: true,
     maxPhotos: 8,
     notificationEmails: true,
+    logoUrl: '',
   });
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploading, uploadFile } = useFileUpload();
 
   useEffect(() => {
     const fetchSettings = async () => {
       const docRef = doc(db!, 'settings', 'general');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setSettings(prev => ({ ...prev, ...docSnap.data() }));
+        const data = docSnap.data();
+        setSettings(prev => ({ ...prev, ...data }));
+        if (data.logoUrl) setLogoPreview(data.logoUrl);
       }
     };
     fetchSettings();
   }, []);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Le fichier est trop volumineux (max 2Mo)');
+      return;
+    }
+    const result = await uploadFile(file, 'logo');
+    if (result) {
+      setSettings(prev => ({ ...prev, logoUrl: result.url }));
+      setLogoPreview(result.url);
+      toast.success('Logo téléchargé avec succès');
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setSettings(prev => ({ ...prev, logoUrl: '' }));
+    setLogoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -207,11 +237,39 @@ export default function AdminSettings() {
               {activeTab === 'appearance' && (
                 <div className="space-y-8">
                   <h3 className="text-white font-serif text-lg font-bold border-b border-[#1E1E1E] pb-4 mb-8">Identité Visuelle</h3>
-                  <div className="p-8 border-2 border-dashed border-[#2A2A2A] rounded-3xl text-center group hover:border-[#C9A84C]/50 transition-all cursor-pointer">
-                    <div className="w-16 h-16 bg-[#1A1A1A] rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#555555] group-hover:text-[#C9A84C] transition-all">
-                      <ImageIcon size={32} />
-                    </div>
-                    <p className="text-sm text-white font-bold">Changer le Logo</p>
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/svg+xml,image/jpeg"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                  />
+                  
+                  <div 
+                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    className={`p-8 border-2 border-dashed rounded-3xl text-center group transition-all cursor-pointer ${
+                      uploading ? 'border-[#C9A84C]/50 bg-[#C9A84C]/5' : 'border-[#2A2A2A] hover:border-[#C9A84C]/50'
+                    }`}
+                  >
+                    {logoPreview ? (
+                      <div className="relative inline-block">
+                        <img src={logoPreview} alt="Logo" className="w-24 h-24 object-contain mx-auto rounded-xl" />
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleRemoveLogo(); }}
+                          className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 bg-[#1A1A1A] rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#555555] group-hover:text-[#C9A84C] transition-all">
+                        {uploading ? <Upload size={32} className="animate-pulse" /> : <ImageIcon size={32} />}
+                      </div>
+                    )}
+                    <p className="text-sm text-white font-bold mt-4">
+                      {uploading ? 'Téléchargement...' : logoPreview ? 'Changer le Logo' : 'Changer le Logo'}
+                    </p>
                     <p className="text-xs text-[#555555] mt-2">Format PNG ou SVG recommandé. Taille max 2Mo.</p>
                   </div>
                   

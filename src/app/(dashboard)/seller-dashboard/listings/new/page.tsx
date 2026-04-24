@@ -58,7 +58,7 @@ export default function NewListing() {
       const filesToAdd = newFiles.slice(0, remainingSlots);
       
       if (newFiles.length > remainingSlots) {
-        toast.error(`Vous pouvez ajouter ${remainingSlots} photo(s) maximum`);
+        toast.error(`You can add up to ${remainingSlots} photo(s) maximum`);
       }
       
       setImages(prev => [...prev, ...filesToAdd]);
@@ -100,15 +100,15 @@ export default function NewListing() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return toast.error('Vous devez être connecté');
-    if (images.length === 0) return toast.error('Ajoutez au moins une photo');
+    if (!user) return toast.error('You must be logged in');
+    if (images.length === 0) return toast.error('Add at least one photo');
     
     setLoading(true);
     try {
       // Get fresh ID token
       const currentUser = auth?.currentUser;
       if (!currentUser) {
-        throw new Error('Utilisateur non connecté');
+        throw new Error('User not logged in');
       }
       const idToken = await currentUser.getIdToken();
 
@@ -116,7 +116,7 @@ export default function NewListing() {
       const imageUrls = uploadResults.map(r => r.url);
 
       if (imageUrls.length === 0) {
-        throw new Error('Échec de l\'upload des images');
+        throw new Error('Image upload failed');
       }
 
       const videoData = parseVideoUrl(form.videoUrl);
@@ -144,20 +144,20 @@ export default function NewListing() {
 
       // Handle rate limit (429)
       if (response.status === 429) {
-        toast.error(result.message || 'Limite atteinte pour aujourd\'hui');
+        toast.error(result.message || 'Daily limit reached');
         router.push('/seller-dashboard');
         return;
       }
 
       if (!response.ok) {
-        throw new Error(result.error || 'Erreur lors de la création');
+        throw new Error(result.error || 'Error creating listing');
       }
 
-      toast.success('Annonce publiée avec succès !');
+      toast.success('Listing published successfully!');
       router.push(`/cars/${result.listingId}`);
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || 'Erreur lors de la publication');
+      toast.error(error.message || 'Error publishing listing');
     } finally {
       setLoading(false);
     }
@@ -167,8 +167,8 @@ export default function NewListing() {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl pb-20">
       
       <div>
-        <h1 className="text-3xl font-bold font-cormorant text-white">Publier un véhicule</h1>
-        <p className="text-white/50 text-sm mt-1">Remplissez les détails pour mettre votre véhicule en vitrine.</p>
+        <h1 className="text-3xl font-bold font-cormorant text-white">Publish a Vehicle</h1>
+        <p className="text-white/50 text-sm mt-1">Fill in the details to list your vehicle.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -178,8 +178,8 @@ export default function NewListing() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-white">
               {userRole === 'seller' 
-                ? `Photo du véhicule (1 maximal)` 
-                : `Photos du véhicule (${images.length}/${maxImages})`}
+                ? `Vehicle photo (1 max)` 
+                : `Vehicle photos (${images.length}/${maxImages})`}
             </h2>
             {userRole === 'showroom' && (
               <span className="text-xs text-[#C9A84C] bg-[#C9A84C]/10 px-2 py-1 rounded">Showroom</span>
@@ -205,7 +205,7 @@ export default function NewListing() {
                           <X size={14} />
                         </button>
                         {index === 0 && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Principale</div>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Main</div>
                         )}
                       </>
                     ) : (
@@ -217,7 +217,7 @@ export default function NewListing() {
                       >
                         <UploadCloud className="text-white/20 group-hover:text-[#C9A84C] transition-colors" size={24} />
                         <span className="text-[10px] uppercase font-bold text-white/40 mt-2">
-                          {index === 0 ? 'Principale' : 'Optional'}
+                          {index === 0 ? 'Main' : 'Optional'}
                         </span>
                       </button>
                     )}
@@ -238,7 +238,7 @@ export default function NewListing() {
                   >
                     <X size={14} />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Photo principale</div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-[10px] text-center text-white font-bold uppercase tracking-wider">Main photo</div>
                 </div>
               ) : (
                 <button 
@@ -247,7 +247,7 @@ export default function NewListing() {
                   className="aspect-video border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center hover:bg-white/5 hover:border-[#C9A84C]/50 transition-colors group"
                 >
                   <UploadCloud className="text-white/20 group-hover:text-[#C9A84C] transition-colors" size={24} />
-                  <span className="text-[10px] uppercase font-bold text-white/40 mt-2">Photo principale (obligatoire)</span>
+                  <span className="text-[10px] uppercase font-bold text-white/40 mt-2">Main photo (required)</span>
                 </button>
               )}
             </div>
@@ -265,11 +265,11 @@ export default function NewListing() {
 
         {/* Basic Info */}
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Informations Principales</h2>
+          <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Main Information</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Titre de l&apos;annonce</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Listing title</label>
               <input 
                 name="title"
                 value={form.title}
@@ -281,7 +281,7 @@ export default function NewListing() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Prix (DZD)</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Price (DZD)</label>
               <input 
                 name="price"
                 value={form.price}
@@ -293,7 +293,7 @@ export default function NewListing() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Marque</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Brand</label>
               <select 
                 name="brand"
                 value={form.brand}
@@ -301,12 +301,12 @@ export default function NewListing() {
                 required
                 className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C] transition-colors"
               >
-                <option value="">Sélectionnez une marque</option>
+                <option value="">Select a brand</option>
                 {CAR_BRANDS.map(brand => <option key={brand} value={brand}>{brand}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Modèle</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Model</label>
               <input 
                 name="model"
                 value={form.model}
@@ -334,11 +334,11 @@ export default function NewListing() {
 
         {/* Technical Specs */}
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Spécifications</h2>
+          <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Specifications</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Année</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Year</label>
               <input 
                 name="year"
                 value={form.year}
@@ -350,7 +350,7 @@ export default function NewListing() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Kilométrage (km)</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Mileage (km)</label>
               <input 
                 name="mileage"
                 value={form.mileage}
@@ -362,22 +362,22 @@ export default function NewListing() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Carburant</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Fuel Type</label>
               <select 
                 name="fuel"
                 value={form.fuel}
                 onChange={handleChange}
                 className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
-                <option value="essence">Essence</option>
+                <option value="essence">Gasoline</option>
                 <option value="diesel">Diesel</option>
                 <option value="hybride">Hybride</option>
-                <option value="electrique">Électrique</option>
+                <option value="electrique">Electric</option>
                 <option value="gpl">GPL</option>
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Boîte de vitesse</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Transmission</label>
               <select 
                 name="transmission"
                 value={form.transmission}
@@ -389,7 +389,7 @@ export default function NewListing() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">État</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Condition</label>
               <select 
                 name="condition"
                 value={form.condition}
@@ -397,12 +397,12 @@ export default function NewListing() {
                 className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
                 <option value="neuf">Neuf</option>
-                <option value="occasion">Excellent (Occasion)</option>
-                <option value="accidente">Accidenté</option>
+                <option value="occasion">Excellent (Used)</option>
+                <option value="accidente">Damaged</option>
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Couleur extérieure</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Exterior Color</label>
               <input 
                 name="color"
                 value={form.color}
@@ -421,7 +421,7 @@ export default function NewListing() {
               value={form.description}
               onChange={handleChange}
               rows={5} 
-              placeholder="Décrivez le véhicule, ses options et ses caractéristiques..." 
+              placeholder="Describe the vehicle, its options and features..." 
               className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C] resize-none"
             ></textarea>
           </div>
@@ -432,10 +432,10 @@ export default function NewListing() {
           <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-4">
             <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4 flex items-center gap-2">
               <Link2 size={20} className="text-[#C9A84C]" />
-              Vidéo du véhicule
+              Vehicle Video
             </h2>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Lien vidéo (YouTube, Facebook, Instagram, TikTok, Dailymotion)</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Video link (YouTube, Facebook, Instagram, TikTok, Dailymotion)</label>
               <input 
                 name="videoUrl"
                 value={form.videoUrl}
@@ -445,7 +445,7 @@ export default function NewListing() {
                 className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C] transition-colors" 
               />
               <p className="text-white/30 text-xs mt-2">
-                Ajoutez une vidéo de présentation de votre véhicule. Formats supportés: YouTube, Facebook, Instagram, TikTok, Dailymotion
+                Add a presentation video for your vehicle. Supported formats: YouTube, Facebook, Instagram, TikTok, Dailymotion
               </p>
             </div>
           </div>
@@ -458,7 +458,7 @@ export default function NewListing() {
             onClick={() => router.back()}
             className="px-6 py-3 rounded-xl text-sm font-bold text-white/50 hover:text-white transition-colors"
           >
-            Annuler
+            Cancel
           </button>
           <button 
             type="submit" 
@@ -466,7 +466,7 @@ export default function NewListing() {
             className="bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] px-8 py-3 rounded-xl text-sm font-bold flex items-center gap-2 hover:shadow-[0_0_15px_rgba(201,168,76,0.3)] transition-all disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 size={18} />}
-            {loading ? 'Publication...' : 'Soumettre l\'annonce'}
+            {loading ? 'Publishing...' : 'Submit Listing'}
           </button>
         </div>
 
