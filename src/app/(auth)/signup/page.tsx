@@ -3,68 +3,61 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { 
   Search, 
   Tag, 
   Building2, 
   ArrowRight, 
-  CheckCircle2,
-  Zap,
-  Calendar,
-  ImageIcon,
-  Shield,
-  Star
+  CheckCircle2
 } from 'lucide-react';
 
 export default function SignupRolePage() {
-  const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const roles = [
     {
       id: 'buyer',
-      title: 'Buyer',
-      subtitle: 'Browse thousands of listings and find your ideal car',
+      title: 'Acheteur',
+      subtitle: 'Parcourez des milliers d\'annonces et trouvez le véhicule idéal',
       icon: Search,
       color: 'blue',
       features: [
-        'Free access to all listings',
-        'Contact sellers directly',
-        'Save your favorites',
+        'Accès gratuit à toutes les annonces',
+        'Contactez les vendeurs directement',
+        'Sauvegardez vos favoris',
       ],
-      buttonText: "Sign Up as Buyer",
+      buttonText: 'Créer un compte Acheteur',
       buttonLink: '/signup/buyer',
       badge: null,
     },
     {
       id: 'seller',
-      title: 'Private Seller',
-      subtitle: 'Post your listing and sell your vehicle quickly',
+      title: 'Vendeur Particulier',
+      subtitle: 'Publiez votre annonce et vendez votre véhicule rapidement',
       icon: Tag,
       color: 'green',
       features: [
-        '1 free listing per day',
-        '1 photo per listing',
-        'Instant approval',
+        '1 annonce gratuite par jour',
+        '1 photo par annonce',
+        'Approbation instantanée',
       ],
-      buttonText: "Sign Up as Seller",
+      buttonText: 'Créer un compte Vendeur',
       buttonLink: '/signup/seller',
-      badge: 'Free',
+      badge: 'Gratuit',
     },
     {
       id: 'showroom',
-      title: 'Professional Showroom',
-      subtitle: 'Manage your inventory and reach thousands of potential buyers',
+      title: 'Showroom Professionnel',
+      subtitle: 'Gérez votre stock et touchez des milliers d\'acheteurs potentiels',
       icon: Building2,
       color: 'amber',
       features: [
-        'Up to 20 listings per day',
-        '4 photos + video link per listing',
-        'Verified Showroom Badge',
-        'Dedicated showroom profile',
+        'Jusqu\'à 20 annonces par jour',
+        '4 photos + lien vidéo par annonce',
+        'Badge Showroom Vérifié',
+        'Profil showroom dédié',
       ],
-      buttonText: 'Create Showroom Account',
+      buttonText: 'Créer un compte Showroom',
       buttonLink: '/signup/showroom',
       badge: 'Premium',
     },
@@ -116,10 +109,10 @@ export default function SignupRolePage() {
           className="text-center mb-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Join <span className="text-[#C9A84C]">Japoni Auto</span>
+            Rejoindre <span className="text-[#C9A84C]">Japoni Auto</span>
           </h1>
           <p className="text-[#A0A0A0] text-lg">
-            Choose your account type to get started
+            Choisissez votre type de compte pour commencer
           </p>
         </motion.div>
 
@@ -199,9 +192,9 @@ export default function SignupRolePage() {
           className="mt-12 text-center"
         >
           <p className="text-[#A0A0A0]">
-            Already have an account?{' '}
+            Déjà un compte ?{' '}
             <Link href="/login" className="text-[#C9A84C] hover:underline">
-              Login
+              Se connecter
             </Link>
           </p>
         </motion.div>

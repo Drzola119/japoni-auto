@@ -50,6 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const snap = await getDoc(docRef);
           if (snap.exists()) {
             const userData = snap.data() as User;
+            
+            if (userData.suspended || userData.status === 'suspended') {
+              if (auth) await signOut(auth);
+              setUser(null);
+              window.location.href = '/login?reason=suspended';
+              return;
+            }
+            
             setUser(userData);
             
             const sessionKey = `session_logged_${fbUser.uid}`;
@@ -90,7 +98,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     if (!auth) throw new Error('Firebase not initialized');
-    await signInWithEmailAndPassword(auth, email, password);
+    if (!db) throw new Error('Firestore not initialized');
+
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    const userDocRef = doc(db, 'users', credential.user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data() as User;
+      if (userData.suspended) {
+        await signOut(auth);
+        throw new Error('Votre compte a été suspendu. Veuillez contacter l\'administrateur.');
+      }
+      if (userData.status === 'suspended') {
+        await signOut(auth);
+        throw new Error('Votre compte a été suspendu. Veuillez contacter l\'administrateur.');
+      }
+    }
   };
 
   const register = async (email: string, password: string, name: string, role: UserRole = 'buyer') => {
@@ -133,7 +157,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await setDoc(docRef, userData);
       setUser(userData);
     } else {
-      setUser(snap.data() as User);
+      const userData = snap.data() as User;
+      if (userData.suspended) {
+        await signOut(auth);
+        throw new Error('Votre compte a été suspendu. Veuillez contacter l\'administrateur.');
+      }
+      if (userData.status === 'suspended') {
+        await signOut(auth);
+        throw new Error('Votre compte a été suspendu. Veuillez contacter l\'administrateur.');
+      }
+      setUser(userData);
     }
   };
 

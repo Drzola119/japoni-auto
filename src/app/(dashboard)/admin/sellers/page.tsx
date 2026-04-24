@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { BadgeCheck, ExternalLink, Phone, ShieldCheck } from 'lucide-react';
+import { BadgeCheck, ExternalLink, Phone, ShieldCheck, Ban, Shield } from 'lucide-react';
 import { m as motion } from 'framer-motion';
 import { formatDate } from '@/lib/utils';
 import { toast } from 'react-hot-toast';
@@ -29,6 +29,31 @@ export default function AdminSellers() {
         verifiedAt: !isVerified ? serverTimestamp() : null
       });
       toast.success(isVerified ? 'Vérification retirée' : 'Vendeur vérifié avec succès');
+    } catch {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const handleToggleSuspend = async (sellerToToggle: UserType) => {
+    if (sellerToToggle.role === 'admin') {
+      toast.error('Impossible de suspendre un administrateur');
+      return;
+    }
+
+    const newStatus = !sellerToToggle.suspended;
+    const confirmMessage = newStatus
+      ? `Voulez-vous suspendre ${sellerToToggle.displayName || sellerToToggle.email} ?`
+      : `Voulez-vous réactiver ${sellerToToggle.displayName || sellerToToggle.email} ?`;
+
+    const confirmed = window.confirm(confirmMessage);
+    if (!confirmed) return;
+
+    try {
+      await updateDoc(doc(db!, 'users', sellerToToggle.uid), { 
+        suspended: newStatus,
+        updatedAt: serverTimestamp(),
+      });
+      toast.success(newStatus ? 'Vendeur suspendu avec succès' : 'Compte réactivé avec succès');
     } catch {
       toast.error('Erreur lors de la mise à jour');
     }
@@ -106,6 +131,7 @@ export default function AdminSellers() {
                 <h3 className="text-white font-bold flex items-center gap-2">
                   {s.displayName}
                   {s.verified && <span className="text-[10px] text-[#C9A84C] uppercase font-black tracking-widest">Premium</span>}
+                  {s.suspended && <span className="text-[10px] text-red-500 uppercase font-black tracking-widest">Suspendu</span>}
                 </h3>
                 <p className="text-xs text-[#555555] mt-1">{s.email}</p>
               </div>
@@ -141,6 +167,17 @@ export default function AdminSellers() {
               >
                 <ShieldCheck size={16} />
                 {s.verified ? 'Révoquer' : 'Vérifier'}
+              </button>
+              <button 
+                onClick={() => handleToggleSuspend(s)}
+                className={`p-2.5 rounded-xl transition-all ${
+                  s.suspended 
+                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20 border border-green-500/20' 
+                    : 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
+                }`}
+                title={s.suspended ? 'Réactiver' : 'Suspendre'}
+              >
+                <Ban size={18} />
               </button>
               <button className="p-2.5 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-white transition-all border border-[#2A2A2A]">
                 <ExternalLink size={18} />

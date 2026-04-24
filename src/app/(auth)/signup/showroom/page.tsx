@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   Mail, Lock, User, Phone, MapPin, Eye, EyeOff, ArrowRight, ArrowLeft, 
-  CheckCircle, Upload, FileText, Building2, X, Loader2
+  CheckCircle, Upload, Building2, X, Loader2
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -15,9 +15,9 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import toast from 'react-hot-toast';
 
 const steps = [
-  { id: 1, title: 'Personal Information' },
-  { id: 2, title: 'Showroom Information' },
-  { id: 3, title: 'Official Documents' },
+  { id: 1, title: 'Informations personnelles' },
+  { id: 2, title: 'Informations du showroom' },
+  { id: 3, title: 'Documents officiels' },
 ];
 
 export default function ShowroomSignupPage() {
@@ -30,20 +30,17 @@ export default function ShowroomSignupPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   
   const [form, setForm] = useState({
-    // Step 1
     ownerName: '',
     email: '',
     phone: '',
     wilaya: '',
     password: '',
     confirmPassword: '',
-    // Step 2
     showroomName: '',
     nif: '',
     registreCommerce: '',
     address: '',
     showroomWilaya: '',
-    // Step 3
     officialDocument: null as File | null,
     officialDocumentUrl: '',
     agreeTerms: false,
@@ -63,27 +60,27 @@ export default function ShowroomSignupPage() {
     const newErrors: Record<string, string> = {};
     
     if (step === 1) {
-      if (!form.ownerName.trim()) newErrors.ownerName = 'Name is required';
-      if (!form.email.trim()) newErrors.email = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email';
-      if (!form.phone.trim()) newErrors.phone = 'Phone is required';
-      if (!form.wilaya) newErrors.wilaya = 'Select a wilaya';
-      if (form.password.length < 8) newErrors.password = 'Minimum 8 characters';
-      if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+      if (!form.ownerName.trim()) newErrors.ownerName = 'Le nom est requis';
+      if (!form.email.trim()) newErrors.email = 'L\'email est requis';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Email invalide';
+      if (!form.phone.trim()) newErrors.phone = 'Le téléphone est requis';
+      if (!form.wilaya) newErrors.wilaya = 'Sélectionnez une wilaya';
+      if (form.password.length < 8) newErrors.password = 'Minimum 8 caractères';
+      if (form.password !== form.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
     
     if (step === 2) {
-      if (!form.showroomName.trim()) newErrors.showroomName = 'Showroom name is required';
-      if (!form.nif.trim()) newErrors.nif = 'NIF is required';
-      if (!form.registreCommerce.trim()) newErrors.registreCommerce = 'RC is required';
-      if (!form.address.trim()) newErrors.address = 'Address is required';
-      if (!form.showroomWilaya) newErrors.showroomWilaya = 'Select a wilaya';
+      if (!form.showroomName.trim()) newErrors.showroomName = 'Le nom du showroom est requis';
+      if (!form.nif.trim()) newErrors.nif = 'Le NIF est requis';
+      if (!form.registreCommerce.trim()) newErrors.registreCommerce = 'Le RC est requis';
+      if (!form.address.trim()) newErrors.address = 'L\'adresse est requise';
+      if (!form.showroomWilaya) newErrors.showroomWilaya = 'Sélectionnez une wilaya';
     }
     
     if (step === 3) {
-      if (!form.officialDocumentUrl && !form.officialDocument) newErrors.officialDocument = 'Official document is required';
-      if (!form.agreeTerms) newErrors.agreeTerms = 'You must accept the terms';
-      if (!form.agreeProfessional) newErrors.agreeProfessional = 'You must accept the professional terms';
+      if (!form.officialDocumentUrl && !form.officialDocument) newErrors.officialDocument = 'Un document officiel est requis';
+      if (!form.agreeTerms) newErrors.agreeTerms = 'Vous devez accepter les conditions';
+      if (!form.agreeProfessional) newErrors.agreeProfessional = 'Vous devez accepter les conditions professionnelles';
     }
 
     setErrors(newErrors);
@@ -105,13 +102,13 @@ export default function ShowroomSignupPage() {
     if (!file) return;
     
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File must be less than 5MB');
+      toast.error('Le fichier doit faire moins de 5Mo');
       return;
     }
     
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Accepted formats: PDF, JPG, PNG, WEBP');
+      toast.error('Formats acceptés: PDF, JPG, PNG, WEBP');
       return;
     }
 
@@ -119,7 +116,7 @@ export default function ShowroomSignupPage() {
   };
 
   const uploadDocument = async (): Promise<string> => {
-    if (!form.officialDocument) throw new Error('No document');
+    if (!form.officialDocument) throw new Error('Aucun document');
     
     setUploading(true);
     setUploadProgress(0);
@@ -128,7 +125,7 @@ export default function ShowroomSignupPage() {
       const result = await uploadSingle(form.officialDocument, `showroom_docs/${Date.now()}_${form.officialDocument.name}`);
       setUploadProgress(100);
       if (!result) {
-        throw new Error('Document upload failed');
+        throw new Error('Échec du téléchargement du document');
       }
       return result.url;
     } finally {
@@ -147,13 +144,12 @@ export default function ShowroomSignupPage() {
         documentUrl = await uploadDocument();
       }
 
-      // Create showroom application (NOT a user yet)
       await addDoc(collection(db!, 'showroom_applications'), {
         ownerName: form.ownerName,
         email: form.email,
         phone: form.phone,
         wilaya: form.wilaya,
-        tempPassword: form.password, // Will be used to create auth user after approval
+        tempPassword: form.password,
         
         showroomName: form.showroomName,
         nif: form.nif,
@@ -168,10 +164,10 @@ export default function ShowroomSignupPage() {
         submittedAt: serverTimestamp(),
       });
 
-      toast.success('Application submitted successfully!');
+      toast.success('Demande soumise avec succès !');
       router.push('/signup/showroom/pending');
     } catch (err: any) {
-      toast.error(err.message || 'Error submitting application');
+      toast.error(err.message || 'Erreur lors de la soumission');
     } finally {
       setLoading(false);
     }
@@ -193,7 +189,7 @@ export default function ShowroomSignupPage() {
       <div className="p-6 border-b border-white/5">
         <Link href="/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} />
-          Back
+          Retour
         </Link>
       </div>
 
@@ -236,25 +232,26 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Personal <span className="text-[#C9A84C]">Information</span>
+                  Informations <span className="text-[#C9A84C]">personnelles</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Contact details for the showroom owner</p>
+                <p className="text-[#A0A0A0]">Coordonnées du responsable du showroom</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Owner's Full Name</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Nom complet du responsable</label>
                   <input
                     type="text"
                     value={form.ownerName}
                     onChange={handleChange('ownerName')}
-                    placeholder="First and last name"
+                    placeholder="Prénom et nom"
                     className={`w-full bg-[#111111] border ${errors.ownerName ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
+                  {errors.ownerName && <p className="text-red-500 text-xs mt-1">{errors.ownerName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Professional Email</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Email professionnel</label>
                   <input
                     type="email"
                     value={form.email}
@@ -262,10 +259,11 @@ export default function ShowroomSignupPage() {
                     placeholder="email@showroom.dz"
                     className={`w-full bg-[#111111] border ${errors.email ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Phone</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Téléphone</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -273,40 +271,53 @@ export default function ShowroomSignupPage() {
                     placeholder="+213 555 123 456"
                     className={`w-full bg-[#111111] border ${errors.phone ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Residence Wilaya</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Wilaya de résidence</label>
                   <select
                     value={form.wilaya}
                     onChange={handleChange('wilaya')}
                     className={`w-full bg-[#111111] border ${errors.wilaya ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C9A84C] appearance-none`}
                   >
-                    <option value="">Select</option>
+                    <option value="">Sélectionnez</option>
                     {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
                   </select>
+                  {errors.wilaya && <p className="text-red-500 text-xs mt-1">{errors.wilaya}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Temporary Password</label>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={form.password}
-                    onChange={handleChange('password')}
-                    placeholder="Will be used to create account after approval"
-                    className={`w-full bg-[#111111] border ${errors.password ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
-                  />
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Mot de passe temporaire</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={handleChange('password')}
+                      placeholder="Sera utilisé pour créer le compte après approbation"
+                      className={`w-full bg-[#111111] border ${errors.password ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 pr-12 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] hover:text-white"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Confirm Password</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Confirmer le mot de passe</label>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.confirmPassword}
                     onChange={handleChange('confirmPassword')}
-                    placeholder="Confirm"
+                    placeholder="Confirmez"
                     className={`w-full bg-[#111111] border ${errors.confirmPassword ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
+                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                 </div>
               </div>
             </>
@@ -317,36 +328,38 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Showroom <span className="text-[#C9A84C]">Information</span>
+                  Informations du <span className="text-[#C9A84C]">showroom</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Details about your establishment</p>
+                <p className="text-[#A0A0A0]">Détails de votre établissement</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Showroom Name</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Nom du showroom</label>
                   <input
                     type="text"
                     value={form.showroomName}
                     onChange={handleChange('showroomName')}
-                    placeholder="e.g. Auto Showroom Algiers"
+                    placeholder="ex. Auto Showroom Alger"
                     className={`w-full bg-[#111111] border ${errors.showroomName ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                   />
+                  {errors.showroomName && <p className="text-red-500 text-xs mt-1">{errors.showroomName}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-2">NIF (Tax ID)</label>
+                    <label className="block text-sm text-[#A0A0A0] mb-2">NIF</label>
                     <input
                       type="text"
                       value={form.nif}
                       onChange={handleChange('nif')}
-                      placeholder="Identification number"
+                      placeholder="Numéro d&apos;identification"
                       className={`w-full bg-[#111111] border ${errors.nif ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                     />
+                    {errors.nif && <p className="text-red-500 text-xs mt-1">{errors.nif}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm text-[#A0A0A0] mb-2">Business Register (RC)</label>
+                    <label className="block text-sm text-[#A0A0A0] mb-2">Registre de Commerce</label>
                     <input
                       type="text"
                       value={form.registreCommerce}
@@ -354,30 +367,33 @@ export default function ShowroomSignupPage() {
                       placeholder="RC N°"
                       className={`w-full bg-[#111111] border ${errors.registreCommerce ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C]`}
                     />
+                    {errors.registreCommerce && <p className="text-red-500 text-xs mt-1">{errors.registreCommerce}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Full Showroom Address</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Adresse complète du showroom</label>
                   <textarea
                     value={form.address}
                     onChange={handleChange('address')}
-                    placeholder="Full address including wilaya"
+                    placeholder="Adresse complète incluant la wilaya"
                     rows={3}
                     className={`w-full bg-[#111111] border ${errors.address ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#C9A84C] resize-none`}
                   />
+                  {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Showroom Wilaya</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Wilaya du showroom</label>
                   <select
                     value={form.showroomWilaya}
                     onChange={handleChange('showroomWilaya')}
                     className={`w-full bg-[#111111] border ${errors.showroomWilaya ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#C9A84C] appearance-none`}
                   >
-                    <option value="">Select</option>
+                    <option value="">Sélectionnez</option>
                     {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
                   </select>
+                  {errors.showroomWilaya && <p className="text-red-500 text-xs mt-1">{errors.showroomWilaya}</p>}
                 </div>
               </div>
             </>
@@ -388,19 +404,19 @@ export default function ShowroomSignupPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">
-                  Official <span className="text-[#C9A84C]">Documents</span>
+                  Documents <span className="text-[#C9A84C]">officiels</span>
                 </h1>
-                <p className="text-[#A0A0A0]">Upload your official document (RC or NIF)</p>
+                <p className="text-[#A0A0A0]">Téléchargez votre document officiel (RC ou NIF)</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#A0A0A0] mb-2">Official Document</label>
+                  <label className="block text-sm text-[#A0A0A0] mb-2">Document officiel</label>
                   <div className={`border-2 border-dashed ${errors.officialDocument ? 'border-red-500' : 'border-[#2A2A2A]'} rounded-xl p-6 text-center hover:border-[#C9A84C] transition-colors`}>
                     {form.officialDocument || form.officialDocumentUrl ? (
                       <div className="flex items-center justify-center gap-3">
                         <CheckCircle className="text-[#2ECC71]" size={24} />
-                        <span className="text-white">{form.officialDocument?.name || 'Document uploaded'}</span>
+                        <span className="text-white">{form.officialDocument?.name || 'Document téléchargé'}</span>
                         <button onClick={() => setForm(prev => ({ ...prev, officialDocument: null, officialDocumentUrl: '' }))} className="text-red-500 hover:text-red-400">
                           <X size={18} />
                         </button>
@@ -408,8 +424,8 @@ export default function ShowroomSignupPage() {
                     ) : (
                       <label className="cursor-pointer">
                         <Upload className="mx-auto text-[#C9A84C] mb-2" size={32} />
-                        <p className="text-[#A0A0A0] mb-1">Click to upload or drag and drop</p>
-                        <p className="text-[#555] text-xs">PDF, JPG, PNG, WEBP - Max 5MB</p>
+                        <p className="text-[#A0A0A0] mb-1">Cliquez pour télécharger ou glissez-déposez</p>
+                        <p className="text-[#555] text-xs">PDF, JPG, PNG, WEBP - Max 5Mo</p>
                         <input type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleDocumentUpload} className="hidden" />
                       </label>
                     )}
@@ -421,6 +437,7 @@ export default function ShowroomSignupPage() {
                       </div>
                     </div>
                   )}
+                  {errors.officialDocument && <p className="text-red-500 text-xs mt-1">{errors.officialDocument}</p>}
                 </div>
 
                 <div className="space-y-3 pt-4">
@@ -432,9 +449,10 @@ export default function ShowroomSignupPage() {
                       className="mt-1 w-4 h-4 rounded bg-[#111111] border-[#2A2A2A] text-[#C9A84C]"
                     />
                     <span className="text-sm text-[#A0A0A0]">
-                      I certify that the information provided is accurate
+                      Je certifie que les informations fournies sont exactes
                     </span>
                   </label>
+                  {errors.agreeTerms && <p className="text-red-500 text-xs">{errors.agreeTerms}</p>}
 
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
@@ -444,11 +462,12 @@ export default function ShowroomSignupPage() {
                       className="mt-1 w-4 h-4 rounded bg-[#111111] border-[#2A2A2A] text-[#C9A84C]"
                     />
                     <span className="text-sm text-[#A0A0A0]">
-                      I accept the{' '}
-                      <Link href="/terms" className="text-[#C9A84C] hover:underline">terms of use</Link>{' '}
-                      and professional conditions
+                      J&apos;accepte les{' '}
+                      <Link href="/terms" className="text-[#C9A84C] hover:underline">conditions d&apos;utilisation</Link>{' '}
+                      et conditions professionnelles
                     </span>
                   </label>
+                  {errors.agreeProfessional && <p className="text-red-500 text-xs">{errors.agreeProfessional}</p>}
                 </div>
               </div>
             </>
@@ -462,7 +481,7 @@ export default function ShowroomSignupPage() {
                 className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#111111] border border-[#2A2A2A] text-white rounded-xl hover:border-[#555] transition-colors"
               >
                 <ArrowLeft size={18} />
-                Previous
+                Précédent
               </button>
             )}
             
@@ -471,7 +490,7 @@ export default function ShowroomSignupPage() {
                 onClick={nextStep}
                 className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#C9A84C] text-black font-bold rounded-xl hover:bg-[#E8C96A] transition-colors"
               >
-                Next
+                Suivant
                 <ArrowRight size={18} />
               </button>
             ) : (
@@ -484,7 +503,7 @@ export default function ShowroomSignupPage() {
                   <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <>
-                    Submit Application
+                    Soumettre ma demande
                     <CheckCircle size={18} />
                   </>
                 )}

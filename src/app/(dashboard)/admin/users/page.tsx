@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { 
   Shield, 
   BadgeCheck, 
@@ -55,10 +55,26 @@ export default function AdminUsers() {
     }
   };
 
-  const handleToggleStatus = async (id: string, suspended: boolean) => {
+  const handleToggleStatus = async (userToToggle: UserType) => {
+    if (userToToggle.role === 'admin') {
+      toast.error('Impossible de suspendre un administrateur');
+      return;
+    }
+
+    const newStatus = !userToToggle.suspended;
+    const confirmMessage = newStatus
+      ? `Voulez-vous suspendre ${userToToggle.displayName || userToToggle.email} ?`
+      : `Voulez-vous réactiver ${userToToggle.displayName || userToToggle.email} ?`;
+
+    const confirmed = window.confirm(confirmMessage);
+    if (!confirmed) return;
+
     try {
-      await updateDoc(doc(db!, 'users', id), { suspended: !suspended });
-      toast.success(suspended ? 'Compte réactivé' : 'Compte suspendu');
+      await updateDoc(doc(db!, 'users', userToToggle.uid), { 
+        suspended: newStatus,
+        updatedAt: serverTimestamp(),
+      });
+      toast.success(newStatus ? 'Utilisateur suspendu avec succès' : 'Compte réactivé avec succès');
     } catch (error) {
       toast.error('Erreur lors de la mise à jour');
     }
@@ -196,13 +212,23 @@ export default function AdminUsers() {
             <div className="mt-6 pt-6 border-t border-[#1E1E1E] flex items-center justify-between">
               <p className="text-[10px] text-[#555555] font-bold uppercase tracking-widest">Inscrit le {(u.createdAt as any) ? formatDate(u.createdAt) : '--'}</p>
               <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => handleToggleStatus(u.uid, u.suspended || false)}
-                  className={`p-2 rounded-xl transition-all ${u.suspended ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'}`}
-                  title={u.suspended ? 'Réactiver' : 'Suspendre'}
-                >
-                  <Ban size={16} />
-                </button>
+                {u.role === 'admin' ? (
+                  <button 
+                    disabled
+                    className="p-2 rounded-xl bg-[#2A2A2A]/30 text-[#555555]/50 cursor-not-allowed"
+                    title="Administrateur protégé"
+                  >
+                    <Shield size={16} />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => handleToggleStatus(u)}
+                    className={`p-2 rounded-xl transition-all ${u.suspended ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'}`}
+                    title={u.suspended ? 'Réactiver' : 'Suspendre'}
+                  >
+                    <Ban size={16} />
+                  </button>
+                )}
                 <button 
                   onClick={() => handleOpenEdit(u)}
                   className="p-2 rounded-xl bg-[#1A1A1A] text-[#A0A0A0] hover:text-[#C9A84C] transition-all"
