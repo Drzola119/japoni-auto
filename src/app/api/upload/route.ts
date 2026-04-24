@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
     if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
 
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
     if (!allowed.includes(file.type))
       return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
 
@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'File too large (max 10MB)' }, { status: 400 });
 
     const ext = file.name.split('.').pop() || 'jpg';
-    const fileName = `${folder}/${nanoid()}.${ext}`;
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileName = `${folder}/${nanoid()}_${safeName}`;
     const buffer = Buffer.from(await file.arrayBuffer());
     const url = await uploadToBunny(buffer, fileName);
 
