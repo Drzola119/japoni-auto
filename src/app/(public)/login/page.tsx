@@ -27,10 +27,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-toast.success('Welcome back!');
+      toast.success('Bienvenue !');
       router.push('/account');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Invalid email or password');
+      toast.error((err as Error).message || 'Email ou mot de passe invalide');
     } finally {
       setLoading(false);
     }
@@ -40,10 +40,10 @@ toast.success('Welcome back!');
     setLoading(true);
     try {
       await loginWithGoogle();
-      toast.success('Signed in with Google!');
+      toast.success('Connexion avec Google réussie !');
       router.push('/account');
     } catch (err: unknown) {
-      toast.error((err as Error).message || 'Google error');
+      toast.error((err as Error).message || 'Erreur Google');
     } finally {
       setLoading(false);
     }
@@ -67,10 +67,10 @@ toast.success('Welcome back!');
             <div className="w-12 h-1 bg-[#C9A84C] transition-all group-hover:w-full duration-500" />
           </Link>
           <h2 className="text-4xl font-semibold mb-6 leading-tight" style={{ fontFamily: 'var(--font-cormorant)' }}>
-            Automotive excellence. <br/>Your next step.
+            Excellence automobile.<br/>Votre prochaine étape.
           </h2>
           <p className="text-white/60 text-lg leading-relaxed">
-            Find the best deals in Algeria. The most exclusive cars await you in our digital showroom.
+            Trouvez les meilleures offres en Algérie. Les voitures les plus exclusives vous attendent.
           </p>
         </div>
       </div>
@@ -93,8 +93,8 @@ toast.success('Welcome back!');
           </div>
 
           <div className="mb-10 text-center lg:text-left">
-            <h3 className="text-2xl font-semibold mb-2">Welcome</h3>
-            <p className="text-white/50">Sign in to continue</p>
+            <h3 className="text-2xl font-semibold mb-2">Bienvenue</h3>
+            <p className="text-white/50">Connectez-vous pour continuer</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -107,7 +107,7 @@ toast.success('Welcome back!');
                     value={form.email} 
                     onChange={handleChange('email')} 
                     type="email" 
-                    placeholder="your@email.com" 
+                    placeholder="votre@email.com" 
                     className="w-full bg-[#111116] border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:outline-none focus:border-[#C9A84C] disabled:opacity-50 transition-all" 
                     style={{ fontSize: '16px' }}
                     required 
@@ -117,9 +117,9 @@ toast.success('Welcome back!');
 
               <div>
                 <div className="flex justify-between mb-2">
-                  <label className="text-white/60 text-sm font-medium block uppercase tracking-wider text-[11px]">Password</label>
+                  <label className="text-white/60 text-sm font-medium block uppercase tracking-wider text-[11px]">Mot de passe</label>
                   <Link href="/forgot-password" className="text-[11px] text-[#C9A84C] hover:text-[#E8C96A] transition-colors">
-                    Forgot password?
+                    Mot de passe oublié ?
                   </Link>
                 </div>
                 <div className="relative group">
@@ -146,14 +146,14 @@ toast.success('Welcome back!');
               disabled={loading} 
               className="w-full bg-gradient-to-r from-[#C9A84C] to-[#E8C96A] text-[#111] font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(201,168,76,0.3)]"
             >
-              {loading ? 'Signing in...' : 'Login'}
+              {loading ? 'Connexion...' : 'Se connecter'}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
 
           <div className="flex items-center gap-4 mt-8 mb-8">
             <hr className="flex-1 border-white/10" />
-            <span className="text-white/30 text-xs uppercase tracking-widest">Or sign in with</span>
+            <span className="text-white/30 text-xs uppercase tracking-widest">Ou se connecter avec</span>
             <hr className="flex-1 border-white/10" />
           </div>
 
@@ -173,9 +173,9 @@ toast.success('Welcome back!');
           </button>
 
           <p className="text-center text-white/50 text-sm mt-10">
-            Don't have an account ?{' '}
-            <Link href="/register" className="text-[#C9A84C] hover:text-[#E8C96A] font-medium transition-colors">
-              Create Account
+            Pas encore de compte ?{' '}
+            <Link href="/signup" className="text-[#C9A84C] hover:text-[#E8C96A] font-medium transition-colors">
+              Créer un compte
             </Link>
           </p>
         </motion.div>
