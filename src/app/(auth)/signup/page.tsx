@@ -34,7 +34,7 @@ export default function SignupRolePage() {
         'Sauvegardez vos favoris',
       ],
       buttonText: "S'inscrire comme Acheteur",
-      buttonLink: '/auth/signup/buyer',
+      buttonLink: '/signup/buyer',
       badge: null,
     },
     {
@@ -49,7 +49,7 @@ export default function SignupRolePage() {
         'Approbation instantanée',
       ],
       buttonText: "S'inscrire comme Vendeur",
-      buttonLink: '/auth/signup/seller',
+      buttonLink: '/signup/seller',
       badge: 'Gratuit',
     },
     {
@@ -65,7 +65,7 @@ export default function SignupRolePage() {
         'Profil showroom dédié',
       ],
       buttonText: 'Créer un compte Showroom',
-      buttonLink: '/auth/signup/showroom',
+      buttonLink: '/signup/showroom',
       badge: 'Premium',
     },
   ];
@@ -200,7 +200,7 @@ export default function SignupRolePage() {
         >
           <p className="text-[#A0A0A0]">
             Déjà un compte ?{' '}
-            <Link href="/auth/login" className="text-[#C9A84C] hover:underline">
+            <Link href="/login" className="text-[#C9A84C] hover:underline">
               Se connecter
             </Link>
           </p>

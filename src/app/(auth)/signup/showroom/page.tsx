@@ -169,7 +169,7 @@ export default function ShowroomSignupPage() {
       });
 
       toast.success('Demande soumise avec succès !');
-      router.push('/auth/signup/showroom/pending');
+      router.push('/signup/showroom/pending');
     } catch (err: any) {
       toast.error(err.message || 'Erreur lors de la soumission');
     } finally {
@@ -191,7 +191,7 @@ export default function ShowroomSignupPage() {
     <div className="min-h-screen bg-[#07070A] text-white flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-white/5">
-        <Link href="/auth/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
+        <Link href="/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} />
           Retour
         </Link>

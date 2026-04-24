@@ -100,7 +100,7 @@ export default function BuyerSignupPage() {
     <div className="min-h-screen bg-[#07070A] text-white flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-white/5">
-        <Link href="/auth/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
+        <Link href="/signup" className="flex items-center gap-2 text-[#A0A0A0] hover:text-white transition-colors w-fit">
           <ArrowLeft size={16} />
           Retour
         </Link>
@@ -277,7 +277,7 @@ export default function BuyerSignupPage() {
 
           <p className="text-center text-[#A0A0A0] text-sm mt-6">
             Déjà un compte ?{' '}
-            <Link href="/auth/login" className="text-[#C9A84C] hover:underline">
+            <Link href="/login" className="text-[#C9A84C] hover:underline">
               Se connecter
             </Link>
           </p>
