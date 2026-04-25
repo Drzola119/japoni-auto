@@ -42,7 +42,7 @@ export default function Footer() {
                 <a 
                   key={label} 
                   href="#" 
-                  className="w-9 h-9 flex items-center justify-center transition-all duration-300 group"
+                  className="w-11 h-11 flex items-center justify-center transition-all duration-300 group"
                   style={{ 
                     background: 'rgba(255,255,255,0.04)', 
                     border: '1px solid rgba(255,255,255,0.06)',

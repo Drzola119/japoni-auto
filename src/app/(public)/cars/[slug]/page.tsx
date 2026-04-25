@@ -119,23 +119,23 @@ export default function CarDetailPage() {
 
       {/* Hero Gallery Base */}
       <div className="w-full bg-black relative">
-        <div className="aspect-[16/7] md:aspect-[21/9] relative overflow-hidden">
+        <div className="aspect-[4/3] md:aspect-[16/7] lg:aspect-[21/9] relative overflow-hidden">
           <Image src={mainImage} alt={listing.title} fill className="object-cover opacity-90" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#07070A] via-transparent to-transparent" />
           
-          <button className="absolute top-6 right-6 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:text-rose-500 hover:bg-black/60 transition-all">
+          <button className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:text-rose-500 hover:bg-black/60 transition-all">
             <Heart size={20} />
           </button>
         </div>
       </div>
 
       {/* Content Container */}
-      <div className="container mx-auto px-4 max-w-7xl -mt-20 relative z-10 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="container mx-auto px-4 max-w-7xl -mt-12 md:-mt-20 relative z-10 pb-12 md:pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           
           {/* Main Info (Left Col) */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="bg-[#111116] border border-white/5 rounded-3xl p-8 shadow-2xl">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-[#111116] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-2xl">
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 {listing.isPremium && <span className="px-3 py-1 bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/20 rounded-md text-[10px] font-bold uppercase tracking-widest">Premium</span>}
                 <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-bold uppercase tracking-widest text-white/70">

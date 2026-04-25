@@ -274,7 +274,7 @@ export default function Navbar() {
             className="fixed inset-0 z-[90] flex flex-col justify-center items-center"
             style={{ background: '#07070C', backdropFilter: 'blur(24px)' }}
           >
-            <div className="flex flex-col items-center gap-8 w-full max-w-sm px-6">
+            <div className="flex flex-col items-center gap-6 w-full max-w-sm px-6">
               {[
                 { href: '/', label: 'Home' },
                 { href: '/cars', label: 'Cars' },
@@ -290,15 +290,42 @@ export default function Navbar() {
                   <Link 
                     href={item.href} 
                     onClick={() => setMenuOpen(false)}
-                    className="text-[#F5F0E8] hover:text-[#C9A84C] transition-colors"
-                    style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '2rem', letterSpacing: '0.1em' }}
+                    className="text-[#F5F0E8] hover:text-[#C9A84C] transition-colors py-3 px-6"
+                    style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.75rem', letterSpacing: '0.1em' }}
                   >
                     {item.label}
                   </Link>
                 </motion.div>
               ))}
               
-              <div className="w-full h-[1px] bg-[rgba(201,168,76,0.15)] my-4" />
+              <div className="w-full h-[1px] bg-[rgba(201,168,76,0.15)] my-2" />
+
+              {/* User Menu when logged in */}
+              {user && (
+                <div className="flex flex-col w-full items-center gap-4">
+                  <Link href="/favorites" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-[#9A9480] hover:text-[#C9A84C] py-3 px-6">
+                    <Heart className="w-5 h-5" /> 
+                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '1rem' }}>Favorites</span>
+                  </Link>
+                  <Link href="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-[#9A9480] hover:text-[#C9A84C] py-3 px-6">
+                    <User className="w-5 h-5" /> 
+                    <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '1rem' }}>My Account</span>
+                  </Link>
+                  {(user.role === 'seller' || user.role === 'showroom') && (
+                    <Link href="/seller-dashboard" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-[#C9A84C] py-3 px-6">
+                      <Shield className="w-5 h-5" /> 
+                      <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '1rem' }}>My Dashboard</span>
+                    </Link>
+                  )}
+                  {(user.role === 'admin' || user.email === 'zickowiko@gmail.com') && (
+                    <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 text-[#C9A84C] py-3 px-6">
+                      <Shield className="w-5 h-5" /> 
+                      <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '1rem' }}>Admin Panel</span>
+                    </Link>
+                  )}
+                  <div className="w-full h-[1px] bg-[rgba(201,168,76,0.15)] my-2" />
+                </div>
+              )}
 
               <button
                 onClick={() => { 
@@ -306,26 +333,51 @@ export default function Navbar() {
                   setLanguage(nextLang); 
                   setMenuOpen(false); 
                 }}
-                className="flex items-center gap-2 text-[#C9A84C]"
-                style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
+                className="flex items-center gap-3 text-[#C9A84C] py-3 px-6"
+                style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.9rem', letterSpacing: '0.15em', textTransform: 'uppercase' }}
               >
                 <Globe className="w-5 h-5" />
-                {language === 'fr' ? 'English' : language === 'en' ? 'Arabic' : 'Francais'}
+                {language === 'fr' ? 'English' : language === 'en' ? 'العربية' : 'Français'}
               </button>
 
               {!user ? (
-                <div className="flex flex-col w-full gap-4 mt-8">
-                  <Link href="/login" onClick={() => setMenuOpen(false)} className="btn-secondary w-full py-4 text-center">
+                <div className="flex flex-col w-full gap-4 mt-4">
+                  <Link href="/login" onClick={() => setMenuOpen(false)} 
+                    className="w-full py-4 text-center rounded transition-all duration-200"
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid rgba(201,168,76,0.3)',
+                      color: '#C9A84C',
+                      fontFamily: '"Inter", sans-serif',
+                      fontWeight: 500,
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase'
+                    }}
+                  >
                     Login
                   </Link>
-                  <Link href="/signup" onClick={() => setMenuOpen(false)} className="btn-primary w-full py-4 text-center">
+                  <Link href="/signup" onClick={() => setMenuOpen(false)} 
+                    className="w-full py-4 text-center rounded transition-all duration-200"
+                    style={{
+                      background: '#C9A84C',
+                      color: '#07070C',
+                      fontFamily: '"Inter", sans-serif',
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase'
+                    }}
+                  >
                     Sign Up
                   </Link>
                 </div>
               ) : (
                 <button onClick={() => { logout(); setMenuOpen(false); }}
-                  className="flex items-center justify-center gap-3 w-full py-4 mt-8 text-[#9A9480] hover:text-[#F5F0E8] border border-[rgba(255,255,255,0.06)] rounded-sm">
-                  <LogOut className="w-5 h-5" /> Logout
+                  className="flex items-center justify-center gap-3 w-full py-4 mt-4 text-[#9A9480] hover:text-[#F5F0E8] border border-[rgba(255,255,255,0.06)] rounded-sm"
+                >
+                  <LogOut className="w-5 h-5" /> 
+                  <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.9rem' }}>Logout</span>
                 </button>
               )}
             </div>

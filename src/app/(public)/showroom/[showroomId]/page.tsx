@@ -127,10 +127,10 @@ export default function PublicShowroomPage() {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-4 sm:mt-0">
               <a 
                 href={`tel:${showroom.phone}`}
-                className="bg-[#C9A84C] text-[#111] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-[#E8C96A] transition-colors"
+                className="bg-[#C9A84C] text-[#111] px-4 sm:px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#E8C96A] transition-colors flex-1 sm:flex-none"
               >
                 <Phone size={18} />
                 Call
@@ -140,7 +140,7 @@ export default function PublicShowroomPage() {
                   href={`https://wa.me/${showroom.whatsapp.replace(/\D/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-green-500/20 text-green-400 border border-green-500/30 px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-green-500/30 transition-colors"
+                  className="bg-green-500/20 text-green-400 border border-green-500/30 px-4 sm:px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-500/30 transition-colors flex-1 sm:flex-none"
                 >
                   WhatsApp
                 </a>

@@ -232,7 +232,7 @@ export default function HomePage() {
 
             {/* Search Bar Container */}
             <div 
-              className="w-full max-w-[780px] mx-auto rounded-[4px] p-1.5 flex flex-col md:flex-row gap-0"
+              className="w-full max-w-[780px] mx-auto rounded-[4px] p-2 sm:p-1.5 flex flex-col md:flex-row gap-2 md:gap-0"
               style={{
                 background: 'rgba(7,7,12,0.7)',
                 backdropFilter: 'blur(20px)',
@@ -241,7 +241,7 @@ export default function HomePage() {
               }}
             >
               {/* Query Input */}
-              <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
+              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
                 <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Search</label>
                 <input
                   type="text"
@@ -254,7 +254,7 @@ export default function HomePage() {
               </div>
 
               {/* Location Input */}
-              <div className="flex-1 border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)] px-4 py-3 relative text-left">
+              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
                 <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Location</label>
                 <select
                   value={selectedWilaya}
@@ -270,7 +270,7 @@ export default function HomePage() {
               </div>
 
               {/* Price Max Input */}
-              <div className="flex-1 px-4 py-3 relative text-left">
+              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left">
                 <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Max Budget</label>
                 <input
                   type="number"
@@ -285,7 +285,7 @@ export default function HomePage() {
               {/* Search Button */}
               <Link
                 href={`/cars?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
-                className="group flex items-center justify-center rounded-[2px] px-8 py-3 mt-2 md:mt-0 transition-all duration-250 cursor-pointer"
+                className="group flex items-center justify-center rounded-[2px] px-6 sm:px-8 py-3 mt-2 md:mt-0 transition-all duration-250 cursor-pointer min-w-[100px]"
                 style={{
                   background: '#C9A84C',
                   color: '#07070C'
@@ -299,7 +299,7 @@ export default function HomePage() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <Search className="w-4 h-4 mr-2" />
+                <Search className="w-4 h-4 mr-2 hidden sm:block" />
                 <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   SHOW
                 </span>

@@ -189,7 +189,7 @@ export default function NewListing() {
           {/* Dynamic slots based on role */}
           {userRole === 'showroom' ? (
             /* Showrooms: show up to 4 slots */
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mb-4">
               {Array.from({ length: maxImages }).map((_, index) => {
                 const hasImage = previews[index];
                 return (
@@ -267,7 +267,7 @@ export default function NewListing() {
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-6">
           <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Main Information</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="md:col-span-2">
               <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Listing title</label>
               <input 
@@ -336,7 +336,7 @@ export default function NewListing() {
         <div className="bg-[#111116] border border-white/5 rounded-2xl p-6 space-y-6">
           <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-4">Specifications</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2">Year</label>
               <input 

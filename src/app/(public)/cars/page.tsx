@@ -106,11 +106,11 @@ export default function CarsListings() {
 
           {/* Animated Filters Panel */}
           {showFilters && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 animate-in slide-in-from-top-4 duration-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 animate-in slide-in-from-top-4 duration-300 p-4 bg-[#111116] rounded-xl -mx-4 sm:mx-0">
               <select 
                 value={filters.brand}
                 onChange={(e) => setFilters({...filters, brand: e.target.value})}
-                className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
+                className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
                 <option value="">All Brands</option>
                 {CAR_BRANDS.map(brand => <option key={brand} value={brand}>{brand}</option>)}
@@ -118,7 +118,7 @@ export default function CarsListings() {
               <select 
                 value={filters.maxPrice}
                 onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
-                className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
+                className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
                 <option value="">Maximum Budget</option>
                 <option value="5000000">5,000,000 DZD</option>
@@ -130,7 +130,7 @@ export default function CarsListings() {
               <select 
                 value={filters.year}
                 onChange={(e) => setFilters({...filters, year: e.target.value})}
-                className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
+                className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
                 <option value="">All Years</option>
                 {[2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map(y => <option key={y} value={y}>{y}</option>)}
@@ -138,7 +138,7 @@ export default function CarsListings() {
               <select 
                 value={filters.fuel}
                 onChange={(e) => setFilters({...filters, fuel: e.target.value})}
-                className="bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
+                className="w-full bg-[#0a0a0f] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#C9A84C]"
               >
                 <option value="">Fuel</option>
                 <option value="essence">Essence</option>
