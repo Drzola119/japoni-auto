@@ -183,9 +183,9 @@ export default function HomePage() {
             {/* Premium Brand Title */}
             <motion.h1
               initial={{ opacity: 0, letterSpacing: "0.2em", filter: "blur(10px)" }}
-              animate={{ opacity: 1, letterSpacing: typeof window !== 'undefined' && window.innerWidth < 768 ? "0.4em" : "1em", filter: "blur(0px)" }}
+              animate={{ opacity: 1, letterSpacing: "0.5em", filter: "blur(0px)" }}
               transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] as const }}
-              className="mb-4 text-[#C9A84C] text-center"
+              className="mb-4 text-[#C9A84C] text-center md:!tracking-[1em]"
               style={{ 
                 fontFamily: '"Cormorant Garamond", serif', 
                 fontWeight: 300, 
@@ -201,8 +201,8 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
-              className="flex items-center gap-2 sm:gap-4 mb-6 md:mb-10 text-[#F5F0E8] opacity-80"
-              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.55rem', smFontSize: '0.65rem', letterSpacing: '0.2em', smLetterSpacing: '0.4em', textTransform: 'uppercase' }}
+              className="flex items-center gap-2 sm:gap-4 mb-6 md:mb-10 text-[#F5F0E8] opacity-80 text-[0.55rem] sm:text-[0.65rem] tracking-[0.2em] sm:tracking-[0.4em] uppercase font-normal"
+              style={{ fontFamily: '"Inter", sans-serif' }}
             >
               <span className="w-8 md:w-12 h-[1px] bg-[#C9A84C] opacity-40" />
               <span className="text-center">ALGÉRIE&apos;S PREMIUM AUTO MARKETPLACE</span>
@@ -224,8 +224,8 @@ export default function HomePage() {
 
             {/* Subheading */}
             <p 
-              className="mx-auto mb-10 md:mb-16 text-[#9A9480] px-4"
-              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '0.9rem', mdFontSize: '1rem', maxWidth: '48ch', lineHeight: 1.6 }}
+              className="mx-auto mb-10 md:mb-16 text-[#9A9480] px-4 text-[0.9rem] md:text-[1rem] leading-relaxed max-w-[48ch] font-light"
+              style={{ fontFamily: '"Inter", sans-serif' }}
             >
               Algeria&apos;s premium marketplace for buying and selling vehicles.
             </p>
@@ -337,8 +337,8 @@ export default function HomePage() {
               transition={{ delay: i * 0.1, duration: 0.6 }}
             >
               <div 
-                className="mb-1 text-[#C9A84C]"
-                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1 }}
+                className="mb-1 text-[#C9A84C] text-[2.5rem] md:text-[3.5rem] leading-none font-light"
+                style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
                 <CountUp end={stat.value} duration={2.5} separator="," />
                 {stat.suffix}
@@ -434,8 +434,8 @@ export default function HomePage() {
                 Latest Listings
               </p>
               <h2 
-                className="text-[#F5F0E8]"
-                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2rem' : '2.5rem' }}
+                className="text-[#F5F0E8] text-[2rem] md:text-[2.5rem] font-light"
+                style={{ fontFamily: '"Cormorant Garamond", serif' }}
               >
                 Featured Vehicles
               </h2>
@@ -535,12 +535,11 @@ export default function HomePage() {
 
       {/* ===== SELL CTA SECTION ===== */}
       <section 
-        className="w-full text-center"
+        className="w-full text-center py-16 md:py-28 px-4"
         style={{ 
           background: 'linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(7,7,12,0) 50%)',
           borderTop: '1px solid rgba(201,168,76,0.1)',
-          borderBottom: '1px solid rgba(201,168,76,0.1)',
-          padding: typeof window !== 'undefined' && window.innerWidth < 768 ? '4rem 1rem' : '7rem 2rem'
+          borderBottom: '1px solid rgba(201,168,76,0.1)'
         }}
       >
         <motion.div
@@ -552,14 +551,14 @@ export default function HomePage() {
         >
           <h2 className="mb-6">
             <span 
-              className="text-[#F5F0E8] block" 
-              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1.1 }}
+              className="text-[#F5F0E8] block text-[2.5rem] md:text-[3.5rem] font-light leading-[1.1]" 
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
             >
               Sell Your Car{' '}
             </span>
             <span 
-              className="text-[#C9A84C] italic" 
-              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1.1 }}
+              className="text-[#C9A84C] italic text-[2.5rem] md:text-[3.5rem] font-normal leading-[1.1]" 
+              style={{ fontFamily: '"Cormorant Garamond", serif' }}
             >
               Quickly
             </span>
