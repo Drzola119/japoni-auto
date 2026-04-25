@@ -38,7 +38,7 @@ const WILAYAS = [
   'Tindouf', 'Tipaza', 'Tissemsilt', 'Tizi Ouzou', 'Tlemcen'
 ]
 
-type RecipientType = 'all_users' | 'all_sellers' | 'buyers' | 'by_wilaya'
+type RecipientType = 'all_users' | 'all_sellers' | 'all_showrooms' | 'buyers' | 'by_wilaya'
 type MessageType = 'notification' | 'internal'
 type NotificationType = 'info' | 'success' | 'warning' | 'promo'
 
@@ -63,7 +63,7 @@ export default function BroadcastPage() {
   
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([])
   const [stats, setStats] = useState({ total: 0, read: 0, rate: 0 })
-  const [userCounts, setUserCounts] = useState({ all: 0, sellers: 0, buyers: 0 })
+  const [userCounts, setUserCounts] = useState({ all: 0, sellers: 0, showrooms: 0, buyers: 0 })
 
   useEffect(() => {
     if (!db) return
@@ -78,11 +78,18 @@ export default function BroadcastPage() {
     if (!db) return
     const qUsers = query(collection(db!, 'users'))
     const qSellers = query(collection(db!, 'users'), where('role', '==', 'seller'))
-    Promise.all([getDocs(qUsers), getDocs(qSellers)]).then(([allSnap, sellersSnap]) => {
+    const qShowrooms = query(collection(db!, 'users'), where('role', '==', 'showroom'))
+    
+    Promise.all([
+      getDocs(qUsers),
+      getDocs(qSellers),
+      getDocs(qShowrooms)
+    ]).then(([allSnap, sellersSnap, showroomsSnap]) => {
       setUserCounts({
         all: allSnap.size,
         sellers: sellersSnap.size,
-        buyers: allSnap.size - sellersSnap.size
+        showrooms: showroomsSnap.size,
+        buyers: allSnap.size - (sellersSnap.size + showroomsSnap.size)
       })
     })
   }, [])
@@ -101,6 +108,7 @@ export default function BroadcastPage() {
   const estimatedReach = useMemo(() => {
     if (recipients === 'all_users') return userCounts.all
     if (recipients === 'all_sellers') return userCounts.sellers
+    if (recipients === 'all_showrooms') return userCounts.showrooms
     if (recipients === 'buyers') return userCounts.buyers
     if (recipients === 'by_wilaya' && selectedWilayas.length > 0) return Math.ceil(selectedWilayas.length * 50)
     return 0
@@ -115,7 +123,8 @@ export default function BroadcastPage() {
       const targetUsers = usersSnap.docs.filter(d => {
         const data = d.data()
         if (recipients === 'all_sellers') return data.role === 'seller'
-        if (recipients === 'buyers') return data.role !== 'seller'
+        if (recipients === 'all_showrooms') return data.role === 'showroom'
+        if (recipients === 'buyers') return data.role === 'buyer'
         if (recipients === 'by_wilaya' && selectedWilayas.length > 0) {
           return data.wilaya && selectedWilayas.includes(data.wilaya)
         }
@@ -244,6 +253,7 @@ if (!db || targetUsers.length === 0) {
               {[
                 { id: 'all_users', icon: Users, label: 'Tous les Utilisateurs', desc: `${userCounts.all} utilisateurs` },
                 { id: 'all_sellers', icon: Store, label: 'Tous les Vendeurs', desc: `${userCounts.sellers} vendeurs` },
+                { id: 'all_showrooms', icon: Store, label: 'Showrooms', desc: `${userCounts.showrooms} showrooms` },
                 { id: 'buyers', icon: ShoppingBag, label: 'Acheteurs', desc: `${userCounts.buyers} acheteurs` },
                 { id: 'by_wilaya', icon: MapPin, label: 'Par Wilaya', desc: selectedWilayas.length > 0 ? `${selectedWilayas.length} sélectionnées` : 'Choisir une région' },
               ].map(opt => (
