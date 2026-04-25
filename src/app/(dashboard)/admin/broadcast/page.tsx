@@ -14,6 +14,7 @@ import {
   Megaphone, Users, Store, ShoppingBag, MapPin, Send,
   Bell, Mail, CheckCircle2, Eye, Gift
 } from 'lucide-react'
+import { WILAYAS } from '@/data/wilayas'
 
 interface Broadcast {
   id: string
@@ -27,16 +28,6 @@ interface Broadcast {
   sentBy: string
   status: 'sent' | 'scheduled' | 'draft'
 }
-
-const WILAYAS = [
-  'Adrar', 'Ain Defla', 'Ain Temouchent', 'Alger', 'Annaba', 'Batna', 'Bechar', 'Bejaia',
-  'Biskra', 'Blida', 'Bordj Bou Arreridj', 'Bouira', 'Boumerdes', 'Chlef', 'Constantine',
-  'Djelfa', 'El Bayadh', 'El Oued', 'El Tarf', 'Ghardaia', 'Guelma', 'Illizi',
-  'Jijel', 'Khenchela', 'Laghouat', 'Lemdi', 'Mostaganem', 'Msilah', 'Médéa',
-  'Naama', 'Oran', 'Ouargla', 'Oum El Bouaghi', 'Relizane', 'Saida', 'Setif',
-  'Sidi Bel Abbes', 'Skikda', 'Souk Ahras', 'Tamanrasset', 'Tebessa', 'Tiaret',
-  'Tindouf', 'Tipaza', 'Tissemsilt', 'Tizi Ouzou', 'Tlemcen'
-]
 
 type RecipientType = 'all_users' | 'all_sellers' | 'all_showrooms' | 'buyers' | 'by_wilaya'
 type MessageType = 'notification' | 'internal'
@@ -131,7 +122,7 @@ export default function BroadcastPage() {
         return true
       })
 
-if (!db || targetUsers.length === 0) {
+    if (!db || targetUsers.length === 0) {
       setToast('❌ Aucun utilisateur trouvé')
       setTimeout(() => setToast(null), 3000)
       setSending(false)

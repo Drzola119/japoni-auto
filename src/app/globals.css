@@ -188,6 +188,14 @@ body.rtl, [dir="rtl"] {
 }
 
 /* Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .hero-overlay {
   background: linear-gradient(
     to bottom,

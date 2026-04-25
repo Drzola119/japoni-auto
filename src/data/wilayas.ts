@@ -48,6 +48,27 @@ export const WILAYAS = [
   'Aïn Témouchent',
   'Ghardaïa',
   'Relizane',
+  'Timimoun',
+  'Bordj Badji Mokhtar',
+  'Ouled Djellal',
+  'Béni Abbès',
+  'In Salah',
+  'In Guezzam',
+  'Touggourt',
+  'Djanet',
+  'El M\'Ghair',
+  'El Meniaa',
+  'Aflou',
+  'Barika',
+  'Ksar Chellala',
+  'Messaad',
+  'Aïn Oussera',
+  'Bou Saâda',
+  'El Abiodh Sidi Cheikh',
+  'El Kantara',
+  'Bir El Ater',
+  'Ksar El Boukhari',
+  'El Aricha',
 ] as const;
 
 export type WILAYA = (typeof WILAYAS)[number];
@@ -64,6 +85,11 @@ export const WILAYAS_WITH_NUMBERS = [
   '36 - El Tarf', '37 - Tindouf', '38 - Tissemsilt', '39 - El Oued', '40 - Khenchela',
   '41 - Souk Ahras', '42 - Tipaza', '43 - Mila', '44 - Aïn Defla', '45 - Naâma',
   '46 - Aïn Témouchent', '47 - Ghardaïa', '48 - Relizane',
+  '49 - Timimoun', '50 - Bordj Badji Mokhtar', '51 - Ouled Djellal', '52 - Béni Abbès', '53 - In Salah',
+  '54 - In Guezzam', '55 - Touggourt', '56 - Djanet', '57 - El M\'Ghair', '58 - El Meniaa',
+  '59 - Aflou', '60 - Barika', '61 - Ksar Chellala', '62 - Messaad', '63 - Aïn Oussera',
+  '64 - Bou Saâda', '65 - El Abiodh Sidi Cheikh', '66 - El Kantara', '67 - Bir El Ater',
+  '68 - Ksar El Boukhari', '69 - El Aricha',
 ] as const;
 
 // Helper to convert between formats

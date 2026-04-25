@@ -182,8 +182,8 @@ export default function HomePage() {
           >
             {/* Premium Brand Title */}
             <motion.h1
-              initial={{ opacity: 0, letterSpacing: "0.5em", filter: "blur(10px)" }}
-              animate={{ opacity: 1, letterSpacing: "1em", filter: "blur(0px)" }}
+              initial={{ opacity: 0, letterSpacing: "0.2em", filter: "blur(10px)" }}
+              animate={{ opacity: 1, letterSpacing: typeof window !== 'undefined' && window.innerWidth < 768 ? "0.4em" : "1em", filter: "blur(0px)" }}
               transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] as const }}
               className="mb-4 text-[#C9A84C] text-center"
               style={{ 
@@ -201,12 +201,12 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
-              className="flex items-center gap-4 mb-10 text-[#F5F0E8] opacity-80"
-              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.65rem', letterSpacing: '0.4em', textTransform: 'uppercase' }}
+              className="flex items-center gap-2 sm:gap-4 mb-6 md:mb-10 text-[#F5F0E8] opacity-80"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.55rem', smFontSize: '0.65rem', letterSpacing: '0.2em', smLetterSpacing: '0.4em', textTransform: 'uppercase' }}
             >
-              <span className="w-12 h-[1px] bg-[#C9A84C] opacity-40" />
-              ALGÉRIE&apos;S PREMIUM AUTO MARKETPLACE
-              <span className="w-12 h-[1px] bg-[#C9A84C] opacity-40" />
+              <span className="w-8 md:w-12 h-[1px] bg-[#C9A84C] opacity-40" />
+              <span className="text-center">ALGÉRIE&apos;S PREMIUM AUTO MARKETPLACE</span>
+              <span className="w-8 md:w-12 h-[1px] bg-[#C9A84C] opacity-40" />
             </motion.div>
 
             {/* Main Heading Text */}
@@ -224,15 +224,15 @@ export default function HomePage() {
 
             {/* Subheading */}
             <p 
-              className="mx-auto mb-16 text-[#9A9480]"
-              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '1rem', maxWidth: '48ch', lineHeight: 1.8 }}
+              className="mx-auto mb-10 md:mb-16 text-[#9A9480] px-4"
+              style={{ fontFamily: '"Inter", sans-serif', fontWeight: 300, fontSize: '0.9rem', mdFontSize: '1rem', maxWidth: '48ch', lineHeight: 1.6 }}
             >
               Algeria&apos;s premium marketplace for buying and selling vehicles.
             </p>
 
             {/* Search Bar Container */}
             <div 
-              className="w-full max-w-[780px] mx-auto rounded-[4px] p-2 sm:p-1.5 flex flex-col md:flex-row gap-2 md:gap-0"
+              className="w-full max-w-[780px] mx-auto rounded-[2px] p-2 sm:p-1.5 flex flex-col md:flex-row gap-0"
               style={{
                 background: 'rgba(7,7,12,0.7)',
                 backdropFilter: 'blur(20px)',
@@ -241,21 +241,24 @@ export default function HomePage() {
               }}
             >
               {/* Query Input */}
-              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Search</label>
-                <input
-                  type="text"
-                  placeholder="Make, model..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
-                  style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
-                />
+              <div className="flex-1 px-4 py-3 md:py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.6rem', letterSpacing: '0.2em' }}>Search</label>
+                <div className="flex items-center">
+                  <Search size={14} className="text-[#4A4840] mr-2 md:hidden" />
+                  <input
+                    type="text"
+                    placeholder="Make, model..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-transparent border-none outline-none text-[#F5F0E8] placeholder-[#4A4840]"
+                    style={{ fontFamily: '"Inter", sans-serif', fontWeight: 400, fontSize: '0.9rem' }}
+                  />
+                </div>
               </div>
 
               {/* Location Input */}
-              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Location</label>
+              <div className="flex-1 px-4 py-3 md:py-3 relative text-left border-b md:border-b-0 md:border-r border-[rgba(255,255,255,0.06)]">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.6rem', letterSpacing: '0.2em' }}>Location</label>
                 <select
                   value={selectedWilaya}
                   onChange={(e) => setSelectedWilaya(e.target.value)}
@@ -270,8 +273,8 @@ export default function HomePage() {
               </div>
 
               {/* Price Max Input */}
-              <div className="flex-1 px-3 sm:px-4 py-3 relative text-left">
-                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.65rem', letterSpacing: '0.2em' }}>Max Budget</label>
+              <div className="flex-1 px-4 py-3 md:py-3 relative text-left border-b md:border-b-0 border-[rgba(255,255,255,0.06)]">
+                <label className="block text-[#C9A84C] uppercase mb-1" style={{ fontFamily: '"Inter", sans-serif', fontWeight: 500, fontSize: '0.6rem', letterSpacing: '0.2em' }}>Max Budget</label>
                 <input
                   type="number"
                   placeholder="Unlimited"
@@ -285,22 +288,14 @@ export default function HomePage() {
               {/* Search Button */}
               <Link
                 href={`/cars?q=${searchQuery}&wilaya=${selectedWilaya}&max=${priceMax}`}
-                className="group flex items-center justify-center rounded-[2px] px-6 sm:px-8 py-3 mt-2 md:mt-0 transition-all duration-250 cursor-pointer min-w-[100px]"
+                className="group flex items-center justify-center rounded-[2px] px-8 py-4 md:py-3 mt-0 transition-all duration-250 cursor-pointer md:min-w-[120px]"
                 style={{
                   background: '#C9A84C',
                   color: '#07070C'
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#E8C96B';
-                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(201,168,76,0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#C9A84C';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
               >
-                <Search className="w-4 h-4 mr-2 hidden sm:block" />
-                <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                <Search className="w-4 h-4 mr-2" />
+                <span style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '0.8rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   SHOW
                 </span>
               </Link>
@@ -331,7 +326,7 @@ export default function HomePage() {
           borderBottom: '1px solid rgba(201,168,76,0.1)'
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-0">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 md:gap-0">
           {STATS.map((stat, i) => (
             <motion.div 
               key={stat.label} 
@@ -343,7 +338,7 @@ export default function HomePage() {
             >
               <div 
                 className="mb-1 text-[#C9A84C]"
-                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '3.5rem', lineHeight: 1 }}
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1 }}
               >
                 <CountUp end={stat.value} duration={2.5} separator="," />
                 {stat.suffix}
@@ -373,18 +368,18 @@ export default function HomePage() {
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
           >
-            {[
-              { icon: Shield, title: 'Verified Listings', desc: 'Every transaction is approved by our specialized team to guarantee authenticity and absolute security.' },
-              { icon: Star, title: 'Premium Excellence', desc: 'Access the most prestigious vehicles with detailed listings and certified sellers.' },
-              { icon: TrendingUp, title: 'Exclusive Sales', desc: 'Exceptional visibility for your vehicle to a targeted and serious clientele.' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <motion.div 
-                key={title} 
-                variants={fadeUpVariants}
-                className="group p-10 rounded-[8px] transition-all duration-300 relative bg-[rgba(255,255,255,0.02)]"
-                style={{
-                  border: '1px solid rgba(255,255,255,0.06)'
-                }}
+              {[
+                { icon: Shield, title: 'Verified Listings', desc: 'Every transaction is approved by our specialized team to guarantee authenticity and absolute security.' },
+                { icon: Star, title: 'Premium Excellence', desc: 'Access the most prestigious vehicles with detailed listings and certified sellers.' },
+                { icon: TrendingUp, title: 'Exclusive Sales', desc: 'Exceptional visibility for your vehicle to a targeted and serious clientele.' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <motion.div 
+                  key={title} 
+                  variants={fadeUpVariants}
+                  className="group p-6 md:p-10 rounded-[8px] transition-all duration-300 relative bg-[rgba(255,255,255,0.02)]"
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.06)'
+                  }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'rgba(201,168,76,0.04)';
                   e.currentTarget.style.borderColor = 'rgba(201,168,76,0.2)';
@@ -440,7 +435,7 @@ export default function HomePage() {
               </p>
               <h2 
                 className="text-[#F5F0E8]"
-                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '2.5rem' }}
+                style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2rem' : '2.5rem' }}
               >
                 Featured Vehicles
               </h2>
@@ -448,7 +443,8 @@ export default function HomePage() {
             
             {/* Filter Tabs */}
             <motion.div 
-              className="flex items-center gap-2 flex-wrap"
+              className="flex items-center gap-2 overflow-x-auto pb-4 md:pb-0 scrollbar-hide no-scrollbar"
+              style={{ width: '100%', WebkitOverflowScrolling: 'touch' }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -464,11 +460,12 @@ export default function HomePage() {
                     border: `1px solid ${activeFilter === f.id ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.08)'}`,
                     color: activeFilter === f.id ? '#C9A84C' : '#4A4840',
                     borderRadius: '2px',
-                    padding: '0.4rem 1.25rem',
+                    padding: '0.4rem 1rem',
                     fontFamily: '"Inter", sans-serif',
                     fontWeight: 500,
-                    fontSize: '0.78rem',
-                    letterSpacing: '0.1em'
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.1em',
+                    whiteSpace: 'nowrap'
                   }}
                   onMouseEnter={(e) => {
                     if (activeFilter !== f.id) {
@@ -543,7 +540,7 @@ export default function HomePage() {
           background: 'linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(7,7,12,0) 50%)',
           borderTop: '1px solid rgba(201,168,76,0.1)',
           borderBottom: '1px solid rgba(201,168,76,0.1)',
-          padding: '7rem 2rem'
+          padding: typeof window !== 'undefined' && window.innerWidth < 768 ? '4rem 1rem' : '7rem 2rem'
         }}
       >
         <motion.div
@@ -555,14 +552,14 @@ export default function HomePage() {
         >
           <h2 className="mb-6">
             <span 
-              className="text-[#F5F0E8] block md:inline" 
-              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: '3.5rem', lineHeight: 1.1 }}
+              className="text-[#F5F0E8] block" 
+              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 300, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1.1 }}
             >
               Sell Your Car{' '}
             </span>
             <span 
               className="text-[#C9A84C] italic" 
-              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: '3.5rem', lineHeight: 1.1 }}
+              style={{ fontFamily: '"Cormorant Garamond", serif', fontWeight: 400, fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '2.5rem' : '3.5rem', lineHeight: 1.1 }}
             >
               Quickly
             </span>

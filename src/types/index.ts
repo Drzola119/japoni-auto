@@ -263,7 +263,12 @@ export const WILAYAS = [
   'Oran', 'El Bayadh', 'Illizi', 'Bordj Bou Arréridj', 'Boumerdès',
   'El Tarf', 'Tindouf', 'Tissemsilt', 'El Oued', 'Khenchela',
   'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma',
-  'Aïn Témouchent', 'Ghardaïa', 'Relizane'
+  'Aïn Témouchent', 'Ghardaïa', 'Relizane',
+  'Timimoun', 'Bordj Badji Mokhtar', 'Ouled Djellal', 'Béni Abbès', 'In Salah',
+  'In Guezzam', 'Touggourt', 'Djanet', 'El M\'Ghair', 'El Meniaa',
+  'Aflou', 'Barika', 'Ksar Chellala', 'Messaad', 'Aïn Oussera',
+  'Bou Saâda', 'El Abiodh Sidi Cheikh', 'El Kantara', 'Bir El Ater',
+  'Ksar El Boukhari', 'El Aricha'
 ] as const;
 
 // CAR BRANDS
