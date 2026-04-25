@@ -59,20 +59,12 @@ export default function SellerSignupPage() {
     
     setLoading(true);
     try {
-      await register(form.email, form.password, form.name, 'seller');
-      
-      const { db } = await import('@/lib/firebase');
-      const { doc, updateDoc } = await import('firebase/firestore');
-      const { auth } = await import('@/lib/firebase');
-      
-      if (auth?.currentUser && db) {
-        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-          phone: form.phone,
-          wilaya: form.wilaya,
-          dailyPostCount: 0,
-          lastPostDate: '',
-        });
-      }
+      await register(form.email, form.password, form.name, 'seller', {
+        phone: form.phone,
+        wilaya: form.wilaya,
+        dailyPostCount: 0,
+        lastPostDate: '',
+      });
       
       toast.success('Compte vendeur créé avec succès !');
       router.push('/seller-dashboard');

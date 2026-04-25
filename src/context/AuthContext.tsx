@@ -22,7 +22,7 @@ interface AuthContextType {
   firebaseUser: FirebaseUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
+  register: (email: string, password: string, name: string, role: UserRole, additionalData?: Partial<User>) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -71,17 +71,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               );
             }
           } else {
-            // Create new user document if doesn't exist
-            const defaultUser: User = {
-              uid: fbUser.uid,
-              email: fbUser.email || '',
-              displayName: fbUser.displayName || 'Utilisateur',
-              role: 'buyer', // Default role
-              status: 'active',
-              createdAt: new Date().toISOString(),
-            };
-            await setDoc(docRef, defaultUser);
-            setUser(defaultUser);
+            // Document doesn't exist yet - this is normal during registration
+            // We don't create it here to avoid race conditions with the register function
+            setUser(null);
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -117,7 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string, name: string, role: UserRole = 'buyer') => {
+  const register = async (email: string, password: string, name: string, role: UserRole = 'buyer', additionalData: Partial<User> = {}) => {
     if (!auth || !db) throw new Error('Firebase not initialized');
     
     const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -132,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       dailyPostCount: 0,
       lastPostDate: '',
       createdAt: new Date().toISOString(),
+      ...additionalData,
     };
     
     await setDoc(doc(db, 'users', cred.user.uid), { ...userData });
