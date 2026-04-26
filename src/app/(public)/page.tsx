@@ -9,11 +9,11 @@ import { Search, Star, Shield, TrendingUp, ArrowRight as ArrowRightIcon } from '
 import { WILAYAS, CarListing } from '@/types';
 import CarCard from '@/components/CarCard';
 import nextDynamic from 'next/dynamic';
+import CarShowcase3D from '@/components/premium/CarShowcase3D';
 
 import LoadingScreen from '@/components/LoadingScreen';
 
 const HeroCanvas = nextDynamic(() => import('@/components/HeroCanvas'), { ssr: false });
-const SocialPopup = nextDynamic(() => import('@/components/SocialPopup'), { ssr: false });
 // Removed dynamic import for LoadingScreen to ensure it's in the main bundle for instant appearance
 import CountUp from 'react-countup';
 
@@ -74,6 +74,40 @@ const DEMO_CARS: CarListing[] = [
   },
 ];
 
+// Premium showcase cars for 3D scroll experience
+const PREMIUM_SHOWCASE_CARS = [
+  {
+    id: 'showcase-1',
+    title: 'Mercedes-Benz C 220 AMG',
+    subtitle: 'Experience the perfect blend of luxury and performance with this stunning AMG Line. Premium features, pristine condition.',
+    price: '9,200,000 DZD',
+    imageUrl: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1200&q=80',
+    accentText: 'AMG',
+    ctaHref: '/cars/3',
+    badge: 'Premium',
+  },
+  {
+    id: 'showcase-2',
+    title: 'Toyota Corolla Cross Hybrid',
+    subtitle: 'The future of driving with advanced hybrid technology. Fuel-efficient, reliable, and elegantly designed.',
+    price: '7,500,000 DZD',
+    imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=1200&q=80',
+    accentText: 'HYBRID',
+    ctaHref: '/cars/1',
+    badge: 'New',
+  },
+  {
+    id: 'showcase-3',
+    title: 'BMW Série 3 320i',
+    subtitle: 'Ultimate driving pleasure in a sleek, sophisticated package. Full options, verified dealer.',
+    price: '7,800,000 DZD',
+    imageUrl: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1200&q=80',
+    accentText: 'BMW',
+    ctaHref: '/cars/5',
+    badge: 'Verified',
+  },
+];
+
 const STATS = [
   { value: 12400, suffix: '+', label: 'Active Listings' },
   { value: 32, suffix: '', label: 'Available Brands' },
@@ -103,7 +137,6 @@ export default function HomePage() {
   const [selectedWilaya, setSelectedWilaya] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [showPopup, setShowPopup] = useState(false);
 
   const handleLoadingComplete = useCallback(() => {
     sessionStorage.setItem('japonLoaded', 'true');
@@ -117,26 +150,9 @@ export default function HomePage() {
     }
   }, []);
 
-  const popupTimerStarted = useRef(false);
 
-  useEffect(() => {
-    // Show popup only on FIRST scroll after loading is complete
-    if (!isLoading && !popupTimerStarted.current) {
-      const handleScroll = () => {
-        if (window.scrollY > 30) {
-          const popupShown = localStorage.getItem('japoniPopupDismissed');
-          if (!popupShown) {
-            popupTimerStarted.current = true;
-            setShowPopup(true);
-          }
-          window.removeEventListener('scroll', handleScroll);
-        }
-      };
-      
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [isLoading]);
+
+
 
   const filters = [
     { id: 'all', label: 'All' },
@@ -357,6 +373,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ===== PREMIUM 3D SHOWCASE ===== */}
+      <CarShowcase3D items={PREMIUM_SHOWCASE_CARS} />
 
       {/* ===== FEATURES ROW ===== */}
       <section className="py-24 fade-up-section">
@@ -601,10 +620,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-        {/* Social Popup */}
-        <AnimatePresence>
-          {showPopup && <SocialPopup onClose={() => setShowPopup(false)} />}
-        </AnimatePresence>
+
       </div>
       </motion.div>
     </>
