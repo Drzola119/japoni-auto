@@ -188,7 +188,7 @@ export default function HomePage() {
         <HeroCanvas />
 
         {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-7xl mx-auto w-full pt-20">
+        <div className="relative z-10 text-center px-4 max-w-7xl mx-auto w-full pt-32 md:pt-20">
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -205,8 +205,9 @@ export default function HomePage() {
               style={{ 
                 fontFamily: '"Cormorant Garamond", serif', 
                 fontWeight: 300, 
-                fontSize: 'clamp(1.5rem, 5vw, 3rem)',
-                textShadow: '0 0 30px rgba(201, 168, 76, 0.3)'
+                fontSize: 'clamp(1.2rem, 8vw, 3rem)',
+                textShadow: '0 0 30px rgba(201, 168, 76, 0.3)',
+                opacity: 0.8
               }}
             >
               JAPONI AUTO

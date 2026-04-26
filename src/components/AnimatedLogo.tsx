@@ -242,10 +242,11 @@ export default function AnimatedLogo({ variant = "navbar", className }: Animated
             className="logo-auto-text"
             style={{ 
               fontFamily: '"Inter", sans-serif', 
-              fontWeight: 300, 
-              fontSize: '0.7rem', 
-              marginTop: '2px', 
-              letterSpacing: '0.2em' 
+              fontWeight: 500, 
+              fontSize: '0.75rem', 
+              marginTop: '1px', 
+              letterSpacing: '0.25em',
+              opacity: 0.9
             }}
           >
             AUTO

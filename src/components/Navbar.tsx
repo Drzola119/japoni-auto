@@ -95,9 +95,9 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
           
-          <Link href="/" className="group">
+          <Link href="/" className="group flex items-center">
             {siteLogo ? (
-              <img src={siteLogo} alt="Logo" className="h-10 w-auto object-contain" />
+              <img src={siteLogo} alt="Logo" className="h-8 md:h-10 w-auto object-contain" />
             ) : (
               <AnimatedLogo variant="navbar" />
             )}
@@ -271,8 +271,12 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-[90] flex flex-col justify-center items-center"
-            style={{ background: '#07070C', backdropFilter: 'blur(24px)' }}
+            className="fixed inset-0 z-[110] flex flex-col justify-start items-center"
+            style={{ 
+              background: '#07070C', 
+              backdropFilter: 'blur(24px)',
+              paddingTop: '120px'
+            }}
           >
             <div className="flex flex-col items-center gap-6 w-full max-w-sm px-6">
               {[
